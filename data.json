@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "vagrant@127.0.0.1:2222": [
+            "john", 
+            "mark"
+        ]
+    }, 
+    "last_modified": "2011-11-30 07:10:53", 
+    "people": {
+        "john": "public ssh key", 
+        "mark": "public ssh key"
+    }
+}
