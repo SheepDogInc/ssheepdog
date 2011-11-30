@@ -30,10 +30,16 @@ class SsheepDog(object):
         This is where the magic happens. This will ssh into a server and update
         public keys
         """
-        # TODO: Implement magic
-        # data = self.data['servers'][host_string]
+        users = self.data['servers'][host_string]
         env.host_string = host_string
-        sudo('pwd')
+        authorized_keys = self._create_authorized_keys_string(users)
+        sudo('echo "%s" > ~/.ssh/authorized_keys' % authorized_keys)
+
+    def _create_authorized_keys_string(self, users):
+        keys = []
+        for user in users:
+            keys.append(self.data['people'][user])
+        return '\n\n'.join(keys)
 
     def _dump_config_file(self):
         now = datetime.now()
