@@ -6,7 +6,7 @@ class UserProfile(models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True)
     ssh_key = models.TextField()
-    active = models.BooleanField()
+    is_active = models.BooleanField()
     def __str__(self):
         return self.nickname
     def __unicode__(self):
@@ -21,7 +21,7 @@ class Machine(models.Model):
     ip = models.CharField(max_length=256, null=True, blank=True)
     description = models.TextField()
     client = models.ForeignKey('Client', null=True, blank=True)
-    active = models.BooleanField()
+    is_active = models.BooleanField()
     def __unicode__(self):
         return self.nickname
 
@@ -30,7 +30,7 @@ class Login(models.Model):
     username = models.CharField(max_length=256)
     users = models.ManyToManyField(User, blank=True)
     client = models.ForeignKey('Client', null=True, blank=True)
-    active = models.BooleanField()
+    is_active = models.BooleanField()
     def __unicode__(self):
         return self.username
     
