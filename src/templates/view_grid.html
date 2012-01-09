@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+<table border="1">
+<tr>
+<th></th>
+{% for employee in users  %}
+	<th>{{employee.nickname}}</th>
+{% endfor %}
+</tr>
+{% for client in login %}
+	<tr>
+	<th> {{client.username}} </th>
+	{% for employee in users %}
+		<td>{{client.is_active}}</td>
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -5,5 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+	url(r'^view_page/$',
+       	'ssheepdog.views.view_page'),
     url(r'^admin/', include(admin.site.urls)),
 )
