@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 
 class UserProfile(models.Model):
     nickname = models.CharField(max_length=256)
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
     ssh_key = models.TextField()
     is_active = models.BooleanField()
     def __str__(self):

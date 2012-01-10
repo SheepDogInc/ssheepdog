@@ -1,18 +1,25 @@
 {% extends 'base.html' %}
- 
 {% block content %}
 <table border="1">
 <tr>
 <th></th>
-{% for employee in users  %}
+{% for employee in profiles  %}
 	<th>{{employee.nickname}}</th>
 {% endfor %}
 </tr>
-{% for client in login %}
+{% for login in logins %}
 	<tr>
-	<th> {{client.username}} </th>
-	{% for employee in users %}
-		<td>{{client.is_active}}</td>
+	<th> {{login.username}} </th>
+	{% for entry in login.entries %}
+		{% if entry.all_active %}
+			{% if entry.is_allowed %}
+				<td> check </td>
+			{% else %}
+				<td> x </td>
+			{% endif %}
+		{% else %}
+			<td> gray </td>
+		{% endif %}
 	{% endfor %}
 	</tr>
 {% endfor %}
