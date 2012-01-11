@@ -1,0 +1,32 @@
+table.admin_list {
+    clear: left;
+    border: 1px solid #ddd;
+    border-style:solid;
+    border-width:1px;
+    margin: 6px 1% 10px 0;
+    cellspacing:0;
+    cellpadding:0;
+    border:0;
+}
+
+table.admin_list th {
+    background: url(images/gray-grad.png) repeat-x;
+}
+
+table.admin_list tr.row2 {
+    background-color: #f8f8f8;
+}
+
+table.admin_list tr.row1 {
+    background-color: #ffffff;
+}
+
+table.admin_list tfoot {
+    font-style: normal;
+}
+table.admin_list td.tick {
+    background: url(images/tick.png) no-repeat;
+}
+table.admin_list td.cross {
+    background: url(images/cross.png) no-repeat;
+}
