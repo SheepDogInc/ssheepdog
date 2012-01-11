@@ -1,24 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<table border="1">
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static base.css %}" type="text/css" />
+<table class="access_view">
+<thead>
 <tr>
 <th></th>
 {% for employee in profiles  %}
 	<th>{{employee.nickname}}</th>
 {% endfor %}
 </tr>
+</thead>
 {% for login in logins %}
-	<tr>
+	<tr class="row1">
 	<th> {{login.username}} </th>
 	{% for entry in login.entries %}
 		{% if entry.all_active %}
 			{% if entry.is_allowed %}
-				<td> check </td>
+            <td class="tick"> </td>
 			{% else %}
-				<td> x </td>
+				<td class="cross"> </td>
 			{% endif %}
 		{% else %}
-			<td> gray </td>
+			<td class="gray"> </td>
 		{% endif %}
 	{% endfor %}
 	</tr>

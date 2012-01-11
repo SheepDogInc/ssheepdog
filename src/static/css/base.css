@@ -1,4 +1,4 @@
-table.admin_list {
+table.access_view {
     clear: left;
     border: 1px solid #ddd;
     border-style:solid;
@@ -9,24 +9,27 @@ table.admin_list {
     border:0;
 }
 
-table.admin_list th {
+table.access_view th {
     background: url(images/gray-grad.png) repeat-x;
 }
 
-table.admin_list tr.row2 {
+table.access_view tr.row2 {
     background-color: #f8f8f8;
 }
 
-table.admin_list tr.row1 {
+table.access_view tr.row1 {
     background-color: #ffffff;
 }
 
-table.admin_list tfoot {
+table.access_view tfoot {
     font-style: normal;
 }
-table.admin_list td.tick {
+table.access_view td.tick {
     background: url(images/tick.png) no-repeat;
 }
-table.admin_list td.cross {
+table.access_view td.cross {
     background: url(images/cross.png) no-repeat;
+}
+table.access_view td.gray {
+    background: url(images/gray-grad.png) repeat-x;
 }
