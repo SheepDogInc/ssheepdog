@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static base.css %}" type="text/css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
 <table class="access_view">
 <thead>
 <tr>

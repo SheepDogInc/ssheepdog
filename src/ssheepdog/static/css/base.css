@@ -10,7 +10,7 @@ table.access_view {
 }
 
 table.access_view th {
-    background: url(images/gray-grad.png) repeat-x;
+    background: url(/static/images/gray-grad.png) repeat-x;
 }
 
 table.access_view tr.row2 {
@@ -25,11 +25,11 @@ table.access_view tfoot {
     font-style: normal;
 }
 table.access_view td.tick {
-    background: url(images/tick.png) no-repeat;
+    background: url(/static/images/tick.png) no-repeat;
 }
 table.access_view td.cross {
-    background: url(images/cross.png) no-repeat;
+    background: url(/static/images/cross.png) no-repeat;
 }
 table.access_view td.gray {
-    background: url(images/gray-grad.png) repeat-x;
+    background: url(/static/images/gray-grad.png) repeat-x;
 }
