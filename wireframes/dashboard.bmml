@@ -1,0 +1,32 @@
+<mockup version="1.0" skin="sketch" measuredW="1004" measuredH="653" mockupW="950" mockupH="645">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="54" y="8" w="950" h="645" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>A%20Web%20Page%0Ahttp%3A//</text>
+      </controlProperties>
+    </control>
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::TabBar" x="106" y="139" w="833" h="449" measuredW="373" measuredH="100" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hrefs>%2Cbyperson%26bm%3Bbyperson.bmml%26bm%3Bbyperson.bmml%26bm%3Bbyperson.bmml%2Cbyclient%26bm%3Bbyclient.bmml%26bm%3Bbyclient.bmml%26bm%3Bbyclient.bmml%2Cbymachine%26bm%3Bbymachine.bmml%26bm%3Bbymachine.bmml%26bm%3Bbymachine.bmml</hrefs>
+        <map>%3Carea%20shape%3D%22rect%22%20coords%3D%22144%2C131%2C214%2C156%22%20href%3D%22byperson.bmml%22%20alt%3D%22byperson%22%20id%3D%226_0%22/%3E%0A%3Carea%20shape%3D%22rect%22%20coords%3D%22214%2C131%2C276%2C156%22%20href%3D%22byclient.bmml%22%20alt%3D%22byclient%22%20id%3D%226_1%22/%3E%0A%3Carea%20shape%3D%22rect%22%20coords%3D%22276%2C131%2C351%2C156%22%20href%3D%22bymachine.bmml%22%20alt%3D%22bymachine%22%20id%3D%226_2%22/%3E%0A</map>
+        <selectedIndex>0</selectedIndex>
+        <text>Dashboard%2C%20By%20Person%2C%20By%20Client%2C%20By%20Machine</text>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::DataGrid" x="159" y="208" w="271" h="85" measuredW="148" measuredH="85" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Active%20machines%2C%2031%0AInactive%20machines%2C%204%0ATeam%20members%2C%2012</text>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Link" x="890" y="90" w="-1" h="-1" measuredW="49" measuredH="21" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Log%20out</text>
+      </controlProperties>
+    </control>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Title" x="118" y="84" w="-1" h="-1" measuredW="196" measuredH="50" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>ssheepdog</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

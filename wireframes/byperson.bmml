@@ -1,0 +1,31 @@
+<mockup version="1.0" skin="sketch" measuredW="1004" measuredH="653" mockupW="950" mockupH="645">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="54" y="8" w="950" h="645" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>A%20Web%20Page%0Ahttp%3A//</text>
+      </controlProperties>
+    </control>
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::TabBar" x="106" y="139" w="833" h="449" measuredW="373" measuredH="100" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>1</selectedIndex>
+        <text>Dashboard%2C%20By%20Person%2C%20By%20Client%2C%20By%20Machine</text>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::DataGrid" x="159" y="208" w="731" h="347" measuredW="396" measuredH="85" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Name%2C%20Email%2C%20Actions%0AJohn%20Smith%2C%20john@smith.com%2C%20View%20%7C%20Edit%20%7C%20Delete%0APeter%20MacDonald%2C%20p.macdonald@gmail.com%2C%20View%20%7C%20Edit%20%7C%20Delete</text>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Link" x="890" y="90" w="-1" h="-1" measuredW="49" measuredH="21" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Log%20out</text>
+      </controlProperties>
+    </control>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Title" x="118" y="84" w="-1" h="-1" measuredW="196" measuredH="50" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>ssheepdog</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
