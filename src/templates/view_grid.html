@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
 <table class="access_view">
 <thead>
-<tr>
+<tr class="top_header">
 <th></th>
 {% for employee in profiles  %}
 	<th>{{employee.nickname}}</th>
@@ -11,7 +11,7 @@
 </tr>
 </thead>
 {% for login in logins %}
-	<tr class="row1">
+<tr class="{% cycle 'row1' 'row2' %}">
 	<th> {{login.username}} </th>
 	{% for entry in login.entries %}
 		{% if entry.all_active %}
