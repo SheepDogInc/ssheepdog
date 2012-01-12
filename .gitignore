@@ -1,5 +1,5 @@
 *.pyc
-.DS_Store
+.*
 *.db
 site_media
 settings_local.py
