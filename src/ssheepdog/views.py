@@ -10,10 +10,10 @@ def view_page(request):
     #user_prof = get_object_or_404(UserProfile,pk = user_id)
     #login = get_object_or_404(UserProfile,pk = user_id)
     #context_dict = {'user' : user_prof,'login' : login}
-    profile = User.objects.select_related('_profile_cache')  
-    users = User.objects.all()
-    user_profiles = UserProfile.objects.all()
+    users = User.objects.select_related('_profile_cache')  
     logins = Login.objects.all()
+    for user in users:
+        user.nickname = user.get_profile().nickname
     for login in logins:
         login.entries = []
         for user in users:
@@ -26,9 +26,7 @@ def view_page(request):
             login.entries.append({'all_active': all_active_bool, 
                                   'is_allowed': allowed,
                                   'user': user})
-    context_dict = {'users' : users, 'logins' : logins, 'profiles' :
-            user_profiles}
-
+    context_dict = {'users' : users, 'logins' : logins}
 
     return render_to_response('view_grid.html',
         context_dict,
