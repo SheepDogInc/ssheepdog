@@ -1,16 +1,10 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine
 from fabric.api import run, env
 import os
 import settings
+
 
 def flag_test(flag):
     """
@@ -26,6 +20,7 @@ def flag_test(flag):
         return new_f
     return decorator
 
+
 def call_with_defaults(**defaults):
     def decorator(f):
         def new_f(**kwargs):
@@ -36,6 +31,7 @@ def call_with_defaults(**defaults):
             return f(**all_kwargs)
         return new_f
     return decorator
+
 
 def create_user(**kwargs):
     """
@@ -53,6 +49,17 @@ def create_user(**kwargs):
         setattr(p, attr, value)
     p.save()
 
+
+def read_file(filename):
+    """
+    Read data from a file and return it
+    """
+    f = open(filename)
+    data = f.read()
+    f.close()
+    return data
+
+
 class TestTemplate(TestCase):
     """
     Superclass which populates DB with some starting data.  Separated into a
@@ -60,9 +67,9 @@ class TestTemplate(TestCase):
     """
     def setUp(self):
         """
-        user_1: {'nickname': 'u1', 'is_active': True, 'ssh_key': 'ssh-key-xyz-1'}
-        user_2: {'nickname': 'u2', 'is_active': True, 'ssh_key': 'ssh-key-xyz-2'}
-        user_3: {'nickname': 'u3', 'is_active': True, 'ssh_key': 'ssh-key-xyz-3'}
+        user_1: {'nickname': 'u1', 'is_active': True, 'ssh_key': 'actual key'}
+        user_2: {'nickname': 'u2', 'is_active': True, 'ssh_key': 'actual key'}
+        user_3: {'nickname': 'u3', 'is_active': True, 'ssh_key': 'actual key'}
         inactive: {'nickname': 'inactive', 'is_active': False, 'ssh_key': 'ssh-key-xyz'}
         {'nickname': 'client1', 'description': 'Test Client'}
         {'nickname': 'client2', 'description': 'Test Client'}
@@ -71,11 +78,20 @@ class TestTemplate(TestCase):
         {'username': 'login', 'machine': <Machine: machine>, 'is_active': False}
         {'username': 'login2', 'machine': <Machine: machine>, 'is_active': False}
         """
+        root = getattr(settings, 'PROJECT_ROOT', None)
+        if not root:
+            raise Exception("Please provide a PROJECT_ROOT variable in your\
+            settings file.")
+
+        keys_dir = os.path.join(root, '../deploy/keys')
 
         for i in range(1,4):
+            key = read_file(os.path.join(keys_dir, 'user_%d.pub' % i))
             create_user(username='user_%d' % i, nickname='u%d' % i,
-                        ssh_key="ssh-key-xyz-%d" % i)
-        create_user(username='inactive', nickname='inactive', is_active=False)
+                        ssh_key=key)
+
+        create_user(username='inactive', nickname='inactive', is_active=False,
+                ssh_key=read_file(os.path.join(keys_dir, 'inactive.pub')))
         create_client = call_with_defaults(nickname='client',
                                            description='Test Client'
                                            )(Client.objects.create)
@@ -111,7 +127,7 @@ class TestTemplate(TestCase):
             env.key_filename = os.path.join(keys_dir, 'user_%d' % i)
             env.host_string = 'login@127.0.0.1:2222'
             run('ls')
-        
+
 
 class MyTests(TestTemplate):
     def test_setup(self):
