@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from ssheepdog.models import Login
-from fabric.api import env, sudo
+from fabric.api import env, sudo, run
 
 def test_sync():
     users = User.objects.select_related('_profile_cache')
@@ -11,6 +11,10 @@ def test_sync():
     for login in logins:
         for user in users:
             if user in login.users.all():
-                env.host_string = login.username+"@" + str(login.machine)
+                m = login.machine
+                env.host_string = "%s@%s:%d" % (login.username,
+                        (m.ip or m.hostname),
+                        m.port)
                 authorized_keys.append(str(user.ssh_key))
-        sudo ('echo "%s" > ~/.ssh/authorized_keys_test' % "\n".join(authorized_keys))
+        print str(env.host_string)
+        run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(authorized_keys))
