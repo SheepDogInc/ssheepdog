@@ -10,17 +10,19 @@ from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine
 import settings
 
-def slow_test(f):
+def flag_test(flag):
     """
-    Decorator to flag a test as slow.  Skip if settings.SKIP_SLOW_TESTS
-    if set to True
+    Decorator to flag a test and restrict whether it is run according to
+    settings.SKIP_TESTS_WITH_FLAGS
     """
-    def new_f(*args, **kwargs):
-        if getattr(settings, 'SKIP_SLOW_TESTS', False):
-            return None
-        else:
-            return f(*args, **kwargs)
-    return new_f
+    def decorator(f):
+        def new_f(*args, **kwargs):
+            if flag in getattr(settings, 'SKIP_TESTS_WITH_FLAGS', []):
+                return None
+            else:
+                return f(*args, **kwargs)
+        return new_f
+    return decorator
 
 def call_with_defaults(**defaults):
     def decorator(f):
