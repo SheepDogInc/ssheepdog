@@ -7,9 +7,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 def view_page(request):
-    #user_prof = get_object_or_404(UserProfile,pk = user_id)
-    #login = get_object_or_404(UserProfile,pk = user_id)
-    #context_dict = {'user' : user_prof,'login' : login}
     users = User.objects.select_related('_profile_cache')  
     logins = Login.objects.all()
     for user in users:
