@@ -2,7 +2,7 @@ Vagrant::Config.run do |config|
   config.vm.forward_port "ssh", 22, 2222
   config.vm.customize do |vm|
     vm.memory_size = 128
-    vm.name = "My Project VM"
+    vm.name = "ssheepdog vm"
   end
 
   # All Vagrant configuration is done here. The most common configuration
@@ -55,17 +55,11 @@ Vagrant::Config.run do |config|
   #   puppet.manifest_file  = "sd-natty.pp"
   # end
 
-  # Enable provisioning with chef solo, specifying a cookbooks path (relative
-  # to this Vagrantfile), and adding some recipes and/or roles.
-  #
-  # config.vm.provision :chef_solo do |chef|
-  #   chef.cookbooks_path = "cookbooks"
-  #   chef.add_recipe "mysql"
-  #   chef.add_role "web"
-  #
-  #   # You may also specify custom JSON attributes:
-  #   chef.json = { :mysql_password => "foo" }
-  # end
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = "deploy/cookbooks"
+    chef.add_recipe "ssheepdog::default"
+  end
+
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).
