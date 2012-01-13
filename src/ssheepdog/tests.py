@@ -8,6 +8,8 @@ Replace this with more appropriate tests for your application.
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine
+from fabric.api import run, env
+import os
 import settings
 
 def flag_test(flag):
@@ -64,8 +66,8 @@ class TestTemplate(TestCase):
         inactive: {'nickname': 'inactive', 'is_active': False, 'ssh_key': 'ssh-key-xyz'}
         {'nickname': 'client1', 'description': 'Test Client'}
         {'nickname': 'client2', 'description': 'Test Client'}
-        {'ip': '12.34.56.78', 'nickname': 'machine', 'hostname': 'machine.ca', 'is_active': True, 'description': 'Test Machine'}
-        {'is_active': True, 'description': 'Test Machine', 'ip': '12.34.56.78', 'hostname': 'machine2.ca', 'nickname': 'machine'}
+        {'ip': '127.0.0.1', 'port': 2222, 'nickname': 'machine', 'hostname': 'machine.ca', 'is_active': True, 'description': 'Test Machine'}
+        {'is_active': True, 'port': 2222, 'description': 'Test Machine', 'ip': '127.0.0.1', 'hostname': 'machine2.ca', 'nickname': 'machine'}
         {'username': 'login', 'machine': <Machine: machine>, 'is_active': False}
         {'username': 'login2', 'machine': <Machine: machine>, 'is_active': False}
         """
@@ -81,7 +83,8 @@ class TestTemplate(TestCase):
         create_client(nickname='client2')
         create_machine = call_with_defaults(nickname='machine',
                                             hostname='machine.ca',
-                                            ip='12.34.56.78',
+                                            ip='127.0.0.1',
+                                            port=2222,
                                             description='Test Machine',
                                             is_active=True
                                             )(Machine.objects.create)
@@ -94,6 +97,21 @@ class TestTemplate(TestCase):
         create_login()
         create_login(username="login2", is_active=False)
 
+    def test_connect(self):
+        """
+        Make sure that test users can log in via ssh
+        """
+        root = getattr(settings, 'PROJECT_ROOT', None)
+        if not root:
+            raise Exception("Please provide a PROJECT_ROOT variable in your\
+            settings file.")
+        keys_dir = os.path.join(root, '../deploy/keys')
+
+        for i in range(1, 4):
+            env.key_filename = os.path.join(keys_dir, 'user_%d' % i)
+            env.host_string = 'login@127.0.0.1:2222'
+            run('ls')
+        
 
 class MyTests(TestTemplate):
     def test_setup(self):
