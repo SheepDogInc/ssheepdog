@@ -20,6 +20,7 @@ class Machine(models.Model):
     hostname = models.CharField(max_length=256, blank=True, null=True)
     ip = models.CharField(max_length=256, null=True, blank=True)
     description = models.TextField()
+    port = models.IntegerField(default=22)
     client = models.ForeignKey('Client', null=True, blank=True)
     is_active = models.BooleanField()
     def __unicode__(self):
