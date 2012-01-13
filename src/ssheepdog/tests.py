@@ -8,6 +8,19 @@ Replace this with more appropriate tests for your application.
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine
+import settings
+
+def slow_test(f):
+    """
+    Decorator to flag a test as slow.  Skip if settings.SKIP_SLOW_TESTS
+    if set to True
+    """
+    def new_f(*args, **kwargs):
+        if getattr(settings, 'SKIP_SLOW_TESTS', False):
+            return None
+        else:
+            return f(*args, **kwargs)
+    return new_f
 
 def call_with_defaults(**defaults):
     def decorator(f):

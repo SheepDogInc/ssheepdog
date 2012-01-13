@@ -145,8 +145,6 @@ LOGGING = {
 }
 
 try:
-    import sys
-    if not 'test' in sys.argv:
-        from settings_local import *
+    from settings_local import *
 except ImportError:
     pass
