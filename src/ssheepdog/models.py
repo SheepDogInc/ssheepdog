@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.db.utils import DatabaseError
 
 class UserProfile(models.Model):
     nickname = models.CharField(max_length=256)
@@ -40,3 +41,13 @@ class Client(models.Model):
     description = models.TextField()
     def __unicode__(self):
         return self.nickname
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        try:
+            UserProfile.objects.create(user=instance)
+        except DatabaseError: # Creating fresh db from manage.py
+            pass
+
+post_save.connect(create_user_profile, sender=User)
+
