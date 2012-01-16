@@ -69,7 +69,6 @@ class TestTemplate(TestCase):
         """
         user_1: {'nickname': 'u1', 'is_active': True, 'ssh_key': 'actual key'}
         user_2: {'nickname': 'u2', 'is_active': True, 'ssh_key': 'actual key'}
-        user_3: {'nickname': 'u3', 'is_active': True, 'ssh_key': 'actual key'}
         inactive: {'nickname': 'inactive', 'is_active': False, 'ssh_key': 'ssh-key-xyz'}
         {'nickname': 'client1', 'description': 'Test Client'}
         {'nickname': 'client2', 'description': 'Test Client'}
@@ -85,18 +84,11 @@ class TestTemplate(TestCase):
 
         keys_dir = os.path.join(root, '../deploy/keys')
 
-        for i in range(1,4):
+        for i in range(1,3):
             key = read_file(os.path.join(keys_dir, 'user_%d.pub' % i))
             create_user(username='user_%d' % i, nickname='u%d' % i,
                         ssh_key=key)
 
-        create_user(username='inactive', nickname='inactive', is_active=False,
-                ssh_key=read_file(os.path.join(keys_dir, 'inactive.pub')))
-        create_client = call_with_defaults(nickname='client',
-                                           description='Test Client'
-                                           )(Client.objects.create)
-        create_client(nickname='client1')
-        create_client(nickname='client2')
         create_machine = call_with_defaults(nickname='machine',
                                             hostname='machine.ca',
                                             ip='127.0.0.1',
@@ -105,14 +97,14 @@ class TestTemplate(TestCase):
                                             is_active=True
                                             )(Machine.objects.create)
         create_machine()
-        create_machine(hostname='machine2.ca', is_active=True)
         create_login = call_with_defaults(username='login',
-                                          is_active=False,
+                                          is_active=True,
                                           machine=Machine.objects.all()[0],
                                           )(Login.objects.create)
-        create_login()
-        create_login(username="login2", is_active=False)
+        create_login(username="login1")
+        create_login(username="login2")
 
+class VagrantTests(TestTemplate):
     def test_connect(self):
         """
         Make sure that test users can log in via ssh
@@ -129,9 +121,15 @@ class TestTemplate(TestCase):
             run('ls')
 
 
+    def test_overwrite_authorized_keys(self):
+        # TODO:  Construct and call a function which takes as arguments a login
+        # and a new authorized_keys file and savely overwrites the file w/o
+        # any risk of ending in a bad state (locking ourselves out)
+        pass
+
 class MyTests(TestTemplate):
     def test_setup(self):
-        self.assertEqual(4, User.objects.count())
-        self.assertEqual(2, Client.objects.count())
-        self.assertEqual(2, Machine.objects.count())
+        self.assertEqual(2, User.objects.count())
+        self.assertEqual(0, Client.objects.count())
+        self.assertEqual(1, Machine.objects.count())
         self.assertEqual(2, Login.objects.count())
