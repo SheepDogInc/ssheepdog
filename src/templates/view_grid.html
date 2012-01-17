@@ -26,4 +26,8 @@
 	</tr>
 {% endfor %}
 </table>
+<form class="sync_form" action="/results_page/" method="post">
+{% csrf_token %} 
+<input class="sync" type="submit" value="sync keys" id="sync_form"/>
+</form>
 {% endblock %}

@@ -8,4 +8,6 @@ urlpatterns = patterns('',
 	url(r'^view_page/$',
        	'ssheepdog.views.view_page'),
     url(r'^admin/', include(admin.site.urls)),
+	url(r'^results_page/$',
+       	'ssheepdog.views.results_page'),
 )
