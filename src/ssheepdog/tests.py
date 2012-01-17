@@ -12,18 +12,6 @@ if not root:
 keys_dir = os.path.join(root, '../deploy/keys')
 from sync import test_sync
 
-def handle_prompt_abort():
-    """
-    Monkey patch fabric so that it raises an exception rather than actually
-    aborting.
-    """
-    import fabric.state
-    if fabric.state.env.abort_on_prompts:
-        raise Exception("THIS IS AN EXCEPTION")
-
-fabric.utils.handle_prompt_abort = handle_prompt_abort
-
-
 def read_file(filename):
     """
     Read data from a file and return it
@@ -127,24 +115,23 @@ def can_connect(user, login):
                                     m.ip or m.hostname,
                                     m.port)
     try:
-        run('cat ~/.ssh/authorized_keys')
+        run('echo')
         return True
     except SystemExit:
         return False
 
 class PushKeyTests(TestCase):
     def setUp(self):
-        pass
+        self.user = create_user(username='user_1')
+        self.machine = create_machine()
+        self.login = create_login(username="login", machine=self.machine)
 
-    def test_successful_key_push(self):
-        user = create_user(username='user_1')
-        machine = create_machine()
-        login = create_login(username="login", machine=machine)
-
+    def test_cannot_connect(self):
         test_sync()
-        self.assertFalse(can_connect(user, login))
+        self.assertFalse(can_connect(self.user, self.login))
 
-        login.users = [user]
-        login.save()
+    def test_key_push(self):
+        self.login.users = [self.user]
+        self.login.save()
         test_sync()
-        self.assertTrue(can_connect(user, login))
+        self.assertTrue(can_connect(self.user, self.login))
