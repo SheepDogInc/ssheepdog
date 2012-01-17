@@ -4,7 +4,34 @@ from ssheepdog.models import Client, Login, Machine
 from fabric.api import run, env
 import os
 import settings
+import fabric.utils
+root = getattr(settings, 'PROJECT_ROOT', None)
+if not root:
+    raise Exception("Please provide a PROJECT_ROOT variable in your"
+                    " settings file.")
+keys_dir = os.path.join(root, '../deploy/keys')
+from sync import test_sync
 
+def handle_prompt_abort():
+    """
+    Monkey patch fabric so that it raises an exception rather than actually
+    aborting.
+    """
+    import fabric.state
+    if fabric.state.env.abort_on_prompts:
+        raise Exception("THIS IS AN EXCEPTION")
+
+fabric.utils.handle_prompt_abort = handle_prompt_abort
+
+
+def read_file(filename):
+    """
+    Read data from a file and return it
+    """
+    f = open(filename)
+    data = f.read()
+    f.close()
+    return data
 
 def flag_test(flag):
     """
@@ -27,109 +54,97 @@ def call_with_defaults(**defaults):
             all_kwargs = {}
             all_kwargs.update(defaults)
             all_kwargs.update(kwargs)
-            # print all_kwargs
             return f(**all_kwargs)
         return new_f
     return decorator
-
 
 def create_user(**kwargs):
     """
     Create a user and userprofile with default values.
     """
+
     defaults = {'password': 'testpassword',
-                'ssh_key': 'ssh-key-xyz',
                 'is_active': True}
+    if not kwargs.get('ssh_key') and kwargs.get('username'):
+        u = kwargs['username']
+        defaults['ssh_key'] = read_file(os.path.join(keys_dir, kwargs['username']+".pub"))
+    defaults['nickname'] = kwargs['username']
     defaults.update(kwargs)
-    u = User.objects.create(username=defaults.pop('username'),
+    username = defaults.pop('username')
+    u = User.objects.create(username=username,
                             password=defaults.pop('password'))
     p = u.get_profile()
-    # print "%s: %s" % (u, defaults)
     for attr, value in defaults.items():
         setattr(p, attr, value)
     p.save()
+    return u
+
+create_machine = call_with_defaults(nickname='machine',
+                                    hostname='machine.ca',
+                                    ip='127.0.0.1',
+                                    port=2222,
+                                    description='Test Machine',
+                                    is_active=True
+                                    )(Machine.objects.create)
+
+create_login = call_with_defaults(username='login',
+                                  is_active=True,
+                                  )(Login.objects.create)
 
 
-def read_file(filename):
-    """
-    Read data from a file and return it
-    """
-    f = open(filename)
-    data = f.read()
-    f.close()
-    return data
-
-
-class TestTemplate(TestCase):
-    """
-    Superclass which populates DB with some starting data.  Separated into a
-    sepate class in case we want to write more than just one class of tests.
-    """
+class VagrantTests(TestCase):
     def setUp(self):
-        """
-        user_1: {'nickname': 'u1', 'is_active': True, 'ssh_key': 'actual key'}
-        user_2: {'nickname': 'u2', 'is_active': True, 'ssh_key': 'actual key'}
-        inactive: {'nickname': 'inactive', 'is_active': False, 'ssh_key': 'ssh-key-xyz'}
-        {'nickname': 'client1', 'description': 'Test Client'}
-        {'nickname': 'client2', 'description': 'Test Client'}
-        {'ip': '127.0.0.1', 'port': 2222, 'nickname': 'machine', 'hostname': 'machine.ca', 'is_active': True, 'description': 'Test Machine'}
-        {'is_active': True, 'port': 2222, 'description': 'Test Machine', 'ip': '127.0.0.1', 'hostname': 'machine2.ca', 'nickname': 'machine'}
-        {'username': 'login', 'machine': <Machine: machine>, 'is_active': False}
-        {'username': 'login2', 'machine': <Machine: machine>, 'is_active': False}
-        """
-        root = getattr(settings, 'PROJECT_ROOT', None)
-        if not root:
-            raise Exception("Please provide a PROJECT_ROOT variable in your\
-            settings file.")
+        create_user(username='user_1')
+        create_user(username='user_2')
 
-        keys_dir = os.path.join(root, '../deploy/keys')
+        m = create_machine()
+        create_login(username="login1", machine=m)
+        create_login(username="login2", machine=m)
 
-        for i in range(1,3):
-            key = read_file(os.path.join(keys_dir, 'user_%d.pub' % i))
-            create_user(username='user_%d' % i, nickname='u%d' % i,
-                        ssh_key=key)
-
-        create_machine = call_with_defaults(nickname='machine',
-                                            hostname='machine.ca',
-                                            ip='127.0.0.1',
-                                            port=2222,
-                                            description='Test Machine',
-                                            is_active=True
-                                            )(Machine.objects.create)
-        create_machine()
-        create_login = call_with_defaults(username='login',
-                                          is_active=True,
-                                          machine=Machine.objects.all()[0],
-                                          )(Login.objects.create)
-        create_login(username="login1")
-        create_login(username="login2")
-
-class VagrantTests(TestTemplate):
-    def test_connect(self):
-        """
-        Make sure that test users can log in via ssh
-        """
-        root = getattr(settings, 'PROJECT_ROOT', None)
-        if not root:
-            raise Exception("Please provide a PROJECT_ROOT variable in your\
-            settings file.")
-        keys_dir = os.path.join(root, '../deploy/keys')
-
-        for i in range(1, 4):
-            env.key_filename = os.path.join(keys_dir, 'user_%d' % i)
-            env.host_string = 'login@127.0.0.1:2222'
-            run('ls')
-
-
-    def test_overwrite_authorized_keys(self):
-        # TODO:  Construct and call a function which takes as arguments a login
-        # and a new authorized_keys file and savely overwrites the file w/o
-        # any risk of ending in a bad state (locking ourselves out)
-        pass
-
-class MyTests(TestTemplate):
     def test_setup(self):
         self.assertEqual(2, User.objects.count())
         self.assertEqual(0, Client.objects.count())
         self.assertEqual(1, Machine.objects.count())
         self.assertEqual(2, Login.objects.count())
+
+    def test_connect(self):
+        """
+        Make sure that test users can log in via ssh
+        """
+        for i in range(1, 4):
+            env.key_filename = os.path.join(keys_dir, 'user_%d' % i)
+            env.host_string = 'login@127.0.0.1:2222'
+            run('ls')
+
+def can_connect(user, login):
+    """
+    Try to connect to the given login using the credential of user
+    """
+    m = login.machine
+    env.abort_on_prompts = True
+    env.key_filename = os.path.join(keys_dir, user.username)
+    env.host_string = "%s@%s:%s" % (login.username,
+                                    m.ip or m.hostname,
+                                    m.port)
+    try:
+        run('cat ~/.ssh/authorized_keys')
+        return True
+    except SystemExit:
+        return False
+
+class PushKeyTests(TestCase):
+    def setUp(self):
+        pass
+
+    def test_successful_key_push(self):
+        user = create_user(username='user_1')
+        machine = create_machine()
+        login = create_login(username="login", machine=machine)
+
+        test_sync()
+        self.assertFalse(can_connect(user, login))
+
+        login.users = [user]
+        login.save()
+        test_sync()
+        self.assertTrue(can_connect(user, login))
