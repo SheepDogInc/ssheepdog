@@ -4,7 +4,7 @@ from ssheepdog.models import Client, Login, Machine
 from fabric.api import run, env
 import os
 import settings
-import fabric.utils
+from fabric.network import disconnect_all
 root = getattr(settings, 'PROJECT_ROOT', None)
 if not root:
     raise Exception("Please provide a PROJECT_ROOT variable in your"
@@ -116,9 +116,14 @@ def can_connect(user, login):
                                     m.port)
     try:
         run('echo')
+        disconnect_all()
         return True
     except SystemExit:
         return False
+
+def sync():
+    test_sync()
+    disconnect_all()
 
 class PushKeyTests(TestCase):
     def setUp(self):
@@ -127,11 +132,11 @@ class PushKeyTests(TestCase):
         self.login = create_login(username="login", machine=self.machine)
 
     def test_cannot_connect(self):
-        test_sync()
+        sync()
         self.assertFalse(can_connect(self.user, self.login))
 
     def test_key_push(self):
         self.login.users = [self.user]
         self.login.save()
-        test_sync()
+        sync()
         self.assertTrue(can_connect(self.user, self.login))
