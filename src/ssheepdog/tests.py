@@ -128,10 +128,11 @@ def sync():
 class PushKeyTests(TestCase):
     def setUp(self):
         self.user = create_user(username='user_1')
+        self.user2 = create_user(username='user_2')
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
 
-    def test_cannot_connect(self):
+    def test_user_login_disconnected(self):
         sync()
         self.assertFalse(can_connect(self.user, self.login))
 
@@ -140,3 +141,31 @@ class PushKeyTests(TestCase):
         self.login.save()
         sync()
         self.assertTrue(can_connect(self.user, self.login))
+    def test_machine_inactive(self):
+        self.login.users = [self.user]
+        self.machine.is_active = False
+        self.machine.save()
+        self.login.save()
+        sync()
+        self.assertFalse(can_connect(self.user, self.login))
+    def test_machine_login_inactive_user_active(self):
+        self.login.users = [self.user] 
+        self.machine.is_active = False
+        self.login.is_active = False
+        self.machine.save()
+        self.login.save()
+        sync()
+        self.assertFalse(can_connect(self.user, self.login))
+    def test_two_users(self):
+        self.login.users = [self.user, self.user2] 
+        self.login.save()
+        sync()
+        self.assertTrue(can_connect(self.user, self.login))
+        self.assertTrue(can_connect(self.user2, self.login))
+    def test_bad_machine(self):
+        self.login.users = [self.user]
+        self.machine.port = 10
+        self.machine.save()
+        self.login.save()
+        sync()
+        self.assertFalse(can_connect(self.user,self.login))
