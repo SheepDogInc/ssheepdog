@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.db.utils import DatabaseError
+from fabric.api import env, run
+import os
+from django.conf import settings
+
+root = getattr(settings, 'PROJECT_ROOT', None)
+keys_dir = os.path.join(root, '../deploy/keys')
 
 class UserProfile(models.Model):
     nickname = models.CharField(max_length=256)
@@ -35,6 +41,35 @@ class Login(models.Model):
     is_active = models.BooleanField()
     def __unicode__(self):
         return self.username
+    def read_file(self, filename):
+        """
+        Read data from a file and return it
+        """
+        f = open(filename)
+        data = f.read()
+        f.close()
+        return data
+    def update_keys(self): 
+        """
+        Updates the authorized_keys file on the machine attached to this login 
+        adding or deleting users public keys
+        """
+        updated = False
+        authorized_keys = [self.read_file(os.path.join(keys_dir, 'application.pub'))]
+        m = self.machine
+        env.abort_on_prompts = True
+        env.key_filename = os.path.join(keys_dir, 'application')
+        env.host_string = "%s@%s:%d" % (self.username,
+                (m.ip or m.hostname),
+                m.port)    
+        if self.is_active and self.machine.is_active:
+            for user in (self.users
+                         .filter(is_active = True)
+                         .select_related('_profile_cache')):
+                authorized_keys.append(user.get_profile().ssh_key)
+                updated = True
+            run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(authorized_keys))
+        return updated
     
 class Client(models.Model):
     nickname = models.CharField(max_length=256)

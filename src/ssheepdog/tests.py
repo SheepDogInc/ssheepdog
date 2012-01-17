@@ -5,11 +5,12 @@ from fabric.api import run, env
 import os
 import settings
 from fabric.network import disconnect_all
+from sync import keys_dir
+
 root = getattr(settings, 'PROJECT_ROOT', None)
 if not root:
     raise Exception("Please provide a PROJECT_ROOT variable in your"
                     " settings file.")
-keys_dir = os.path.join(root, '../deploy/keys')
 from sync import test_sync
 
 def read_file(filename):

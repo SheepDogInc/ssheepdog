@@ -5,6 +5,7 @@ from src import ssheepdog
 from ssheepdog.models import UserProfile, Machine, Login, Client
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from sync import test_sync
 
 def view_page(request):
     users = User.objects.select_related('_profile_cache')  
@@ -27,4 +28,11 @@ def view_page(request):
 
     return render_to_response('view_grid.html',
         context_dict,
-        context_instance=RequestContext(request)) 
+        context_instance=RequestContext(request))  
+def results_page(request):
+    if request.method == 'POST':
+        test_sync()
+    return render_to_response('base.html',
+            {},
+            context_instance=RequestContext(request))  
+
