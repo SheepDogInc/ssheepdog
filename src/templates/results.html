@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<table class="access_view">
+<tr class="top_header"><th> Login </th>
+<th> Status </th></tr>
+{% for login in logins %}
+    <tr class="{% cycle 'row1' 'row2' %}"><td>{{ login.username }}</td>
+    {% if login.is_dirty %}
+        <td class="dirty"> Update incomplete </td>
+    {% else %} 
+        <td class="clean"> Complete </td>
+    {% endif %}
+{% endfor %}
+</table>
+{% endblock %}
