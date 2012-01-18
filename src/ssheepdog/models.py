@@ -32,6 +32,7 @@ class Machine(models.Model):
     description = models.TextField()
     port = models.IntegerField(default=22)
     client = models.ForeignKey('Client', null=True, blank=True)
+    is_down = models.BooleanField(default=False)
     is_active = models.BooleanField()
 
     def __unicode__(self):
@@ -66,6 +67,8 @@ class Login(models.Model):
         not (status stays dirty). If login not active returns none
         """
         mach = self.machine
+        if mach.is_down: # Do not update machines which are flagged as down
+            return None
         env.abort_on_prompts = True
         env.key_filename = os.path.join(KEYS_DIR, 'application')
         env.host_string = "%s@%s:%d" % (self.username,
