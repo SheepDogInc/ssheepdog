@@ -43,6 +43,7 @@ class Login(models.Model):
     users = models.ManyToManyField(User, blank=True)
     client = models.ForeignKey('Client', null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_dirty = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.username
@@ -51,6 +52,9 @@ class Login(models.Model):
         """
         Updates the authorized_keys file on the machine attached to this login 
         adding or deleting users public keys
+
+        returns true if successfully changed the authorized files and false if
+        not (status stays dirty). If login not active returns none
         """
         authorized_keys = [read_file(os.path.join(KEYS_DIR, 'application.pub'))]
         m = self.machine
@@ -64,11 +68,14 @@ class Login(models.Model):
                          .filter(is_active = True)
                          .select_related('_profile_cache')):
                 authorized_keys.append(user.get_profile().ssh_key)
-        try:
-            run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(authorized_keys))
-            return True
-        except SystemExit:
-            return False
+            try:
+                run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(authorized_keys))
+                return True
+                self.is_dirty = False
+            except SystemExit:
+                return False
+                self.is_dirty = True
+        else: self.is_dirty = True
     
 class Client(models.Model):
     nickname = models.CharField(max_length=256)
