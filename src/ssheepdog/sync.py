@@ -6,8 +6,11 @@ from django.conf import settings
 def test_sync():
     try:
         for login in Login.objects.all():
-            login.update_keys()
-    except:
-        print 'failed bro'
+            try:
+                login.update_keys()
+            except SystemExit:
+                pass 
     finally:
-        disconnect_all
+        disconnect_all()
+
+    
