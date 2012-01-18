@@ -50,6 +50,10 @@ class Login(models.Model):
         return self.username
 
     def get_authorized_keys(self):
+        """
+        Return a list of authorized keys strings which should be deployed
+        to the machine.
+        """
         keys = [read_file(os.path.join(KEYS_DIR, 'application.pub'))]
         if self.is_active and self.machine.is_active:
             for user in (self.users
@@ -63,11 +67,12 @@ class Login(models.Model):
         Updates the authorized_keys file on the machine attached to this login 
         adding or deleting users public keys
 
-        returns true if successfully changed the authorized files and false if
-        not (status stays dirty). If login not active returns none
+        Returns True if successfully changed the authorized files and False if
+        not (status stays dirty).  If no change attempted, return None.
         """
         mach = self.machine
-        if mach.is_down: # Do not update machines which are flagged as down
+        if mach.is_down or not self.is_dirty:
+            # No update required (either impossible or not needed)
             return None
         env.abort_on_prompts = True
         env.key_filename = os.path.join(KEYS_DIR, 'application')
