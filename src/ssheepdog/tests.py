@@ -200,4 +200,15 @@ class DirtyTests(TestCase):
         """Changing the m2m for a user makes the login dirty"""
         self.login.users = []
         self.login.save()
+
+    def test_machine(self):
+        """Changing the machine should make all the logins associated dirty"""
+        self.machine.is_active = False
+        self.machine.save()
         self.assertDirty()
+    def test_machine_not_dirty(self):
+        """Tests that the logins connected to the machine does not get dirtyed
+        when an unimportant machine field is changed"""
+        self.machine.nickname = False
+        self.machine.save()
+        self.assertClean()

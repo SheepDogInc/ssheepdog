@@ -41,9 +41,8 @@ class Machine(DirtyFieldsMixin, models.Model):
     def save(self, *args, **kwargs):
         fields = set(['hostname', 'ip', 'port','is_active'])
         made_dirty = bool(fields.intersection(self.get_dirty_fields()))
-        logins = Login.objects.filter(machine = self)
-        for login in logins:
-            login.is_dirty = self.is_dirty or made_dirty
+        if made_dirty:
+            self.login_set.update(is_dirty=True)
         super(Machine, self).save(*args, **kwargs)
 
 class Login(DirtyFieldsMixin, models.Model):
@@ -69,7 +68,7 @@ class Login(DirtyFieldsMixin, models.Model):
         """
         mach = self.machine
         env.abort_on_prompts = True
-        env.key_filename = os.path.join(KEYS_DIR, 'application')
+        env.key_filename = os.path.join(KEYS_DIR, 'ssheepdog')
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
                                         mach.port)    
@@ -84,7 +83,7 @@ class Login(DirtyFieldsMixin, models.Model):
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [read_file(os.path.join(KEYS_DIR, 'application.pub'))]
+        keys = [read_file(os.path.join(KEYS_DIR, 'ssheepdog.pub'))]
         if self.is_active and self.machine.is_active:
             for user in (self.users
                          .filter(is_active = True)
