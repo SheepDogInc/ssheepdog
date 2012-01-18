@@ -38,6 +38,14 @@ class Machine(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return self.nickname
 
+    def save(self, *args, **kwargs):
+        fields = set(['hostname', 'ip', 'port','is_active'])
+        made_dirty = bool(fields.intersection(self.get_dirty_fields()))
+        logins = Login.objects.filter(machine = self)
+        for login in logins:
+            login.is_dirty = self.is_dirty or made_dirty
+        super(Machine, self).save(*args, **kwargs)
+
 class Login(DirtyFieldsMixin, models.Model):
     machine = models.ForeignKey('Machine')
     username = models.CharField(max_length=256)
