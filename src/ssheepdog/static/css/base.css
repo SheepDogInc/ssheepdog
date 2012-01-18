@@ -11,7 +11,11 @@ table,th, td
 table.access_view thead{
     
 }
-table.access_view th {
+table.access_view td.dirty {
+    color: red;
+}
+table.access_view td.clean {
+    color: green;
 }
 table.access_view tr.top_header {
     color: black;
