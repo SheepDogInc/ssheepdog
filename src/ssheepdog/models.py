@@ -48,6 +48,15 @@ class Login(models.Model):
     def __unicode__(self):
         return self.username
 
+    def get_authorized_keys(self):
+        keys = [read_file(os.path.join(KEYS_DIR, 'application.pub'))]
+        if self.is_active and self.machine.is_active:
+            for user in (self.users
+                         .filter(is_active = True)
+                         .select_related('_profile_cache')):
+                keys.append(user.get_profile().ssh_key)
+        return keys
+
     def update_keys(self): 
         """
         Updates the authorized_keys file on the machine attached to this login 
@@ -56,27 +65,21 @@ class Login(models.Model):
         returns true if successfully changed the authorized files and false if
         not (status stays dirty). If login not active returns none
         """
-        authorized_keys = [read_file(os.path.join(KEYS_DIR, 'application.pub'))]
-        m = self.machine
+        mach = self.machine
         env.abort_on_prompts = True
         env.key_filename = os.path.join(KEYS_DIR, 'application')
         env.host_string = "%s@%s:%d" % (self.username,
-                (m.ip or m.hostname),
-                m.port)    
-        if self.is_active and self.machine.is_active:
-            for user in (self.users
-                         .filter(is_active = True)
-                         .select_related('_profile_cache')):
-                authorized_keys.append(user.get_profile().ssh_key)
-            try:
-                run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(authorized_keys))
-                return True
-                self.is_dirty = False
-            except SystemExit:
-                return False
-                self.is_dirty = True
-        else: self.is_dirty = True
-    
+                                        (mach.ip or mach.hostname),
+                                        mach.port)    
+        try:
+            run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
+                self.get_authorized_keys()))
+            self.is_dirty = False
+            self.save()
+            return True
+        except SystemExit:
+            return False
+
 class Client(models.Model):
     nickname = models.CharField(max_length=256)
     description = models.TextField()
