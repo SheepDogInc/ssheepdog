@@ -1,27 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine
-from fabric.api import run, env
 import os
-import settings
+import settings as app_settings
 from fabric.network import disconnect_all
-
-root = getattr(settings, 'PROJECT_ROOT', None)
-keys_dir = os.path.join(root, '../deploy/keys')
-
-if not root:
-    raise Exception("Please provide a PROJECT_ROOT variable in your"
-                    " settings file.")
+from ssheepdog.models import KEYS_DIR
 from sync import test_sync
-
-def read_file(filename):
-    """
-    Read data from a file and return it
-    """
-    f = open(filename)
-    data = f.read()
-    f.close()
-    return data
+from utils import read_file
+from fabric.api import run, env, hide, settings
 
 def flag_test(flag):
     """
@@ -30,7 +16,7 @@ def flag_test(flag):
     """
     def decorator(f):
         def new_f(*args, **kwargs):
-            if flag in getattr(settings, 'SKIP_TESTS_WITH_FLAGS', []):
+            if flag in getattr(app_settings, 'SKIP_TESTS_WITH_FLAGS', []):
                 return None
             else:
                 return f(*args, **kwargs)
@@ -57,7 +43,7 @@ def create_user(**kwargs):
                 'is_active': True}
     if not kwargs.get('ssh_key') and kwargs.get('username'):
         u = kwargs['username']
-        defaults['ssh_key'] = read_file(os.path.join(keys_dir, kwargs['username']+".pub"))
+        defaults['ssh_key'] = read_file(os.path.join(KEYS_DIR, kwargs['username']+".pub"))
     defaults['nickname'] = kwargs['username']
     defaults.update(kwargs)
     username = defaults.pop('username')
@@ -102,7 +88,7 @@ class VagrantTests(TestCase):
         Make sure that test users can log in via ssh
         """
         for i in range(1, 4):
-            env.key_filename = os.path.join(keys_dir, 'user_%d' % i)
+            env.key_filename = os.path.join(KEYS_DIR, 'user_%d' % i)
             env.host_string = 'login@127.0.0.1:2222'
             run('ls')
 
@@ -112,12 +98,13 @@ def can_connect(user, login):
     """
     m = login.machine
     env.abort_on_prompts = True
-    env.key_filename = os.path.join(keys_dir, user.username)
+    env.key_filename = os.path.join(KEYS_DIR, user.username)
     env.host_string = "%s@%s:%s" % (login.username,
                                     m.ip or m.hostname,
                                     m.port)
     try:
-        run('echo')
+        with settings(hide('everything')):
+            run('echo')
         disconnect_all()
         return True
     except SystemExit:
