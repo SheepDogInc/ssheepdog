@@ -32,8 +32,7 @@ def view_page(request):
 def results_page(request):
     if request.method == 'POST':
         test_sync()
-        logins = Login.objects.all()
     return render_to_response('results.html',
-            {'logins' : logins},
+            {'logins' : Login.objects.all()},
             context_instance=RequestContext(request))  
 

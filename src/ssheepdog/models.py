@@ -117,6 +117,10 @@ class Client(models.Model):
     def __unicode__(self):
         return self.nickname
 
+class SshKey(DirtyFieldsMixin, models.Model):
+    private_key = models.TextField()
+    public_key = models.TextField()
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         try:
