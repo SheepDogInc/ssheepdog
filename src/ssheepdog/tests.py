@@ -158,3 +158,40 @@ class PushKeyTests(TestCase):
         self.login.save()
         sync()
         self.assertFalse(can_connect(self.user,self.login))
+
+class DirtyTests(TestCase):
+    def setUp(self):
+        self.user = create_user(username='user_1')
+        self.user2 = create_user(username='user_2')
+        self.machine = create_machine()
+        self.login = create_login(username="login", machine=self.machine)
+    
+    def clean(self):
+        self.login.is_dirty = False
+
+    def assertDirty(self):
+        login = Login.objects.get()
+        self.assertTrue(login.is_dirty)
+
+    def assertClean(self):
+        login = Login.objects.get()
+        self.assertFalse(login.is_dirty)
+
+    def test_dirty(self):
+        self.assertDirty()
+
+    def test_clean(self):
+        self.clean()
+        self.assertDirty()
+
+    def test_client(self):
+        self.clean()
+        self.login.client = Client.objects.create(nickname="joe")
+        self.login.save()
+        self.assertClean()
+
+    def test_username(self):
+        self.clean()
+        self.login.username = "changed"
+        self.login.save()
+        self.assertDirty()

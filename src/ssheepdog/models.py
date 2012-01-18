@@ -2,15 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.db.utils import DatabaseError
-from fabric.api import env, run
+from fabric.api import env, run, hide, settings
 import os
-from django.conf import settings
-from ssheepdog.utils import read_file
+from django.conf import settings as app_settings
+from ssheepdog.utils import read_file, DirtyFieldsMixin
 
-root = getattr(settings, 'PROJECT_ROOT', None)
-KEYS_DIR = os.path.join(root, '../deploy/keys')
+KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
+                        '../deploy/keys')
 
-class UserProfile(models.Model):
+class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
     ssh_key = models.TextField()
@@ -22,7 +22,7 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.nickname or self.user.username
 
-class Machine(models.Model):
+class Machine(DirtyFieldsMixin, models.Model):
     # XXX: A machine should have either an IP or hostname or both
     # Need a validator in the form supplied to the django admin
     # Consider validating on save as well... not as important
@@ -38,7 +38,7 @@ class Machine(models.Model):
     def __unicode__(self):
         return self.nickname
 
-class Login(models.Model):
+class Login(DirtyFieldsMixin, models.Model):
     machine = models.ForeignKey('Machine')
     username = models.CharField(max_length=256)
     users = models.ManyToManyField(User, blank=True)
@@ -48,6 +48,28 @@ class Login(models.Model):
 
     def __unicode__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        fields = set(['machine', 'username', 'is_active'])
+        made_dirty = bool(fields.intersection(self.get_dirty_fields()))
+        self.is_dirty = self.is_dirty or made_dirty
+        super(Login, self).save(*args, **kwargs)
+
+    def run(self, command):
+        """
+        Ssh in to Login to run command.  Return True on success, False ow.
+        """
+        mach = self.machine
+        env.abort_on_prompts = True
+        env.key_filename = os.path.join(KEYS_DIR, 'application')
+        env.host_string = "%s@%s:%d" % (self.username,
+                                        (mach.ip or mach.hostname),
+                                        mach.port)    
+        try:
+            run(command)
+            return True
+        except SystemExit:
+            return False
 
     def get_authorized_keys(self):
         """
@@ -70,22 +92,15 @@ class Login(models.Model):
         Returns True if successfully changed the authorized files and False if
         not (status stays dirty).  If no change attempted, return None.
         """
-        mach = self.machine
-        if mach.is_down or not self.is_dirty:
+        if self.machine.is_down or not self.is_dirty:
             # No update required (either impossible or not needed)
             return None
-        env.abort_on_prompts = True
-        env.key_filename = os.path.join(KEYS_DIR, 'application')
-        env.host_string = "%s@%s:%d" % (self.username,
-                                        (mach.ip or mach.hostname),
-                                        mach.port)    
-        try:
-            run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
-                self.get_authorized_keys()))
+        if self.run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
+            self.get_authorized_keys())):
             self.is_dirty = False
             self.save()
             return True
-        except SystemExit:
+        else:
             return False
 
 class Client(models.Model):
