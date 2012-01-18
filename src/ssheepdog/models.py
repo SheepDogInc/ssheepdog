@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.db.utils import DatabaseError
 from fabric.api import env, run, hide, settings
 import os
@@ -126,3 +126,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
+
+def user_login_changed(sender, instance=None, reverse=None, model=None,
+                       action=None, **kwargs):
+    if action[:4] == 'pre_':
+        return
+    login = model if reverse else instance
+    login.is_dirty = True
+    login.save()
+
+m2m_changed.connect(user_login_changed, sender=Login.users.through)

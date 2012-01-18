@@ -165,11 +165,9 @@ class DirtyTests(TestCase):
         self.user2 = create_user(username='user_2')
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
-    
-    def clean(self):
         self.login.is_dirty = False
         self.login.save()
-
+    
     def assertDirty(self):
         login = Login.objects.get()
         self.assertTrue(login.is_dirty)
@@ -179,22 +177,27 @@ class DirtyTests(TestCase):
         self.assertFalse(login.is_dirty)
 
     def test_dirty(self):
+        Login.objects.all().delete()
+        create_login(username="login", machine=self.machine)
         self.assertDirty()
 
     def test_clean(self):
-        self.clean()
         self.assertClean()
 
     def test_client(self):
         """Changing the client should not dirty the login"""
-        self.clean()
         self.login.client = Client.objects.create(nickname="joe")
         self.login.save()
         self.assertClean()
 
     def test_username(self):
         """Changing the username requires pushing out new keys... dirty"""
-        self.clean()
         self.login.username = "changed"
+        self.login.save()
+        self.assertDirty()
+
+    def test_user(self):
+        """Changing the m2m for a user makes the login dirty"""
+        self.login.users = []
         self.login.save()
         self.assertDirty()
