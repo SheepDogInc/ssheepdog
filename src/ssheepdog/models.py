@@ -9,6 +9,7 @@ from ssheepdog.utils import read_file, DirtyFieldsMixin
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
+FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
@@ -73,7 +74,8 @@ class Login(DirtyFieldsMixin, models.Model):
                                         (mach.ip or mach.hostname),
                                         mach.port)    
         try:
-            run(command)
+            with settings(hide(*FABRIC_WARNINGS)):
+                run(command)
             return True
         except SystemExit:
             return False

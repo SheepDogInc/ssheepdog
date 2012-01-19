@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ssheepdog.models import Client, Login, Machine
+from ssheepdog.models import Client, Login, Machine, FABRIC_WARNINGS
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
@@ -103,16 +103,17 @@ def can_connect(user, login):
                                     m.ip or m.hostname,
                                     m.port)
     try:
-        with settings(hide('everything')):
+        with settings(hide(*FABRIC_WARNINGS)):
             run('echo')
-        disconnect_all()
+            disconnect_all()
         return True
     except SystemExit:
         return False
 
 def sync():
-    test_sync()
-    disconnect_all()
+    with settings(hide(*FABRIC_WARNINGS)):
+        test_sync()
+        disconnect_all()
 
 class PushKeyTests(TestCase):
     def setUp(self):
