@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ssheepdog.models import Client, Login, Machine, FABRIC_WARNINGS
+from ssheepdog.models import Client, Login, Machine, ApplicationKey, FABRIC_WARNINGS
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
@@ -219,3 +219,13 @@ class DirtyTests(TestCase):
         self.machine.nickname = False
         self.machine.save()
         self.assertClean()
+
+class ApplicationKeyTests(TestCase):
+    def test_get_latest(self):
+        latest = ApplicationKey.get_latest()
+        self.assertEqual(None, latest)
+        a = ApplicationKey.objects.create(public_key="A", private_key="A")
+        b = ApplicationKey.objects.create(public_key="B", private_key="B")
+        c = ApplicationKey.objects.create(public_key="C", private_key="C")
+        latest = ApplicationKey.get_latest()
+        self.assertEqual(c, latest)

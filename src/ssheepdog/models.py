@@ -124,6 +124,13 @@ class ApplicationKey(models.Model):
     private_key = models.TextField()
     public_key = models.TextField()
 
+    @staticmethod
+    def get_latest():
+        try:
+            return ApplicationKey.objects.latest('pk')
+        except ApplicationKey.DoesNotExist:
+            return None
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         try:
