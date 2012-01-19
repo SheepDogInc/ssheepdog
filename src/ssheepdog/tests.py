@@ -97,19 +97,7 @@ def can_connect(user, login):
     """
     Try to connect to the given login using the credential of user
     """
-    m = login.machine
-    env.abort_on_prompts = True
-    env.key_filename = os.path.join(KEYS_DIR, user.username)
-    env.host_string = "%s@%s:%s" % (login.username,
-                                    m.ip or m.hostname,
-                                    m.port)
-    try:
-        with settings(hide(*FABRIC_WARNINGS)):
-            run('echo')
-            disconnect_all()
-        return True
-    except SystemExit:
-        return False
+    return login.run('echo', private_key_filename=user.username)
 
 def key_present(user,login):
     return user.get_profile().ssh_key in login.get_authorized_keys()

@@ -63,13 +63,13 @@ class Login(DirtyFieldsMixin, models.Model):
         self.is_dirty = self.is_dirty or made_dirty
         super(Login, self).save(*args, **kwargs)
 
-    def run(self, command):
+    def run(self, command, private_key_filename='ssheepdog'):
         """
         Ssh in to Login to run command.  Return True on success, False ow.
         """
         mach = self.machine
         env.abort_on_prompts = True
-        env.key_filename = os.path.join(KEYS_DIR, 'ssheepdog')
+        env.key_filename = os.path.join(KEYS_DIR, private_key_filename)
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
                                         mach.port)    
@@ -118,7 +118,7 @@ class Client(models.Model):
     def __unicode__(self):
         return self.nickname
 
-class SshKey(DirtyFieldsMixin, models.Model):
+class ApplicationKey(models.Model):
     private_key = models.TextField()
     public_key = models.TextField()
 
