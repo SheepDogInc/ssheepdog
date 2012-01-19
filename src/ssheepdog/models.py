@@ -51,6 +51,7 @@ class Login(DirtyFieldsMixin, models.Model):
     username = models.CharField(max_length=256)
     users = models.ManyToManyField(User, blank=True)
     client = models.ForeignKey('Client', null=True, blank=True)
+    application_key = models.ForeignKey('ApplicationKey', null=True)
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
 
