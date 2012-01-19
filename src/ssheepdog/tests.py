@@ -97,7 +97,7 @@ def can_connect(user, login):
     """
     Try to connect to the given login using the credential of user
     """
-    return login.run('echo', private_key_filename=user.username)
+    return login.run('echo', private_key=user.username)
 
 def key_present(user,login):
     return user.get_profile().ssh_key in login.get_authorized_keys()
