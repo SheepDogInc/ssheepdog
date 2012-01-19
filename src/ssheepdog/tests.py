@@ -83,6 +83,7 @@ class VagrantTests(TestCase):
         self.assertEqual(1, Machine.objects.count())
         self.assertEqual(2, Login.objects.count())
 
+    @flag_test('requires_server')
     def test_connect(self):
         """
         Make sure that test users can log in via ssh
@@ -122,15 +123,19 @@ class PushKeyTests(TestCase):
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
 
+    @flag_test('requires_server')
     def test_user_login_disconnected(self):
         sync()
         self.assertFalse(can_connect(self.user, self.login))
 
+    @flag_test('requires_server')
     def test_key_push(self):
         self.login.users = [self.user]
         self.login.save()
         sync()
         self.assertTrue(can_connect(self.user, self.login))
+
+    @flag_test('requires_server')
     def test_machine_inactive(self):
         self.login.users = [self.user]
         self.machine.is_active = False
@@ -138,6 +143,8 @@ class PushKeyTests(TestCase):
         self.login.save()
         sync()
         self.assertFalse(can_connect(self.user, self.login))
+
+    @flag_test('requires_server')
     def test_machine_login_inactive_user_active(self):
         self.login.users = [self.user] 
         self.machine.is_active = False
@@ -146,12 +153,16 @@ class PushKeyTests(TestCase):
         self.login.save()
         sync()
         self.assertFalse(can_connect(self.user, self.login))
+
+    @flag_test('requires_server')
     def test_two_users(self):
         self.login.users = [self.user, self.user2] 
         self.login.save()
         sync()
         self.assertTrue(can_connect(self.user, self.login))
         self.assertTrue(can_connect(self.user2, self.login))
+
+    @flag_test('requires_server')
     def test_bad_machine(self):
         self.login.users = [self.user]
         self.machine.port = 10
@@ -207,6 +218,7 @@ class DirtyTests(TestCase):
         self.machine.is_active = False
         self.machine.save()
         self.assertDirty()
+
     def test_machine_not_dirty(self):
         """Tests that the logins connected to the machine does not get dirtyed
         when an unimportant machine field is changed"""
