@@ -111,6 +111,12 @@ def can_connect(user, login):
     except SystemExit:
         return False
 
+def can_write_keys(user,login):
+    if user.get_profile().ssh_key in login.get_authorized_keys():
+        return True
+    else: 
+        False
+
 def sync():
     with settings(hide(*FABRIC_WARNINGS)):
         test_sync()
@@ -123,10 +129,10 @@ class PushKeyTests(TestCase):
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
 
-    @flag_test('requires_server')
+    #@flag_test('requires_server')
     def test_user_login_disconnected(self):
         sync()
-        self.assertFalse(can_connect(self.user, self.login))
+        self.assertFalse(can_write_keys(self.user, self.login))
 
     @flag_test('requires_server')
     def test_key_push(self):
@@ -144,7 +150,7 @@ class PushKeyTests(TestCase):
         sync()
         self.assertFalse(can_connect(self.user, self.login))
 
-    @flag_test('requires_server')
+    #@flag_test('requires_server')
     def test_machine_login_inactive_user_active(self):
         self.login.users = [self.user] 
         self.machine.is_active = False
@@ -152,15 +158,15 @@ class PushKeyTests(TestCase):
         self.machine.save()
         self.login.save()
         sync()
-        self.assertFalse(can_connect(self.user, self.login))
+        self.assertFalse(can_write_keys(self.user, self.login))
 
-    @flag_test('requires_server')
+    #@flag_test('requires_server')
     def test_two_users(self):
         self.login.users = [self.user, self.user2] 
         self.login.save()
         sync()
-        self.assertTrue(can_connect(self.user, self.login))
-        self.assertTrue(can_connect(self.user2, self.login))
+        self.assertTrue(can_write_keys(self.user, self.login))
+        self.assertTrue(can_write_keys(self.user2, self.login))
 
     @flag_test('requires_server')
     def test_bad_machine(self):
