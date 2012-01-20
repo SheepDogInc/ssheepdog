@@ -123,8 +123,7 @@ def key_present(user,login):
 
 def sync():
     with settings(hide(*FABRIC_WARNINGS)):
-        test_sync()
-        disconnect_all()
+        Login.sync()
 
 class LoginTests(TestCase):
     def setUp(self):
@@ -253,6 +252,13 @@ class ApplicationKeyTests(TestCase):
         c = ApplicationKey.objects.create(public_key="C", private_key="C")
         latest = ApplicationKey.get_latest()
         self.assertEqual(c, latest)
+
+    def test_get_latest_with_create(self):
+        c = ApplicationKey.objects.create(public_key="C", private_key="C")
+        latest = ApplicationKey.get_latest()
+        self.assertEqual(c, latest)
+        latest = ApplicationKey.get_latest(create_new=True)
+        self.assertNotEqual(c, latest)
 
     @flag_test('requires_server')
     def test_can_connect(self):

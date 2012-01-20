@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, m2m_changed
 from django.db.utils import DatabaseError
 from fabric.api import env, run, hide, settings
+from fabric.network import disconnect_all
 import os
 from django.conf import settings as app_settings
 from ssheepdog.utils import read_file, DirtyFieldsMixin
@@ -54,6 +55,15 @@ class Login(DirtyFieldsMixin, models.Model):
     application_key = models.ForeignKey('ApplicationKey', null=True)
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
+
+    @staticmethod
+    def sync():
+        try:
+            for login in Login.objects.all():
+                login.update_keys()
+        finally:
+            disconnect_all()
+        
 
     def __unicode__(self):
         return self.username
