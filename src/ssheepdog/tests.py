@@ -5,7 +5,6 @@ import os
 import settings as app_settings
 from fabric.network import disconnect_all
 from ssheepdog.models import KEYS_DIR
-from sync import test_sync
 from utils import read_file
 from fabric.api import run, env, hide, settings, local
 
@@ -77,39 +76,64 @@ create_application_key = call_with_defaults(public_key = 'testpubkey',private_ke
 
 class VagrantTests(TestCase):
     def setUp(self):
-        create_user(username='user_1')
-        create_user(username='user_2')
-
-        m = create_machine()
-        create_login(username="login1", machine=m)
-        create_login(username="login2", machine=m)
+        populate_ssheepdog_key()
+        self.user = create_user(username='user_1')
+        self.machine = create_machine()
+        self.login = create_login(username="login", machine=self.machine)
+        self.reset_vagrant()
 
     @flag_test('requires_server')
-    def test_reset_vagrant(self):
-        env.key_filename = local('vagrant ssh_config | grep IdentityFile',
-                                 capture=True).split()[1]
-        env.host_string = 'vagrant@127.0.0.1:2222'
-        for u in ['login']:
-            run('sudo bash -c "echo %s > ~%s/.ssh/authorized_keys"' % (
-                read_file(os.path.join(KEYS_DIR, "ssheepdog.pub")).strip(), u))
-            run('sudo chown %s:logingroup ~%s/.ssh/authorized_keys' % (u,u))
+    def reset_vagrant(self):
+        with settings(hide(*FABRIC_WARNINGS)):
+            env.key_filename = local('vagrant ssh_config | grep IdentityFile',
+                                     capture=True).split()[1]
+            env.host_string = 'vagrant@127.0.0.1:2222'
+            for u in ['login']:
+                run('sudo bash -c "echo %s > ~%s/.ssh/authorized_keys"' % (
+                    read_file(os.path.join(KEYS_DIR, "ssheepdog.pub")).strip(), u))
+                run('sudo chown %s:logingroup ~%s/.ssh/authorized_keys' % (u,u))
+            disconnect_all()
         env.key_filename = None
-
-    def test_setup(self):
-        self.assertEqual(2, User.objects.count())
-        self.assertEqual(0, Client.objects.count())
-        self.assertEqual(1, Machine.objects.count())
-        self.assertEqual(2, Login.objects.count())
 
     @flag_test('requires_server')
     def test_connect(self):
         """
-        Make sure that test users can log in via ssh
+        Make sure that application can connect
         """
-        for i in range(1, 4):
-            env.key_filename = os.path.join(KEYS_DIR, 'user_%d' % i)
-            env.host_string = 'login@127.0.0.1:2222'
-            run('ls')
+        env.key_filename = os.path.join(KEYS_DIR, 'ssheepdog')
+        env.host_string = 'login@127.0.0.1:2222'
+        run('ls')
+
+    @flag_test('requires_server')
+    def test_can_connect(self):
+        """
+        If user's key is injected, that user can now connect
+        """
+        self.login.users = [self.user]
+        self.login.save()
+        sync()
+        self.assertTrue(can_connect(self.user, self.login))
+
+    @flag_test('requires_server')
+    def test_cannot_connect(self):
+        self.login.users = []
+        self.login.save()
+        sync()
+        self.assertFalse(can_connect(self.user, self.login))
+
+    @flag_test('requires_server')
+    def test_can_deploy_new_keys(self):
+        latest = ApplicationKey.get_latest()
+        self.assertEqual(self.login.get_application_key().pk,
+                         latest.pk)
+        latest = ApplicationKey.get_latest(create_new=True)
+        self.assertNotEqual(self.login.get_application_key().pk,
+                            latest.pk)
+        sync()
+        self.assertEqual(self.login.get_application_key().pk,
+                         latest.pk)
+        self.assertTrue(self.login.run('echo')) # Can still connect
+        populate_ssheepdog_key()
 
 def can_connect(user, login):
     """
@@ -124,27 +148,6 @@ def key_present(user,login):
 def sync():
     with settings(hide(*FABRIC_WARNINGS)):
         Login.sync()
-
-class LoginTests(TestCase):
-    def setUp(self):
-        populate_ssheepdog_key()
-        self.user = create_user(username='user_1')
-        self.machine = create_machine()
-        self.login = create_login(username="login", machine=self.machine)
-
-    @flag_test('requires_server')
-    def test_can_connect(self):
-        self.login.users = [self.user]
-        self.login.save()
-        sync()
-        self.assertTrue(can_connect(self.user, self.login))
-
-    @flag_test('requires_server')
-    def test_cannot_connect(self):
-        self.login.users = []
-        self.login.save()
-        sync()
-        self.assertFalse(can_connect(self.user, self.login))
 
 class PushKeyTests(TestCase):
     def setUp(self):
@@ -260,18 +263,6 @@ class ApplicationKeyTests(TestCase):
         latest = ApplicationKey.get_latest(create_new=True)
         self.assertNotEqual(c, latest)
 
-    @flag_test('requires_server')
-    def test_can_connect(self):
-        self.login.users = [self.user]
-        self.login.save()
-        profile = self.user.get_profile()
-        k = ApplicationKey()
-        profile.ssh_key = k.public_key
-        profile.save()
-        sync()
-        self.assertTrue(self.login.run('echo', private_key=k.private_key))
-<<<<<<< Updated upstream
-
     def test_when_latest_key_differs_from_login_key(self):
         previous = ApplicationKey.get_latest()
         self.assertTrue(previous.public_key in self.login.get_authorized_keys())
@@ -279,17 +270,3 @@ class ApplicationKeyTests(TestCase):
         keys = self.login.get_authorized_keys()
         self.assertFalse(previous.public_key in keys)
         self.assertTrue(latest.public_key in keys)
-
-    @flag_test('requires_server')
-    def test_can_deploy_new_keys(self):
-        latest = ApplicationKey.get_latest()
-        self.assertEqual(self.login.get_application_key().pk,
-                         latest.pk)
-        latest = ApplicationKey.get_latest(create_new=True)
-        self.assertNotEqual(self.login.get_application_key().pk,
-                            latest.pk)
-        sync()
-        self.assertEqual(self.login.get_application_key().pk,
-                         latest.pk)
-        self.assertTrue(self.login.run('echo')) # Can still connect
-        populate_ssheepdog_key()
