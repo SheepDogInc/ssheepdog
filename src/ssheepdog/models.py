@@ -61,6 +61,7 @@ class Login(DirtyFieldsMixin, models.Model):
         try:
             for login in Login.objects.all():
                 login.update_keys()
+                disconnect_all()
         finally:
             disconnect_all()
         
