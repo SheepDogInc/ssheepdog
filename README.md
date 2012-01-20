@@ -11,6 +11,10 @@ appropriate servers.
 `ssheepdog` is a django app and it's contained in the `src/` directory. You
 should be able to run it locally without much trouble.
 
+Documentation
+-------------
+Latest documentation can be found on [ReadTheDocs][1].
+
 Testing vagrant VM
 ------------------
 We have provided a vagrant VM configuration for testing the ssh syncing.
@@ -22,3 +26,6 @@ Boot it up:
 Log in:
 
     $ ssh ssheepdog@127.0.0.1 -p 2222 -i deploy/cookbooks/ssheepdog/files/default/id_rsa
+
+
+[1]: http://ssheepdog.readthedocs.org/en/latest/index.html
