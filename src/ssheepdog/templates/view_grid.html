@@ -26,8 +26,4 @@
 	</tr>
 {% endfor %}
 </table>
-<form class="sync_form" action="{% url ssheepdog.views.results_page %}" method="post">
-{% csrf_token %} 
-<input class="sync" type="submit" value="sync keys" id="sync_form"/>
-</form>
 {% endblock %}

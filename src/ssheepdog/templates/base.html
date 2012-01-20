@@ -1,9 +1,17 @@
 <html>
-    <body>
-        <head>
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
-        </head>
-        {% block content %}
-        {% endblock %}
-    </body>
+  <body>
+    <head>
+      <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
+    </head>
+    {% block content %}
+    {% endblock %}
+    <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+      {% csrf_token %} 
+      <input class="sync" type="submit" value="sync keys" id="sync_form"/>
+    </form>
+    <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
+      {% csrf_token %} 
+      <input class="sync" type="submit" value="new app key" id="new_app_key"/>
+    </form>
+  </body>
 </html>

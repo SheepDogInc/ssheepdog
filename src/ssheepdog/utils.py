@@ -30,3 +30,10 @@ class DirtyFieldsMixin(object):
     def get_dirty_fields(self):
         new_state = self._as_dict()
         return dict([(key, value) for key, value in self._original_state.iteritems() if value != new_state[key]])
+
+def generate_new_application_key():
+    from ssheepdog import models
+    from django.db import transaction
+    with transaction.commit_on_success():
+        models.ApplicationKey.get_latest(create_new = True)
+        models.Login.objects.update(is_dirty=True)
