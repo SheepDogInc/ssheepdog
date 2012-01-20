@@ -29,7 +29,7 @@ def view_page(request):
 
 def sync_keys(request):
     Login.sync()
-    return redirect(reverse('results'))
+    return redirect(reverse('ssheepdog.views.results_page'))
 
 def results_page(request):
     return render_to_response('results.html',
