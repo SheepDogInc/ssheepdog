@@ -116,7 +116,7 @@ class Login(DirtyFieldsMixin, models.Model):
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [read_file(os.path.join(KEYS_DIR, 'ssheepdog.pub'))]
+        keys = [ApplicationKey.get_latest().public_key] 
         if self.is_active and self.machine.is_active:
             for user in (self.users
                          .filter(is_active = True)
@@ -136,8 +136,11 @@ class Login(DirtyFieldsMixin, models.Model):
             # No update required (either impossible or not needed)
             return None
         if self.run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
-            self.get_authorized_keys())):
+            self.get_authorized_keys()),
+            self.get_application_key().private_key):
             self.is_dirty = False
+            self.application_key.get_latest() 
+            self.application_key.save()
             self.save()
             return True
         else:

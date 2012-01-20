@@ -270,6 +270,7 @@ class ApplicationKeyTests(TestCase):
         profile.save()
         sync()
         self.assertTrue(self.login.run('echo', private_key=k.private_key))
+<<<<<<< Updated upstream
 
     def test_when_latest_key_differs_from_login_key(self):
         previous = ApplicationKey.get_latest()
@@ -291,3 +292,4 @@ class ApplicationKeyTests(TestCase):
         self.assertEqual(self.login.get_application_key().pk,
                          latest.pk)
         self.assertTrue(self.login.run('echo')) # Can still connect
+        populate_ssheepdog_key()
