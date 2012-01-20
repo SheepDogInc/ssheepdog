@@ -39,4 +39,4 @@ def results_page(request):
 def generate_new_application_key(request):
     from ssheepdog.utils import generate_new_application_key
     generate_new_application_key()
-    return redirect(reverse('results'))
+    return redirect(reverse('ssheepdog.views.results_page'))

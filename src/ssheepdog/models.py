@@ -149,7 +149,7 @@ class ApplicationKey(models.Model):
         super(ApplicationKey, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s ssheepdog_%s" % (self.public_key, self.pk)
+        return "%s ssheepdog_%s" % (self.public_key[-10:], self.pk)
 
     def generate_key_pair(self):
         import base64
