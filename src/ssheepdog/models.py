@@ -6,7 +6,7 @@ from fabric.api import env, run, hide, settings
 from fabric.network import disconnect_all
 import os
 from django.conf import settings as app_settings
-from ssheepdog.utils import read_file, DirtyFieldsMixin
+from ssheepdog.utils import DirtyFieldsMixin
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
@@ -168,7 +168,7 @@ class ApplicationKey(models.Model):
         import base64
         from Crypto.PublicKey import RSA
         
-        key = RSA.generate(2048)
+        key = RSA.generate(app_settings.RSA_KEY_LENGTH)
         self.private_key = key.exportKey()
 
         # This magic is from

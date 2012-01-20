@@ -144,7 +144,10 @@ LOGGING = {
     }
 }
 
+RSA_KEY_LENGTH = 2048
+
 try:
     from settings_local import *
 except ImportError:
     pass
+
