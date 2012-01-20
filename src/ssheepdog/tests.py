@@ -7,7 +7,7 @@ from fabric.network import disconnect_all
 from ssheepdog.models import KEYS_DIR
 from sync import test_sync
 from utils import read_file
-from fabric.api import run, env, hide, settings
+from fabric.api import run, env, hide, settings, local
 
 def populate_ssheepdog_key():
     pub = read_file(os.path.join(KEYS_DIR, "ssheepdog.pub"))
@@ -82,6 +82,17 @@ class VagrantTests(TestCase):
         m = create_machine()
         create_login(username="login1", machine=m)
         create_login(username="login2", machine=m)
+
+    @flag_test('requires_server')
+    def test_reset_vagrant(self):
+        env.key_filename = local('vagrant ssh_config | grep IdentityFile',
+                                 capture=True).split()[1]
+        env.host_string = 'vagrant@127.0.0.1:2222'
+        for u in ['login']:
+            run('sudo bash -c "echo %s > ~%s/.ssh/authorized_keys"' % (
+                read_file(os.path.join(KEYS_DIR, "ssheepdog.pub")).strip(), u))
+            run('sudo chown %s:logingroup ~%s/.ssh/authorized_keys' % (u,u))
+        env.key_filename = None
 
     def test_setup(self):
         self.assertEqual(2, User.objects.count())
