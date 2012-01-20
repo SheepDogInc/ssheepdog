@@ -73,6 +73,7 @@ create_login = call_with_defaults(username='login',
                                   is_active=True,
                                   )(Login.objects.create)
 
+create_application_key = call_with_defaults(public_key = 'testpubkey',private_key ='testprikey')(ApplicationKey.objects.create)
 
 class VagrantTests(TestCase):
     def setUp(self):

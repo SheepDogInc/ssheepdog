@@ -58,6 +58,28 @@ class Login(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return self.username
 
+    
+    def get_application_key(self):
+        if self.application_key is None:
+            self.application_key = self.application_key.get_latest()
+            self.save()
+        return self.application_key
+    """ 
+    def push_keys(self):
+        latest_pk = ApplicationKey.objects.latest('pk')
+        if self.application_key is not latest_pk: 
+            try:
+                #pastes the latest application public key into the
+                #authorized_keys file using the old private key to ssh in
+                self.login.run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
+                                self.login.get_authorized_keys(latest_pk.public_key)),
+                                self.application_key.private_key):
+            except:
+                pass #have decided on exception yet
+        #saves the new application keyset
+        self.application_key = latest_pk
+        self.application_key.save()
+    """
     def save(self, *args, **kwargs):
         fields = set(['machine', 'username', 'is_active'])
         made_dirty = bool(fields.intersection(self.get_dirty_fields()))
