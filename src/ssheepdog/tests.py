@@ -130,6 +130,7 @@ class VagrantTests(TestCase):
         self.assertNotEqual(self.login.get_application_key().pk,
                             latest.pk)
         sync()
+        self.login = Login.objects.get(pk=self.login.pk)
         self.assertEqual(self.login.get_application_key().pk,
                          latest.pk)
         self.assertTrue(self.login.run('echo')) # Can still connect
