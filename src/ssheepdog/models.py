@@ -64,17 +64,14 @@ class Login(DirtyFieldsMixin, models.Model):
         self.is_dirty = self.is_dirty or made_dirty
         super(Login, self).save(*args, **kwargs)
 
-    def run(self, command, private_key='ssheepdog'):
+    def run(self, command, private_key=None):
         """
         Ssh in to Login to run command.  Return True on success, False ow.
         """
 
         mach = self.machine
         env.abort_on_prompts = True
-        if len(private_key) < 300:
-            env.key_filename = read_file(os.path.join(KEYS_DIR, private_key))
-        else:
-            env.key_filename = private_key
+        env.key_filename = private_key or ApplicationKey.get_latest().private_key
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
                                         mach.port)    
@@ -175,6 +172,9 @@ class ApplicationKey(models.Model):
                 return ApplicationKey.objects.latest('pk')
             except ApplicationKey.DoesNotExist:
                 pass
+        key = ApplicationKey()
+        key.save()
+        return key
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

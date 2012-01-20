@@ -9,6 +9,12 @@ from sync import test_sync
 from utils import read_file
 from fabric.api import run, env, hide, settings
 
+def populate_ssheepdog_key():
+    pub = read_file(os.path.join(KEYS_DIR, "ssheepdog.pub"))
+    priv = read_file(os.path.join(KEYS_DIR, "ssheepdog"))
+    ApplicationKey.objects.create(public_key=pub,
+                                  private_key=priv)
+
 def flag_test(flag):
     """
     Decorator to flag a test and restrict whether it is run according to
@@ -97,7 +103,8 @@ def can_connect(user, login):
     """
     Try to connect to the given login using the credential of user
     """
-    return login.run('echo', private_key=user.username)
+    private_key = read_file(os.path.join(KEYS_DIR, user.username))
+    return login.run('echo', private_key=private_key)
 
 def key_present(user,login):
     return user.get_profile().ssh_key in login.get_authorized_keys()
@@ -109,6 +116,7 @@ def sync():
 
 class LoginTests(TestCase):
     def setUp(self):
+        populate_ssheepdog_key()
         self.user = create_user(username='user_1')
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
@@ -222,13 +230,12 @@ class DirtyTests(TestCase):
 
 class ApplicationKeyTests(TestCase):
     def setUp(self):
+        populate_ssheepdog_key()
         self.user = create_user(username='user_1')
         self.machine = create_machine()
         self.login = create_login(username="login", machine=self.machine)
 
     def test_get_latest(self):
-        latest = ApplicationKey.get_latest()
-        self.assertEqual(None, latest)
         ApplicationKey.objects.create(public_key="A", private_key="A")
         ApplicationKey.objects.create(public_key="B", private_key="B")
         c = ApplicationKey.objects.create(public_key="C", private_key="C")
@@ -240,7 +247,7 @@ class ApplicationKeyTests(TestCase):
         self.login.users = [self.user]
         self.login.save()
         profile = self.user.get_profile()
-        k = ApplicationKey.objects.create()
+        k = ApplicationKey()
         profile.ssh_key = k.public_key
         profile.save()
         sync()
