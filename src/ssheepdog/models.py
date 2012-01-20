@@ -105,7 +105,7 @@ class Login(DirtyFieldsMixin, models.Model):
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [ApplicationKey.get_latest().public_key] 
+        keys = [ApplicationKey.get_latest().nice_public_key] 
         if self.is_active and self.machine.is_active:
             for user in (self.users
                          .filter(is_active = True)
@@ -145,12 +145,18 @@ class ApplicationKey(models.Model):
     public_key = models.TextField()
 
     def save(self, *args, **kwargs):
-        if not self.private_key and not self.public_key:
+        if not self.private_key or not self.public_key:
             self.generate_key_pair()
+        self.private_key = self.private_key.strip()
+        self.public_key = self.public_key.strip()
         super(ApplicationKey, self).save(*args, **kwargs)
 
+    @property
+    def nice_public_key(self):
+        return "%s ssheepdog_%s" % (self.public_key, self.pk)
+
     def __unicode__(self):
-        return "%s ssheepdog_%s" % (self.public_key[-10:], self.pk)
+        return "...%s ssheepdog_%s" % (self.public_key[-10:], self.pk)
 
     def generate_key_pair(self):
         import base64
