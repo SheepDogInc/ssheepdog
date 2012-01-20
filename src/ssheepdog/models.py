@@ -124,7 +124,7 @@ class Login(DirtyFieldsMixin, models.Model):
         if self.machine.is_down or not self.is_dirty:
             # No update required (either impossible or not needed)
             return None
-        if self.run('echo "%s" > ~/.ssh/authorized_keys' % "\n".join(
+        if self.run('echo "%s" > ~/.ssh/authorized_keys' % "\n\n".join(
             self.get_authorized_keys()),
             self.get_application_key().private_key):
             self.is_dirty = False
