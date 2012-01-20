@@ -3,3 +3,4 @@
 *.db
 site_media
 settings_local.py
+_build
