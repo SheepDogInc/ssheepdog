@@ -71,7 +71,10 @@ class Login(DirtyFieldsMixin, models.Model):
 
         mach = self.machine
         env.abort_on_prompts = True
-        env.key_filename = read_file(os.path.join(KEYS_DIR, private_key))
+        if len(private_key) < 300:
+            env.key_filename = read_file(os.path.join(KEYS_DIR, private_key))
+        else:
+            env.key_filename = private_key
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
                                         mach.port)    
@@ -124,12 +127,54 @@ class ApplicationKey(models.Model):
     private_key = models.TextField()
     public_key = models.TextField()
 
+    def save(self, *args, **kwargs):
+        if not self.private_key and not self.public_key:
+            self.generate_key_pair()
+        super(ApplicationKey, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s ssheepdog_%s" % (self.public_key, self.pk)
+
+    def generate_key_pair(self):
+        import base64
+        from Crypto.PublicKey import RSA
+        
+        key = RSA.generate(2048)
+        self.private_key = key.exportKey()
+
+        # This magic is from
+        # http://stackoverflow.com/questions/2466401/how-to-generate-ssh-key-pairs-with-python
+
+        exponent = '%x' % (key.e, )
+        if len(exponent) % 2:
+            exponent = '0' + exponent
+        
+        ssh_rsa = '00000007' + base64.b16encode('ssh-rsa')
+        ssh_rsa += '%08x' % (len(exponent) / 2, )
+        ssh_rsa += exponent
+        
+        modulus = '%x' % (key.n, )
+        if len(modulus) % 2:
+            modulus = '0' + modulus
+        
+        if modulus[0] in '89abcdef':
+            modulus = '00' + modulus
+        
+        ssh_rsa += '%08x' % (len(modulus) / 2, )
+        ssh_rsa += modulus
+        
+        self.public_key = 'ssh-rsa %s' % (
+            base64.b64encode(base64.b16decode(ssh_rsa.upper())),
+            )
+        
+
     @staticmethod
-    def get_latest():
-        try:
-            return ApplicationKey.objects.latest('pk')
-        except ApplicationKey.DoesNotExist:
-            return None
+    def get_latest(create_new=False):
+        if not create_new:
+            try:
+                return ApplicationKey.objects.latest('pk')
+            except ApplicationKey.DoesNotExist:
+                pass
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

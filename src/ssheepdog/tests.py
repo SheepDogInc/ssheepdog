@@ -221,11 +221,27 @@ class DirtyTests(TestCase):
         self.assertClean()
 
 class ApplicationKeyTests(TestCase):
+    def setUp(self):
+        self.user = create_user(username='user_1')
+        self.machine = create_machine()
+        self.login = create_login(username="login", machine=self.machine)
+
     def test_get_latest(self):
         latest = ApplicationKey.get_latest()
         self.assertEqual(None, latest)
-        a = ApplicationKey.objects.create(public_key="A", private_key="A")
-        b = ApplicationKey.objects.create(public_key="B", private_key="B")
+        ApplicationKey.objects.create(public_key="A", private_key="A")
+        ApplicationKey.objects.create(public_key="B", private_key="B")
         c = ApplicationKey.objects.create(public_key="C", private_key="C")
         latest = ApplicationKey.get_latest()
         self.assertEqual(c, latest)
+
+    @flag_test('requires_server')
+    def test_can_connect(self):
+        self.login.users = [self.user]
+        self.login.save()
+        profile = self.user.get_profile()
+        k = ApplicationKey.objects.create()
+        profile.ssh_key = k.public_key
+        profile.save()
+        sync()
+        self.assertTrue(self.login.run('echo', private_key=k.private_key))
