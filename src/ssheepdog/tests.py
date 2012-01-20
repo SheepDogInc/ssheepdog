@@ -270,3 +270,24 @@ class ApplicationKeyTests(TestCase):
         profile.save()
         sync()
         self.assertTrue(self.login.run('echo', private_key=k.private_key))
+
+    def test_when_latest_key_differs_from_login_key(self):
+        previous = ApplicationKey.get_latest()
+        self.assertTrue(previous.public_key in self.login.get_authorized_keys())
+        latest = ApplicationKey.get_latest(create_new=True)
+        keys = self.login.get_authorized_keys()
+        self.assertFalse(previous.public_key in keys)
+        self.assertTrue(latest.public_key in keys)
+
+    @flag_test('requires_server')
+    def test_can_deploy_new_keys(self):
+        latest = ApplicationKey.get_latest()
+        self.assertEqual(self.login.get_application_key().pk,
+                         latest.pk)
+        latest = ApplicationKey.get_latest(create_new=True)
+        self.assertNotEqual(self.login.get_application_key().pk,
+                            latest.pk)
+        sync()
+        self.assertEqual(self.login.get_application_key().pk,
+                         latest.pk)
+        self.assertTrue(self.login.run('echo')) # Can still connect

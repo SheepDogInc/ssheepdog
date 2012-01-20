@@ -71,7 +71,7 @@ class Login(DirtyFieldsMixin, models.Model):
     
     def get_application_key(self):
         if self.application_key is None:
-            self.application_key = self.application_key.get_latest()
+            self.application_key = ApplicationKey.get_latest()
             self.save()
         return self.application_key
 
