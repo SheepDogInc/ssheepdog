@@ -27,7 +27,11 @@
 				<td class="cross"> </td>
 			{% endif %}
 		{% else %}
-			<td class="gray"> </td>
+			{% if entry.is_allowed %}
+                <td class="gray"></td>
+			{% else %}
+				<td class="gray-cross"></td>
+			{% endif %}
 		{% endif %}
 	{% endfor %}
 	</tr>
