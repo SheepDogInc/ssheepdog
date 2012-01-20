@@ -6,8 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-	url(r'^view_page/$', 'ssheepdog.views.view_page'),
-	url(r'^results/$',	'ssheepdog.views.results_page'),
+	url(r'^/?$', 'ssheepdog.views.view_page'),
 	url(r'^new_key/$',	'ssheepdog.views.generate_new_application_key'),
 	url(r'^sync_keys/$', 'ssheepdog.views.sync_keys'),
 )

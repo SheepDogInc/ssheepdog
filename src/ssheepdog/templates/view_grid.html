@@ -4,6 +4,7 @@
 <thead>
 <tr class="top_header">
 <th></th>
+<th> Status </th>
 {% for employee in users %}
 	<th>{{ employee.nickname }}</th>
 {% endfor %}
@@ -12,6 +13,12 @@
 {% for login in logins %}
 <tr class="{% cycle 'row1' 'row2' %}">
 	<th> {{login.username}} </th>
+    {% if login.is_dirty %}
+        <td class="dirty"> Update incomplete </td>
+    {% else %} 
+        <td class="clean"> Complete </td>
+    {% endif %}
+  
 	{% for entry in login.entries %}
 		{% if entry.all_active %}
 			{% if entry.is_allowed %}

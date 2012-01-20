@@ -29,14 +29,9 @@ def view_page(request):
 
 def sync_keys(request):
     Login.sync()
-    return redirect(reverse('ssheepdog.views.results_page'))
-
-def results_page(request):
-    return render_to_response('results.html',
-            {'logins' : Login.objects.all()},
-            context_instance=RequestContext(request))  
+    return redirect(reverse('ssheepdog.views.view_page'))
 
 def generate_new_application_key(request):
     from ssheepdog.utils import generate_new_application_key
     generate_new_application_key()
-    return redirect(reverse('ssheepdog.views.results_page'))
+    return redirect(reverse('ssheepdog.views.view_page'))
