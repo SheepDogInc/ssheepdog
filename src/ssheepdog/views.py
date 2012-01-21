@@ -28,7 +28,15 @@ def view_page(request):
         context_instance=RequestContext(request))  
 
 def sync_keys(request):
-    Login.sync()
+    pk = request.POST.get('pk', None)
+    if pk:
+        try:
+            login = Login.objects.get(pk=pk)
+            login.sync()
+        except Login.DoesNotExist:
+            pass
+    else:
+        Login.sync_all()
     return redirect(reverse('ssheepdog.views.view_page'))
 
 def generate_new_application_key(request):
