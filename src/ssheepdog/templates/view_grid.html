@@ -20,19 +20,11 @@
     {% endif %}
   
 	{% for entry in login.entries %}
-		{% if entry.all_active %}
-			{% if entry.is_allowed %}
-            <td class="tick"> </td>
-			{% else %}
-				<td class="cross"> </td>
-			{% endif %}
-		{% else %}
-			{% if entry.is_allowed %}
-                <td class="gray"></td>
-			{% else %}
-				<td class="gray-cross"></td>
-			{% endif %}
-		{% endif %}
+    {% comment %}
+        Add two classes: tick or cross AND active or inactive
+        For example:  class="tick active"
+    {% endcomment %}
+    <td class="{% if entry.is_allowed %}is_allowed{% else %}not_allowed{% endif %} {% if entry.all_active %}active{% else %}inactive{% endif %}">&nbsp;</td>
 	{% endfor %}
 	</tr>
 {% endfor %}
