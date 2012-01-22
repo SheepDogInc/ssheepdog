@@ -5,8 +5,8 @@
 <tr class="top_header">
 <th></th>
 <th></th>
-{% for employee in users %}
-	<th>{{ employee.nickname }}</th>
+{% for user in users %}
+	<th><a href="{{ user.get_change_url }}">{{ user.nickname }}</a></th>
 {% endfor %}
 </tr>
 </thead>

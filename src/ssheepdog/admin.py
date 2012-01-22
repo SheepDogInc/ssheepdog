@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, User
 from django.contrib.auth.forms import UserChangeForm
 import models
+from django.utils.translation import ugettext_lazy as _
 
 admin.site.register(models.Machine)
 admin.site.register(models.Login)
@@ -24,7 +25,13 @@ class UserProfileInline(admin.StackedInline):
     fk_name = 'user'
 
 class SmartUserAdmin(UserAdmin):
-    form = UserChangeForm
     inlines = [UserProfileInline]
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'user_permissions')}),
+        # (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Groups'), {'fields': ('groups',)}),
+    )
 
 reregister(User, SmartUserAdmin)
