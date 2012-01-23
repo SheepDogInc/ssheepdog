@@ -18,7 +18,7 @@ def view_access_summary(request):
             allowed = False
             if user in login.users.all():
                 allowed = True
-            if user.active and login.is_active and login.machine.is_active:
+            if user.is_active and login.is_active and login.machine.is_active:
                 all_active_bool = True
             login.entries.append({'all_active': all_active_bool, 
                                   'is_allowed': allowed,
