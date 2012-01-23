@@ -35,7 +35,9 @@ table.access_view tr.top_header {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72',GradientType=0 ); /* IE6-9 */
 
 }
-
+.sync_form{
+    float:left;
+}
 table.access_view tr.row2 {
     background-color: rgb(200, 200, 900);
 }
