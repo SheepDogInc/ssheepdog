@@ -3,8 +3,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from ssheepdog.models import Login
+from django.contrib.auth.decorators import permission_required
 
-def view_page(request):
+@permission_required('ssheepdog.can_view_access_summary')
+def view_access_summary(request):
     users = User.objects.select_related('_profile_cache')  
     logins = Login.objects.all()
     for user in users:
@@ -16,7 +18,7 @@ def view_page(request):
             allowed = False
             if user in login.users.all():
                 allowed = True
-            if user.get_profile().is_active and login.is_active and login.machine.is_active:
+            if user.active and login.is_active and login.machine.is_active:
                 all_active_bool = True
             login.entries.append({'all_active': all_active_bool, 
                                   'is_allowed': allowed,
@@ -27,11 +29,21 @@ def view_page(request):
         context_dict,
         context_instance=RequestContext(request))  
 
+@permission_required('ssheepdog.can_sync')
 def sync_keys(request):
-    Login.sync()
-    return redirect(reverse('ssheepdog.views.view_page'))
+    pk = request.POST.get('pk', None)
+    if pk:
+        try:
+            login = Login.objects.get(pk=pk)
+            login.sync()
+        except Login.DoesNotExist:
+            pass
+    else:
+        Login.sync_all()
+    return redirect(reverse('ssheepdog.views.view_access_summary'))
 
+@permission_required('ssheepdog.can_sync')
 def generate_new_application_key(request):
     from ssheepdog.utils import generate_new_application_key
     generate_new_application_key()
-    return redirect(reverse('ssheepdog.views.view_page'))
+    return redirect(reverse('ssheepdog.views.view_access_summary'))

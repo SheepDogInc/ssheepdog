@@ -4,37 +4,46 @@
 <thead>
 <tr class="top_header">
 <th></th>
-<th> Status </th>
-{% for employee in users %}
-	<th>{{ employee.nickname }}</th>
+<th></th>
+{% for user in users %}
+	<th><a href="{{ user.get_change_url }}">{{ user.nickname }}</a></th>
 {% endfor %}
 </tr>
 </thead>
 {% for login in logins %}
 <tr class="{% cycle 'row1' 'row2' %}">
-	<th> {{login.username}} </th>
+	<th> <a href="{{ login.get_change_url }}"> {{login.username}} </a></th>
+    <td>
     {% if login.is_dirty %}
-        <td class="dirty"> Update incomplete </td>
-    {% else %} 
-        <td class="clean"> Complete </td>
+    <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="pk" value="{{ login.pk }}">
+      <input class="sync" type="submit" value="sync" id="sync_form"/>
+    </form>
+    {% else %}
+      ok
     {% endif %}
-  
+   </td>
+
 	{% for entry in login.entries %}
-		{% if entry.all_active %}
-			{% if entry.is_allowed %}
-            <td class="tick"> </td>
-			{% else %}
-				<td class="cross"> </td>
-			{% endif %}
-		{% else %}
-			{% if entry.is_allowed %}
-                <td class="gray"></td>
-			{% else %}
-				<td class="gray-cross"></td>
-			{% endif %}
-		{% endif %}
+    {% comment %}
+        Add two classes: is_allowed or not_allowed AND active or inactive
+        For example:  class="allowed active"
+    {% endcomment %}
+    <td class="{% if entry.is_allowed %}is_allowed{% else %}not_allowed{% endif %} {% if entry.all_active %}active{% else %}inactive{% endif %}">&nbsp;</td>
 	{% endfor %}
 	</tr>
 {% endfor %}
 </table>
+
+    <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+      {% csrf_token %} 
+      <input class="sync" type="submit" value="sync all" id="sync_form"/>
+    </form>
+
+    <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
+      {% csrf_token %} 
+      <input class="sync" type="submit" value="new app key" id="new_app_key"/>
+    </form>
+
 {% endblock %}

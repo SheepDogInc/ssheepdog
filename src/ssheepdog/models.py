@@ -7,6 +7,7 @@ from fabric.network import disconnect_all
 import os
 from django.conf import settings as app_settings
 from ssheepdog.utils import DirtyFieldsMixin
+from django.core.urlresolvers import reverse
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
@@ -16,7 +17,6 @@ class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
     ssh_key = models.TextField()
-    is_active = models.BooleanField()
 
     def __str__(self):
         return self.nickname
@@ -55,16 +55,21 @@ class Login(DirtyFieldsMixin, models.Model):
     application_key = models.ForeignKey('ApplicationKey', null=True)
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
+    def get_change_url(self):
+        return reverse('admin:ssheepdog_login_change', args=(self.pk,))
 
     @staticmethod
-    def sync():
+    def sync_all():
         try:
             for login in Login.objects.all():
-                login.update_keys()
-                disconnect_all()
+                login.sync()
         finally:
             disconnect_all()
         
+
+    def sync(self):
+        self.update_keys()
+        disconnect_all()
 
     def __unicode__(self):
         return self.username

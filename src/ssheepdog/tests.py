@@ -111,14 +111,14 @@ class VagrantTests(TestCase):
         """
         self.login.users = [self.user]
         self.login.save()
-        sync()
+        sync_all()
         self.assertTrue(can_connect(self.user, self.login))
 
     @flag_test('requires_server')
     def test_cannot_connect(self):
         self.login.users = []
         self.login.save()
-        sync()
+        sync_all()
         self.assertFalse(can_connect(self.user, self.login))
 
     @flag_test('requires_server')
@@ -129,7 +129,7 @@ class VagrantTests(TestCase):
         latest = ApplicationKey.get_latest(create_new=True)
         self.assertNotEqual(self.login.get_application_key().pk,
                             latest.pk)
-        sync()
+        sync_all()
         self.login = Login.objects.get(pk=self.login.pk)
         self.assertEqual(self.login.get_application_key().pk,
                          latest.pk)
@@ -146,9 +146,9 @@ def can_connect(user, login):
 def key_present(user,login):
     return user.get_profile().ssh_key in login.get_authorized_keys()
 
-def sync():
+def sync_all():
     with settings(hide(*FABRIC_WARNINGS)):
-        Login.sync()
+        Login.sync_all()
 
 class PushKeyTests(TestCase):
     def setUp(self):
