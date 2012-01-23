@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import permission_required
 
 @permission_required('ssheepdog.can_view_access_summary')
 def view_access_summary(request):
-    users = User.objects.select_related('_profile_cache')  
-    logins = Login.objects.all()
+    users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
+    logins = Login.objects.all().order_by('username')
     for user in users:
         user.nickname = user.get_profile().nickname
     for login in logins:
@@ -23,6 +23,7 @@ def view_access_summary(request):
             login.entries.append({'all_active': all_active_bool, 
                                   'is_allowed': allowed,
                                   'user': user})
+
     context_dict = {'users' : users, 'logins' : logins}
 
     return render_to_response('view_grid.html',
