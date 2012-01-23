@@ -118,6 +118,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'south',
+    'djcelery',
+    'djkombu',
     'ssheepdog',
 )
 
@@ -145,6 +147,12 @@ LOGGING = {
 }
 
 RSA_KEY_LENGTH = 2048
+
+BROKER_TRANSPORT = 'django'
+BROKER_HOST = "localhost"
+
+import djcelery
+djcelery.setup_loader()
 
 try:
     from settings_local import *
