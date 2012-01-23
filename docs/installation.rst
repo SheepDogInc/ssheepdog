@@ -19,4 +19,27 @@ And the application will be running on ``http://localhost:8000``.
 .. note:: We **strongly** recommend using `virtualenv`_ when installing
     ssheepdog.
 
+Celery tasks
+------------
+
+If you have a lot of servers to sync, you may wish to run the sync process in
+the background. This is the recommended setup for production use since a real
+web server will timeout with such a long running request. There is a celery
+task that you can use to accomplish this.
+
+In addition to your development server, you will need to run a celery worker.
+
+::
+
+    $ python manage.py celeryd -l info
+
+Then, you can run a background task like this:
+
+.. code-block:: python
+
+    from ssheepdog.tasks import sync
+
+    sync.delay()
+
+
 .. _virtualenv: http://www.virtualenv.org/en/latest/index.html
