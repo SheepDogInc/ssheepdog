@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from ssheepdog.models import Login
+from ssheepdog.models import Login, UserProfile
 from django.contrib.auth.decorators import permission_required
 
 @permission_required('ssheepdog.can_view_access_summary')
@@ -55,8 +55,9 @@ def edit_ssh(request):
     pk = request.POST.get('pk',None)
     pub_key = request.POST.get('pub_key',None)
     try:
-        user = UserProfile.objects.get(pk=pk)
+        user = UserProfile.objects.get(user=pk)
         user.ssh_key = pub_key 
+        user.save()
     except User.DoesNotExist:
         pass
     return redirect(reverse('ssheepdog.views.view_access_summary'))

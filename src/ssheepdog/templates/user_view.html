@@ -10,6 +10,7 @@
 <form class="ssh_key_form" action="{% url ssheepdog.views.edit_ssh %}" method="post">{% csrf_token %}
     <input type="hidden" name="pk" value="{{user.pk}}">
     <div> Public Key: </div>
-    <textarea class="pub_key" rows="6" cols="15">{{user.ssh_key}}</textarea>
+    <textarea name="pub_key" id="pub_key" rows="6" cols="15">{{user.ssh_key}}</textarea>
+    <div><input type="submit" value="Submit"></div>
 </form>
 </div>
