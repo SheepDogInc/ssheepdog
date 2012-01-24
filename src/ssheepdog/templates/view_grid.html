@@ -6,7 +6,7 @@
 <th></th>
 <th></th>
 {% for user in users %}
-	<th><a class="test" href="{{ user.get_change_url }}">{{ user.nickname }}</a></th>
+<th><a class="test" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.nickname }}</a></th>
 {% endfor %}
 </tr>
 </thead>
