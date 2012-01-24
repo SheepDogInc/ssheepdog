@@ -30,6 +30,12 @@ def view_access_summary(request):
         context_dict,
         context_instance=RequestContext(request))  
 
+def user_admin_view(request):
+    users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
+    return render_to_response('user_view.html',
+            {'user':user},
+            context_instance=RequestContext(request))
+
 @permission_required('ssheepdog.can_sync')
 def sync_keys(request):
     pk = request.POST.get('pk', None)
@@ -42,6 +48,16 @@ def sync_keys(request):
     else:
         Login.sync_all()
     return redirect(reverse('ssheepdog.views.view_access_summary'))
+
+def post_user(request):
+    pk = request.POST.get('pk',None)
+    pub_key = request.POST.get('pub_key',None)
+    try:
+        user = UserProfile.objects.get(pk=pk)
+        user.ssh_key = pub_key 
+    except User.DoesNotExist:
+        pass
+
 
 @permission_required('ssheepdog.can_sync')
 def generate_new_application_key(request):

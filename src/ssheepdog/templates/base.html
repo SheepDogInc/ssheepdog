@@ -2,8 +2,26 @@
   <body>
     <head>
       <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
+      <script type="text/javascript"src="/static/admin/js/jquery.min.js"></script>
+      <script type="text/javascript"src="{{STATIC_URL}}js/jquery-1.7.1.js"></script>
+      <script type="text/javascript"src="{{STATIC_URL}}js/jquery-ui-1.8.17.custom/js/jquery-ui-1.8.17.custom.min.js"></script>
+      <link rel="stylesheet" href="{{STATIC_URL}}js/jquery-ui-1.8.17.custom/development-bundle/themes/base/jquery.ui.all.css" type="test/css"/>
+      <script type="text/javascript"> 
+          $(function() {
+                  var $dialog = $('<div></div>')
+                  .dialog({
+                    autoOpen: false,
+                    html('test'),
+                    title: 'Profile'
+                  });
+                  $('.test').click(function(){
+                      $dialog.dialog('open');
+                      return false;
+                    });
+      });
+</script>
     </head>
     {% block content %}
     {% endblock %}
- </body>
+</body>
 </html>
