@@ -1,12 +1,15 @@
-<div class="ssh_div">
-<form class="ssh_key_form" action="{% url ssheepdog.views.edit_ssh %}" method="post">{% csrf_token %}
-    <input type="hidden" name="pk" value="{{user.pk}}">
-    <textarea class="pub_key" rows="3" cols="20">{{user.ssh_key}}</textarea>
-</form>
-</div>
 <div class="user_div">
+    <div>Username:</div>
     <input class="username" type="text" value="{{user.username}}"/>
 </div>
 <div class="nickname_div">
+    <div>Nickname:</div>
     <input class="nickname" type="text" value="{{user.nickname}}"/>
+</div>
+<div class="ssh_div">
+<form class="ssh_key_form" action="{% url ssheepdog.views.edit_ssh %}" method="post">{% csrf_token %}
+    <input type="hidden" name="pk" value="{{user.pk}}">
+    <div> Public Key: </div>
+    <textarea class="pub_key" rows="6" cols="15">{{user.ssh_key}}</textarea>
+</form>
 </div>

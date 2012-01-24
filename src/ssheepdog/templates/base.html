@@ -9,12 +9,17 @@
       <script type="text/javascript"> 
           $(function() {
                   var $dialog = $('<div></div>')
-                  .dialog({
-                    autoOpen: false,
-                    title: 'Profile'
+                    .html('')
+                    .dialog({
+                        autoOpen: false,
+                        title: 'User Profile'
                   });
                   $('.test').click(function(){
-                      $dialog.dialog('open');
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
                       return false;
                     });
       });
