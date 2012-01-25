@@ -37,14 +37,17 @@ def user_admin_view(request,id=None):
     user.ssh_key = user.get_profile().ssh_key
     form = UserProfileForm(initial={'public_key':user.ssh_key})
     if request.method == 'POST':
-        if request.POST.get('public_key'):
-            form = UserProfileForm(request.POST)
-            if form.is_valid():
-                user = UserProfile.objects.get(user=id)
-                new_key = form.cleaned_data['public_key']
-                user.ssh_key = new_key 
-                user.save()
-                return redirect(reverse('ssheepdog.views.view_access_summary'))
+        if request.user.is_authenticated() and request.user == user:
+            if request.POST.get('public_key'):
+                form = UserProfileForm(request.POST)
+                if form.is_valid():
+                    user = UserProfile.objects.get(user=id)
+                    new_key = form.cleaned_data['public_key']
+                    user.ssh_key = new_key 
+                    user.save()
+                    return redirect(reverse('ssheepdog.views.view_access_summary'))
+        else: 
+            return redirect(reverse('ssheepdog.views.view_access_summary'))
     return render_to_response('user_view.html',
             {'user':user, 'form':form, 'request': request},
             context_instance=RequestContext(request))
