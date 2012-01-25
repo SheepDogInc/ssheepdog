@@ -9,15 +9,26 @@
       <script type="text/javascript"> 
           $(function() {
                   var $dialog = $('<div></div>')
-                  .dialog({
-                    autoOpen: false,
-                    html('test'),
-                    title: 'Profile'
+                    .dialog({
+                        autoOpen: false,
                   });
-                  $('.test').click(function(){
-                      $dialog.dialog('open');
+                  $('.user').click(function(){
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
                       return false;
                     });
+                  $('.login').click(function(){
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
+                      return false;
+                    });
+
       });
 </script>
     </head>
