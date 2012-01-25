@@ -1,33 +1,14 @@
 {% block content %}
 <div class="username_div">
-    <div>Username:</div>
-    <input class="username" type="text" value="{{login.username}}"/>
-</div>
+    <div>Username: {{login.username}}</div>
+</div></br>
 <div class="machine_div">
-    <div>Machine:</div>
-    <select class="login_selector">
-    {% for machine in machines %}
-    <option>{{machine.nickname}}</option>
-    {% endfor %}
-    <option selected>{{login.machine}}</option>
-</select>
-</div>
+    <div>Machine: {{login.machine}}</div>
+</div></br>
 <div class="client_div">
-    <div>Client:</div>
-    <select class="login_selector">
-    {% for client in clients %}
-    <option>{{client.nickname}}</option>
-    {% endfor %}
-    <option selected>{{login.client}}</option>
-</select>
-</div>
+    <div>Client: {{login.client}}</div>
+</div></br>
 <div class="app_key_div">
-    <div>Application Key:</div>
-    <select class="login_selector">
-    {% for app_key in app_keys %}
-    <option>{{app_key.public_key}}</option>
-    {% endfor %}
-    <option selected>{{latest_app_key}}</option>
-</select>
+    <div>Application Key: <p>{{latest_app_key}}</p></div>
 </div>
 {% endblock %}

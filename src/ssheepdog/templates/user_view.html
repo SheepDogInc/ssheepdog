@@ -1,11 +1,9 @@
 {% block content %}
 <div class="user_div">
-    <div>Username:</div>
-    <input class="username" type="text" value="{{user.username}}"/>
+    <div>Username: {{user.username}}</div>
 </div>
 <div class="nickname_div">
-    <div>Nickname:</div>
-    <input class="nickname" type="text" value="{{user.nickname}}"/>
+    <div>Nickname: {{user.nickname}}</div>
 </div>
 <div class="ssh_div">
 <form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
