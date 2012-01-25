@@ -1,17 +1,19 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, m2m_changed
 from django.db.utils import DatabaseError
 from fabric.api import env, run, hide, settings
 from fabric.network import disconnect_all
-import os
 from django.conf import settings as app_settings
 from ssheepdog.utils import DirtyFieldsMixin
 from django.core.urlresolvers import reverse
 
+
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
 FABRIC_WARNINGS = ['everything', 'status', 'aborts']
+
 
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
@@ -23,6 +25,7 @@ class UserProfile(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return self.nickname or self.user.username
+
 
 class Machine(DirtyFieldsMixin, models.Model):
     # XXX: A machine should have either an IP or hostname or both
@@ -47,6 +50,7 @@ class Machine(DirtyFieldsMixin, models.Model):
             self.login_set.update(is_dirty=True)
         super(Machine, self).save(*args, **kwargs)
 
+
 class Login(DirtyFieldsMixin, models.Model):
     machine = models.ForeignKey('Machine')
     username = models.CharField(max_length=256)
@@ -55,6 +59,7 @@ class Login(DirtyFieldsMixin, models.Model):
     application_key = models.ForeignKey('ApplicationKey', null=True)
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
+
     def get_change_url(self):
         return reverse('admin:ssheepdog_login_change', args=(self.pk,))
 
@@ -65,7 +70,6 @@ class Login(DirtyFieldsMixin, models.Model):
                 login.sync()
         finally:
             disconnect_all()
-        
 
     def sync(self):
         self.update_keys()
@@ -73,7 +77,6 @@ class Login(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return self.username
-
     
     def get_application_key(self):
         if self.application_key is None:
@@ -91,7 +94,6 @@ class Login(DirtyFieldsMixin, models.Model):
         """
         Ssh in to Login to run command.  Return True on success, False ow.
         """
-
         mach = self.machine
         env.abort_on_prompts = True
         env.key_filename = private_key or ApplicationKey.get_latest().private_key
@@ -139,11 +141,13 @@ class Login(DirtyFieldsMixin, models.Model):
         else:
             return False
 
+
 class Client(models.Model):
     nickname = models.CharField(max_length=256)
     description = models.TextField()
     def __unicode__(self):
         return self.nickname
+
 
 class ApplicationKey(models.Model):
     private_key = models.TextField()
@@ -195,7 +199,6 @@ class ApplicationKey(models.Model):
             base64.b64encode(base64.b16decode(ssh_rsa.upper())),
             )
         
-
     @staticmethod
     def get_latest(create_new=False):
         if not create_new:
@@ -207,12 +210,14 @@ class ApplicationKey(models.Model):
         key.save()
         return key
 
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         try:
             UserProfile.objects.create(user=instance)
         except DatabaseError: # Creating fresh db from manage.py
             pass
+
 
 post_save.connect(create_user_profile, sender=User)
 
@@ -224,5 +229,6 @@ def user_login_changed(sender, instance=None, reverse=None, model=None,
     login = model if reverse else instance
     login.is_dirty = True
     login.save()
+
 
 m2m_changed.connect(user_login_changed, sender=Login.users.through)
