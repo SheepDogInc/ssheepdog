@@ -1,49 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
-<table class="access_view">
-<thead>
-<tr class="top_header">
-<th></th>
-<th></th>
-{% for user in users %}
-	<th><a class="test" href="{{ user.get_change_url }}">{{ user.nickname }}</a></th>
-{% endfor %}
-</tr>
-</thead>
-{% for login in logins %}
-<tr class="{% cycle 'row1' 'row2' %}">
-	<th> <a href="{{ login.get_change_url }}"> {{login.username}} </a></th>
-    <td>
-    {% if login.is_dirty %}
-    <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="pk" value="{{ login.pk }}">
-      <input class="sync" type="submit" value="sync" id="sync_form"/>
-    </form>
-    {% else %}
-      ok
-    {% endif %}
-   </td>
 
-	{% for entry in login.entries %}
-    {% comment %}
-        Add two classes: is_allowed or not_allowed AND active or inactive
-        For example:  class="allowed active"
-    {% endcomment %}
-    <td class="{% if entry.is_allowed %}is_allowed{% else %}not_allowed{% endif %} {% if entry.all_active %}active{% else %}inactive{% endif %}">&nbsp;</td>
-	{% endfor %}
-	</tr>
-{% endfor %}
+{% if logins %}
+
+<table class="access_view">
+    <thead>
+        <tr class="top_header">
+            <th></th>
+            <th></th>
+            {% for user in users %}
+                <th><a class="test" href="{{ user.get_change_url }}">{{ user.nickname }}</a></th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for login in logins %}
+
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <th><a href="{{ login.get_change_url }}"> {{login.username}} </a></th>
+                <td>
+                    {% if login.is_dirty %}
+                        <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="pk" value="{{ login.pk }}">
+                            <input class="sync" type="submit" value="sync" id="sync_form"/>
+                        </form>
+                    {% else %}
+                        ok
+                    {% endif %}
+                </td>
+
+                {% for entry in login.entries %}
+                    {% comment %}
+                        Add two classes: is_allowed or not_allowed AND active or inactive
+                        For example:  class="allowed active"
+                    {% endcomment %}
+                    <td class="{% if entry.is_allowed %}is_allowed{% else %}not_allowed{% endif %} {% if entry.all_active %}active{% else %}inactive{% endif %}">
+                        &nbsp;
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+
+    </tbody>
+
 </table>
 
-    <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
-      {% csrf_token %} 
-      <input class="sync" type="submit" value="sync all" id="sync_form"/>
-    </form>
+{% else %}
+    <p>No data</p>
+{% endif %}
 
-    <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
-      {% csrf_token %} 
-      <input class="sync" type="submit" value="new app key" id="new_app_key"/>
-    </form>
+<form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+    {% csrf_token %}
+    <input class="sync" type="submit" value="sync all" id="sync_form"/>
+</form>
+
+<form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
+    {% csrf_token %}
+    <input class="sync" type="submit" value="new app key" id="new_app_key"/>
+</form>
 
 {% endblock %}
