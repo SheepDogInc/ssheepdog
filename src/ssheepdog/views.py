@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from ssheepdog.models import Login
+from ssheepdog.models import Login, UserProfile
 from django.contrib.auth.decorators import permission_required
+
 
 @permission_required('ssheepdog.can_view_access_summary')
 def view_access_summary(request):
@@ -32,13 +33,14 @@ def view_access_summary(request):
 
     return render_to_response('view_grid.html',
         context_dict,
-        context_instance=RequestContext(request))  
+        context_instance=RequestContext(request))
+
 
 def user_admin_view(request):
     users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
-    return render_to_response('user_view.html',
-            {'user':user},
+    return render_to_response('user_view.html', {'users':users},
             context_instance=RequestContext(request))
+
 
 @permission_required('ssheepdog.can_sync')
 def sync_keys(request):
@@ -51,20 +53,23 @@ def sync_keys(request):
             pass
     else:
         Login.sync_all()
-    return redirect(reverse('ssheepdog.views.view_access_summary'))
+    return redirect('ssheepdog.views.view_access_summary')
+
 
 def post_user(request):
     pk = request.POST.get('pk',None)
     pub_key = request.POST.get('pub_key',None)
     try:
         user = UserProfile.objects.get(pk=pk)
-        user.ssh_key = pub_key 
+        user.ssh_key = pub_key
     except User.DoesNotExist:
         pass
+
+    return HttpResponse("This should probably render something more useful.")
 
 
 @permission_required('ssheepdog.can_sync')
 def generate_new_application_key(request):
     from ssheepdog.utils import generate_new_application_key
     generate_new_application_key()
-    return redirect(reverse('ssheepdog.views.view_access_summary'))
+    return redirect('ssheepdog.views.view_access_summary')
