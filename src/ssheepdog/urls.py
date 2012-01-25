@@ -6,5 +6,4 @@ urlpatterns = patterns('',
 	url(r'^sync_keys/$', 'ssheepdog.views.sync_keys'),
 	url(r'^user/(?P<id>[0-9]+)/$', 'ssheepdog.views.user_admin_view'),	
 	url(r'^login/(?P<id>[0-9]+)/$','ssheepdog.views.login_admin_view'),
-	url(r'^edit_ssh/$', 'ssheepdog.views.edit_ssh'),
 )
