@@ -9,22 +9,26 @@ from django.contrib.auth.decorators import permission_required
 def view_access_summary(request):
     users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
     logins = Login.objects.all().order_by('username')
-    for user in users:
-        user.nickname = user.get_profile().nickname
-    for login in logins:
-        login.entries = []
-        for user in users:
-            all_active_bool = False
-            allowed = False
-            if user in login.users.all():
-                allowed = True
-            if user.is_active and login.is_active and login.machine.is_active:
-                all_active_bool = True
-            login.entries.append({'all_active': all_active_bool, 
-                                  'is_allowed': allowed,
-                                  'user': user})
 
-    context_dict = {'users' : users, 'logins' : logins}
+    if not users or not logins:
+        context_dict = {'users' : [], 'logins' : []}
+    else:
+        for user in users:
+            user.nickname = user.get_profile().nickname
+        for login in logins:
+            login.entries = []
+            for user in users:
+                all_active_bool = False
+                allowed = False
+                if user in login.users.all():
+                    allowed = True
+                if user.is_active and login.is_active and login.machine.is_active:
+                    all_active_bool = True
+                login.entries.append({'all_active': all_active_bool,
+                                    'is_allowed': allowed,
+                                    'user': user})
+
+        context_dict = {'users' : users, 'logins' : logins}
 
     return render_to_response('view_grid.html',
         context_dict,
