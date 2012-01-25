@@ -6,13 +6,13 @@
 <th></th>
 <th></th>
 {% for user in users %}
-<th><a class="test" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.nickname }}</a></th>
+<th><a class="user" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.nickname }}</a></th>
 {% endfor %}
 </tr>
 </thead>
 {% for login in logins %}
 <tr class="{% cycle 'row1' 'row2' %}">
-	<th> <a href="{{ login.get_change_url }}"> {{login.username}} </a></th>
+    <th> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
     <td>
     {% if login.is_dirty %}
     <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">

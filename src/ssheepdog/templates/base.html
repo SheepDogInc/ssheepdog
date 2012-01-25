@@ -9,12 +9,11 @@
       <script type="text/javascript"> 
           $(function() {
                   var $dialog = $('<div></div>')
-                    .html('')
                     .dialog({
                         autoOpen: false,
                         title: 'User Profile'
                   });
-                  $('.test').click(function(){
+                  $('.user').click(function(){
                       $.get($(this).attr('href')).success(function(data){
                             $dialog.html(data);
                             $dialog.dialog('open');
@@ -22,6 +21,15 @@
                       );
                       return false;
                     });
+                  $('.login').click(function(){
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
+                      return false;
+                    });
+
       });
 </script>
     </head>
