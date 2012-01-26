@@ -1,11 +1,9 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from ssheepdog.models import Login, UserProfile, Machine, ApplicationKey, Client
 from django.contrib.auth.decorators import permission_required
 from ssheepdog.forms import UserProfileForm
-from django.core.urlresolvers import reverse
 
 
 @permission_required('ssheepdog.can_view_access_summary')
@@ -52,9 +50,9 @@ def user_admin_view(request,id=None):
                     new_key = form.cleaned_data['public_key']
                     user.ssh_key = new_key 
                     user.save()
-                    return redirect(reverse('ssheepdog.views.view_access_summary'))
+                    return redirect('ssheepdog.views.view_access_summary')
         else: 
-            return redirect(reverse('ssheepdog.views.view_access_summary'))
+            return redirect('ssheepdog.views.view_access_summary')
     return render_to_response('user_view.html',
             {'user':user, 'form':form, 'request': request},
             context_instance=RequestContext(request))
