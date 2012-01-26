@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'Login' %}{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Login" %}</h1>
+  
+{% if not user.is_anonymous %}
+  {% trans "You are currently logged in." %}&nbsp;
+  <a href="{% url logout %}">{% trans "Log Out" %}</a>
+
+{% else %}
+{% if not locked %}
+  <div id="login_form">
+  	<form method="post" action="">
+  	    {% csrf_token %}
+		
+  	    <ul>{{ form.as_ul }}</ul>
+  	    <input type="submit" value="{% trans 'Login' %}" />
+  	</form>
+{% comment %}
+ 	<p><a href="{% url reset_password %}">{% trans 'Forgot your password?' %}</a>
+  	  |
+  	  <a href="/help/signin/">{% trans 'Having problems signing in?' %}</a>
+  	</p>
+{% endcomment %}
+  	<script type="text/javascript" charset="utf-8">
+  	    document.getElementById('id_username').focus();
+  	</script>
+  </div>
+  {% else %}
+  <p>{% trans 'Your account was locked. Please ' %}
+    <a href="/signin-help/">{% trans 'contact the administrator' %}</a>.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}
