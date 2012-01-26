@@ -1,14 +1,26 @@
 {% block content %}
 <div class="username_div">
-    <div>Username: {{login.username}}</div>
-</div></br>
+    <div>Username: {{ login.username }}</div>
+</div>
 <div class="machine_div">
-    <div>Machine: {{login.machine}}</div>
-</div></br>
+    <div>Machine: {{ login.machine }}</div>
+</div>
 <div class="client_div">
-    <div>Client: {{login.client}}</div>
+    <div>Client:   
+        {% if login.client %}
+            {{ login.client }}
+        {% else %}
+            {{ login.machine.client }}
+        {% endif %}
+    </div>
+    <div>Description:</div><textarea> {{ login.client.description }}</textarea>
+</div></br>
+<div class="machine_info">
+    <div>Hostname: {{ login.machine.hostname }}</div>
+    <div>IP: {{ login.machine.ip }}</div>
+    <div>Port: {{ login.machine.port }} </div>
 </div></br>
 <div class="app_key_div">
-    <div>Application Key: <textarea>{{latest_app_key}}</textarea></div>
+    <div>Application Key: <textarea>{{ latest_app_key }}</textarea></div>
 </div>
 {% endblock %}
