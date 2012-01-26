@@ -19,18 +19,18 @@
         {% for login in logins %}
 
             <tr class="{% cycle 'row1' 'row2' %}">
-                <th> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
                 <td>
                     {% if login.is_dirty %}
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
-                            <input class="sync" type="submit" value="sync" id="sync_form"/>
+                            <input class="sync dirty" type="submit" value="sync" id="sync_form"/>
                         </form>
                     {% else %}
-                        ok
+                    <input class="sync clean" type="submit" value="        "> 
                     {% endif %}
                 </td>
+                <th> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
 
                 {% for entry in login.entries %}
                     {% comment %}
@@ -54,12 +54,12 @@
 
 <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
     {% csrf_token %}
-    <input class="sync" type="submit" value="sync all" id="sync_form"/>
+    <input class="sync_all" type="submit" value="sync all" id="sync_form"/>
 </form>
 
 <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
     {% csrf_token %}
-    <input class="sync" type="submit" value="new app key" id="new_app_key"/>
+    <input class="new_app_key" type="submit" value="new app key" id="new_app_key"/>
 </form>
 
 {% endblock %}
