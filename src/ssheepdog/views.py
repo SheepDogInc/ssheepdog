@@ -18,7 +18,7 @@ def view_access_summary(request):
             user.nickname = user.get_profile().nickname
         for login in logins:
             login.entries = []
-            login.entries = get_user_login_info(login,users)
+            get_user_login_info(login,users)
         context_dict = {'users' : users, 'logins' : logins}
 
     return render_to_response('view_grid.html',
