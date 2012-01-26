@@ -5,6 +5,7 @@ from django.template import RequestContext
 from ssheepdog.models import Login, UserProfile, Machine, ApplicationKey, Client
 from django.contrib.auth.decorators import permission_required
 from ssheepdog.forms import UserProfileForm
+from django.core.urlresolvers import reverse
 
 
 @permission_required('ssheepdog.can_view_access_summary')
