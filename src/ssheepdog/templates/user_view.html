@@ -1,14 +1,16 @@
-{% extends 'base.html' %}
 {% block content %}
-<div class="ssh_div">
-<form class="ssh_key_form" action="{% url ssheepdog.views.edit_ssh %}" method="post">{% csrf_token %}
-    <input type="hidden" name="pk" value="{{user.pk}}">
-    <input class="pub_key" type="textarea" value="{{user.pub_key}}">
-</div>
 <div class="user_div">
-    <input class="username" type="text" value="{{user.username}}">
+    <div>Username: {{user.username}}</div>
 </div>
 <div class="nickname_div">
-    <input class="nickname" type="text" value="{{user.nickname}}">
+    <div>Nickname: {{user.nickname}}</div>
+</div>
+<div class="ssh_div">
+<form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
+    {{form.as_p}}
+    {% if request.user.is_authenticated and request.user == user %}
+    <input type="submit" value="Submit">
+    {% endif %}
+</form>
 </div>
 {% endblock %}

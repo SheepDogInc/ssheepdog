@@ -6,18 +6,30 @@
     <script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.8.17.custom/js/jquery-ui-1.8.17.custom.min.js"></script>
     <script type="text/javascript">
-        $(function() {
-            var $dialog = $('<div></div>').dialog({
-                autoOpen: false,
-                title: 'Profile'
-            });
+          $(function() {
+                  var $dialog = $('<div></div>')
+                    .dialog({
+                        autoOpen: false,
+                  });
+                  $('.user').click(function(){
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
+                      return false;
+                    });
+                  $('.login').click(function(){
+                      $.get($(this).attr('href')).success(function(data){
+                            $dialog.html(data);
+                            $dialog.dialog('open');
+                        }
+                      );
+                      return false;
+                    });
 
-            $('.test').click(function() {
-                $dialog.dialog('open');
-                return false;
-            });
-        });
-    </script>
+      });
+   </script>
 </head>
 <body>
     {% block content %}
