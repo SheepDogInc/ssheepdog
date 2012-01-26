@@ -18,22 +18,28 @@ def view_access_summary(request):
             user.nickname = user.get_profile().nickname
         for login in logins:
             login.entries = []
-            for user in users:
-                all_active_bool = False
-                allowed = False
-                if user in login.users.all():
-                    allowed = True
-                if user.is_active and login.is_active and login.machine.is_active:
-                    all_active_bool = True
-                login.entries.append({'all_active': all_active_bool,
-                                    'is_allowed': allowed,
-                                    'user': user})
-
+            login.entries = get_user_login_info(login,users)
         context_dict = {'users' : users, 'logins' : logins}
 
     return render_to_response('view_grid.html',
         context_dict,
         context_instance=RequestContext(request))
+
+    
+def get_user_login_info(login,users): 
+    for user in users:
+        if user in login.users.all():
+            allowed = True
+        else:
+            allowed = False
+        if user.is_active and login.is_active and login.machine.is_active:
+            all_active_bool = True
+        else:
+            all_active_bool = False
+        login.entries.append({'all_active': all_active_bool,
+                            'is_allowed': allowed,
+                            'user': user})
+    return login.entries
 
 
 def user_admin_view(request,id=None):
