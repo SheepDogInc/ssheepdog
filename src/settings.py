@@ -146,6 +146,10 @@ LOGGING = {
     }
 }
 
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+LOGIN_REDIRECT_URL = '/'
+
 RSA_KEY_LENGTH = 2048
 
 BROKER_TRANSPORT = 'django'

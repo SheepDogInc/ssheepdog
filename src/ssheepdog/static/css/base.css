@@ -97,15 +97,15 @@ table.access_view tr.row1 {
 table.access_view tfoot {
     font-style: normal;
 }
-table.access_view td.is_allowed.active {
+table.access_view td.entry.is_allowed.active {
     background: url(/static/images/tick.png) no-repeat;
 }
-table.access_view td.not_allowed.active {
+table.access_view td.entry.active {
     background: url(/static/images/cross.png) no-repeat;
 }
-table.access_view td.is_allowed.inactive {
+table.access_view td.entry.is_allowed {
     background: url(/static/images/tick-gray.png) no-repeat;
 }
-table.access_view td.not_allowed.inactive {
+table.access_view td.entry {
     background: url(/static/images/cross-gray.png) no-repeat;
 }

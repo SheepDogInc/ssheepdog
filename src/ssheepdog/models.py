@@ -8,6 +8,7 @@ from fabric.network import disconnect_all
 from django.conf import settings as app_settings
 from ssheepdog.utils import DirtyFieldsMixin
 from django.core.urlresolvers import reverse
+from south.signals import post_migrate
 
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
@@ -232,3 +233,11 @@ def user_login_changed(sender, instance=None, reverse=None, model=None,
 
 
 m2m_changed.connect(user_login_changed, sender=Login.users.through)
+
+
+def force_one_app_key(app, **kwargs):
+    if app == 'ssheepdog':
+        ApplicationKey.get_latest()         
+
+post_migrate.connect(force_one_app_key)
+
