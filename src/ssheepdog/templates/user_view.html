@@ -1,10 +1,14 @@
 {% block content %}
+{% if fullname %}
+<div class="fullName"> Full Name: {{ user.fullname }} </div>
+{% endif %}
 <div class="user_div">
     <div>Username: {{user.username}}</div>
 </div>
 <div class="nickname_div">
     <div>Nickname: {{user.nickname}}</div>
 </div>
+<div class="active"> Active: {{ user.is_active }} </div>
 <div class="ssh_div">
 <form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
     {{form.as_p}}

@@ -39,9 +39,13 @@ def view_access_summary(request):
 
 
 def user_admin_view(request,id=None):
+    fullname_bool = True
     user = User.objects.select_related('_profile_cache').get(pk=id)
     user.nickname = user.get_profile().nickname
     user.ssh_key = user.get_profile().ssh_key
+    user.fullname = user.get_full_name()
+    if user.fullname == "":
+        fullname_bool = False 
     form = UserProfileForm(initial={'public_key':user.ssh_key})
     if request.method == 'POST':
         if request.user.is_authenticated() and request.user == user:
@@ -56,7 +60,8 @@ def user_admin_view(request,id=None):
         else: 
             return redirect(reverse('ssheepdog.views.view_access_summary'))
     return render_to_response('user_view.html',
-            {'user':user, 'form':form, 'request': request},
+            {'user':user, 'form':form, 'request': request,
+                'fullname': fullname_bool},
             context_instance=RequestContext(request))
 
 
