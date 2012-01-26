@@ -37,7 +37,7 @@
                         Add two classes: is_allowed or not_allowed AND active or inactive
                         For example:  class="allowed active"
                     {% endcomment %}
-                    <td class="{% if entry.is_allowed %}is_allowed{% else %}not_allowed{% endif %} {% if entry.all_active %}active{% else %}inactive{% endif %}">
+                    <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.all_active %}active{% endif %}">
                         &nbsp;
                     </td>
                 {% endfor %}
