@@ -27,6 +27,7 @@ Contents:
 
    installation
    developing
+   how-it-works
 
 
 
