@@ -11,43 +11,29 @@ def view_access_summary(request):
     users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
     logins = Login.objects.all().order_by('username')
 
-    if not users or not logins:
-        context_dict = {'users' : [], 'logins' : []}
-    else:
-        for user in users:
-            user.nickname = user.get_profile().nickname
-        for login in logins:
-            login.entries = []
-            get_user_login_info(login,users)
-        context_dict = {'users' : users, 'logins' : logins}
+    for login in logins:
+        login.entries = get_user_login_info(login,users)
 
     return render_to_response('view_grid.html',
-        context_dict,
+        {'users' : users, 'logins' : logins},
         context_instance=RequestContext(request))
 
     
-def get_user_login_info(login,users): 
-    for user in users:
-        if user in login.users.all():
-            allowed = True
-        else:
-            allowed = False
-        if user.is_active and login.is_active and login.machine.is_active:
-            all_active_bool = True
-        else:
-            all_active_bool = False
-        login.entries.append({'all_active': all_active_bool,
-                            'is_allowed': allowed,
-                            'user': user})
-    return login.entries
+def get_user_login_info(login, users):
+    """
+    Return a dict of data for each user; it's important
+    that the users remain in the same order.
+    """
+    login_is_active = login.is_active and login.machine.is_active
+    return [{'is_active': user.is_active and login_is_active,
+             'is_allowed': user in login.users.all(),
+             'user': user}
+            for user in users]
 
 
 def user_admin_view(request,id=None):
     user = User.objects.select_related('_profile_cache').get(pk=id)
-    user.nickname = user.get_profile().nickname
-    user.ssh_key = user.get_profile().ssh_key
-    user.fullname = user.get_full_name()
-    form = UserProfileForm(initial={'public_key':user.ssh_key})
+    form = UserProfileForm(initial={'public_key': user.get_profile().ssh_key})
     if request.method == 'POST':
         if request.user.is_authenticated() and request.user == user:
             if request.POST.get('public_key'):
@@ -61,7 +47,7 @@ def user_admin_view(request,id=None):
         else: 
             return redirect('ssheepdog.views.view_access_summary')
     return render_to_response('user_view.html',
-            {'user':user, 'form':form, 'request': request},
+            {'user': user, 'form': form},
             context_instance=RequestContext(request))
 
 

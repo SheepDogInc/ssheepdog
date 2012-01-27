@@ -1,12 +1,12 @@
 {% block content %}
-{% if user.fullname %}
-<div class="fullName"> Full Name: {{ user.fullname }} </div>
+{% if user.get_full_name %}
+<div class="fullName"> Full Name: {{ user.get_full_name }} </div>
 {% endif %}
 <div class="user_div">
     <div>Username: {{user.username}}</div>
 </div>
 <div class="nickname_div">
-    <div>Nickname: {{user.nickname}}</div>
+    <div>Nickname: {{user.get_profile.nickname}}</div>
 </div>
 <div class="active"> Active: {{ user.is_active }} </div>
 <div class="ssh_div">
