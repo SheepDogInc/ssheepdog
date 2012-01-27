@@ -1,12 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ssheepdog.models import Client, Login, Machine, ApplicationKey, FABRIC_WARNINGS
+from ssheepdog.models import Client, Login, Machine, ApplicationKey, PublicKeyField, FABRIC_WARNINGS
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
 from ssheepdog.models import KEYS_DIR
 from utils import read_file
 from fabric.api import run, env, hide, settings, local
+from django.core import exceptions
 
 def populate_ssheepdog_key():
     pub = read_file(os.path.join(KEYS_DIR, "ssheepdog.pub"))
@@ -271,3 +272,43 @@ class ApplicationKeyTests(TestCase):
         keys = self.login.get_authorized_keys()
         self.assertFalse(previous.nice_public_key in keys)
         self.assertTrue(latest.nice_public_key in keys)
+
+class PublicKeyFieldTests(TestCase):
+    def setUp(self):
+        self.field = PublicKeyField()
+        self.key = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvRY/4gdg/V6sKShGk/Cx6qqRUiCWybdEokMsTEf502BRe/uD0qP8Y8zQ2fJSPZ5FcySIMorTQ9cl8tSeqVDOhAiwelJW7EB8qCMxc+Nkn8urtXmLTCS26lG/bF5A1XA33ToL3EadLpllUu2oQ8ebetmAuKpjKjVH/oi+ghP2P9yaLOrr6uQT1BGaFTa0dtAN2KSFBNeVejuhbZLgB8/uHEnsdEu3kxeqL9E4WXGbvPKgvrg3J/U6bAMG326yw/C43OHrZEi6OJ+yroRrdKkmHDAHTIZRRgaEkYCXlULBdZMrO2vrIjVTdJSOjeQ324if24L7p3HQx/KOnG4WhMuYbQ=="
+    def good(self, key, expected=None):
+        result = self.field.clean(key, None)
+        if expected:
+            self.assertEqual(result, expected)
+
+    def bad(self, key):
+        self.assertRaises(exceptions.ValidationError, self.field.clean, key, None)
+
+    def test_good(self):
+        self.good("ssh-rsa %s comment" % self.key,
+                  "ssh-rsa %s comment" % self.key)
+
+    def test_whitespace_ok(self):
+        self.good("\n  ssh-rsa  \n%s\ncomment  " % self.key,
+                  "ssh-rsa %s comment" % self.key)
+
+    def test_comment_with_whitespace(self):
+        self.good("\n  ssh-rsa  \n%s\ncomment  comment2  " % self.key,
+                  "ssh-rsa %s comment comment2" % self.key)
+
+    def test_no_comment(self):
+        self.good("ssh-rsa %s" % self.key,
+                  "ssh-rsa %s" % self.key)
+
+    def test_long_enough(self): # This isn't really an ssh key, but it will pass the weak test
+        self.good("\n  ssh-rsa  \n%s\ncomment  " % self.key[0:104])
+
+    def test_too_short(self):
+        self.bad("\n  ssh-rsa  \n%s\ncomment  " % self.key[0:96])
+
+    def test_not_base64(self): # This isn't really an ssh key, but it will pass the weak test
+        self.bad("ssh-rsa %s comment" % self.key[0:97])
+
+    def test_bad_key_type_name(self):
+        self.assertRaises(exceptions.ValidationError, self.field.clean, "sh-rs %s comment" % self.key, None)

@@ -1,4 +1,4 @@
-import os
+import os, base64, struct
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, m2m_changed
@@ -9,17 +9,44 @@ from django.conf import settings as app_settings
 from ssheepdog.utils import DirtyFieldsMixin
 from django.core.urlresolvers import reverse
 from south.signals import post_migrate
-
+from south.modelsinspector import add_introspection_rules
+from django.core import exceptions
+from django.utils.translation import ugettext as _
+from Crypto.PublicKey import RSA
+add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
 FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 
 
+
+class PublicKeyField(models.TextField):
+    def validate(self, value, model_instance):
+        """
+        Just confirm that the first field is something like ssh-rsa or ssh-dss,
+        and the second field is reasonably long and can be base64 decoded.
+        """
+        super(PublicKeyField, self).validate(value, model_instance)
+        try:
+            type_, key_string = value.split()[:2]
+            assert (type_[:4] == 'ssh-')
+            assert (len(key_string) > 100)
+            base64.decodestring(key_string)
+        except:
+            raise exceptions.ValidationError(_("Does not appear to be an ssh public key"))
+        
+    def clean(self, value, model_instance):
+        """
+        Clean up any whitespace.
+        """
+        value = " ".join(value.strip().split())
+        return super(PublicKeyField, self).clean(value, model_instance)
+
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
-    ssh_key = models.TextField()
+    ssh_key = PublicKeyField()
 
     def __str__(self):
         return self.nickname
@@ -152,7 +179,7 @@ class Client(models.Model):
 
 class ApplicationKey(models.Model):
     private_key = models.TextField()
-    public_key = models.TextField()
+    public_key = PublicKeyField()
 
     def save(self, *args, **kwargs):
         if not self.private_key or not self.public_key:
@@ -169,9 +196,6 @@ class ApplicationKey(models.Model):
         return "...%s ssheepdog_%s" % (self.public_key[-10:], self.pk)
 
     def generate_key_pair(self):
-        import base64
-        from Crypto.PublicKey import RSA
-        
         key = RSA.generate(app_settings.RSA_KEY_LENGTH)
         self.private_key = key.exportKey()
 
