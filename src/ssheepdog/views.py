@@ -33,23 +33,16 @@ def get_user_login_info(login, users):
 
 def user_admin_view(request,id=None):
     user = User.objects.select_related('_profile_cache').get(pk=id)
-    form = UserProfileForm(
-        initial={'public_key': user.get_profile().formatted_public_key})
+    profile = user.get_profile()
     if request.method == 'POST':
-        if request.user.is_authenticated() and request.user == user:
-            if request.POST.get('public_key'):
-                form = UserProfileForm(request.POST)
-                if form.is_valid():
-                    user = UserProfile.objects.get(user=id)
-                    new_key = form.cleaned_data['public_key']
-                    user.ssh_key = new_key 
-                    user.save()
-                    return redirect('ssheepdog.views.view_access_summary')
-        else: 
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
             return redirect('ssheepdog.views.view_access_summary')
-    return render_to_response('user_view.html',
-            {'user': user, 'form': form},
-            context_instance=RequestContext(request))
+    else:
+        form = UserProfileForm(instance=profile)
+    return render_to_response('user_view.html', {'user': user, 'form': form},
+                              context_instance=RequestContext(request))
 
 
 def login_admin_view(request,id=None):

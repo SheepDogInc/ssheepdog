@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from south.signals import post_migrate
 from south.modelsinspector import add_introspection_rules
 from Crypto.PublicKey import RSA
-from ssheepdog.forms import PublicKeyField
+from ssheepdog.fields import PublicKeyField
 add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine, ApplicationKey, FABRIC_WARNINGS
-from ssheepdog.forms import PublicKeyField
+from ssheepdog.fields import PublicKeyField
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
