@@ -34,7 +34,9 @@ def get_user_login_info(login, users):
 def user_admin_view(request,id=None):
     user = User.objects.select_related('_profile_cache').get(pk=id)
     profile = user.get_profile()
-    if request.method == 'POST':
+
+    if request.method == 'POST' and request.user.pk == user.pk:
+        # Can only edit your own ssh key through this interface
         form = UserProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
