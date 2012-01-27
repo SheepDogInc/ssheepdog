@@ -33,7 +33,8 @@ def get_user_login_info(login, users):
 
 def user_admin_view(request,id=None):
     user = User.objects.select_related('_profile_cache').get(pk=id)
-    form = UserProfileForm(initial={'public_key': user.get_profile().ssh_key})
+    form = UserProfileForm(
+        initial={'public_key': user.get_profile().formatted_public_key})
     if request.method == 'POST':
         if request.user.is_authenticated() and request.user == user:
             if request.POST.get('public_key'):

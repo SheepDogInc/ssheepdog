@@ -1,4 +1,4 @@
-import os, base64, struct
+import os, base64
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, m2m_changed
@@ -10,9 +10,8 @@ from ssheepdog.utils import DirtyFieldsMixin
 from django.core.urlresolvers import reverse
 from south.signals import post_migrate
 from south.modelsinspector import add_introspection_rules
-from django.core import exceptions
-from django.utils.translation import ugettext as _
 from Crypto.PublicKey import RSA
+from ssheepdog.forms import PublicKeyField
 add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
@@ -20,33 +19,15 @@ KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
 FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 
 
-class PublicKeyField(models.TextField):
-    def validate(self, value, model_instance):
-        """
-        Just confirm that the first field is something like ssh-rsa or ssh-dss,
-        and the second field is reasonably long and can be base64 decoded.
-        """
-        super(PublicKeyField, self).validate(value, model_instance)
-        try:
-            type_, key_string = value.split()[:2]
-            assert (type_[:4] == 'ssh-')
-            assert (len(key_string) > 100)
-            base64.decodestring(key_string)
-        except:
-            raise exceptions.ValidationError(_("Does not appear to be an ssh public key"))
-        
-    def clean(self, value, model_instance):
-        """
-        Clean up any whitespace.
-        """
-        value = " ".join(value.strip().split())
-        return super(PublicKeyField, self).clean(value, model_instance)
-
-
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
     ssh_key = PublicKeyField()
+
+    @property
+    def formatted_public_key(self):
+        return "%s %s" % (" ".join(self.ssh_key.split()[:2]),
+                          self.user.email or self.user.username)
 
     def __str__(self):
         return self.nickname
@@ -149,7 +130,7 @@ class Login(DirtyFieldsMixin, models.Model):
             for user in (self.users
                          .filter(is_active = True)
                          .select_related('_profile_cache')):
-                keys.append(user.get_profile().ssh_key)
+                keys.append(user.get_profile().formatted_public_key)
         return keys
 
     def update_keys(self): 

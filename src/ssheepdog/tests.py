@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ssheepdog.models import Client, Login, Machine, ApplicationKey, PublicKeyField, FABRIC_WARNINGS
+from ssheepdog.models import Client, Login, Machine, ApplicationKey, FABRIC_WARNINGS
+from ssheepdog.forms import PublicKeyField
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
@@ -145,7 +146,7 @@ def can_connect(user, login):
     return login.run('echo', private_key=private_key)
 
 def key_present(user,login):
-    return user.get_profile().ssh_key in login.get_authorized_keys()
+    return user.get_profile().formatted_public_key in login.get_authorized_keys()
 
 def sync_all():
     with settings(hide(*FABRIC_WARNINGS)):
