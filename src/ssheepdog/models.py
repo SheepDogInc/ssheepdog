@@ -20,7 +20,6 @@ KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
 FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 
 
-
 class PublicKeyField(models.TextField):
     def validate(self, value, model_instance):
         """
@@ -42,6 +41,7 @@ class PublicKeyField(models.TextField):
         """
         value = " ".join(value.strip().split())
         return super(PublicKeyField, self).clean(value, model_instance)
+
 
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
@@ -112,6 +112,10 @@ class Login(DirtyFieldsMixin, models.Model):
             self.save()
         return self.application_key
 
+    @property
+    def formatted_public_key(self):
+        return self.get_application_key().formatted_public_key
+
     def save(self, *args, **kwargs):
         fields = set(['machine', 'username', 'is_active'])
         made_dirty = bool(fields.intersection(self.get_dirty_fields()))
@@ -140,7 +144,7 @@ class Login(DirtyFieldsMixin, models.Model):
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [ApplicationKey.get_latest().nice_public_key] 
+        keys = [ApplicationKey.get_latest().formatted_public_key] 
         if self.is_active and self.machine.is_active:
             for user in (self.users
                          .filter(is_active = True)
@@ -189,7 +193,7 @@ class ApplicationKey(models.Model):
         super(ApplicationKey, self).save(*args, **kwargs)
 
     @property
-    def nice_public_key(self):
+    def formatted_public_key(self):
         return "%s ssheepdog_%s" % (self.public_key, self.pk)
 
     def __unicode__(self):

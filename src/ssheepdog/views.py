@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from ssheepdog.models import Login, UserProfile, Machine, ApplicationKey, Client
+from ssheepdog.models import Login, UserProfile
 from django.contrib.auth.decorators import permission_required
 from ssheepdog.forms import UserProfileForm
 
@@ -52,15 +52,8 @@ def user_admin_view(request,id=None):
 
 
 def login_admin_view(request,id=None):
-    login = Login.objects.get(pk=id)
-    machines = Machine.objects.all()
-    clients = Client.objects.all()
-    app_keys = ApplicationKey.objects.all()
-    latest_app_key = ApplicationKey.get_latest().public_key
-    content = {'login':login, 'machines':machines, 'clients':clients,
-                'app_keys':app_keys, 'latest_app_key':latest_app_key}
     return render_to_response('login_view.html',
-            content,
+            {'login': Login.objects.get(pk=id)},
             context_instance=RequestContext(request))
 
 
