@@ -9,8 +9,12 @@ from django.db.models import Q
 
 @permission_required('ssheepdog.can_view_access_summary')
 def view_access_summary(request):
-    users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
-    logins = Login.objects.all().order_by('username')
+    users = (User.objects
+             .select_related('_profile_cache')
+             .order_by('_profile_cache__nickname'))
+    logins = (Login.objects
+              .select_related('client', 'machine')
+              .order_by('client__nickname', 'machine__nickname', 'username'))
     filter_form = AccessFilterForm(request.GET)
     u, l = filter_form.data.get('user'), filter_form.data.get('login')
     if u:

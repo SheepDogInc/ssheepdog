@@ -18,7 +18,9 @@
     <thead>
         <tr class="top_header">
             <th></th>
-            <th></th>
+            <th>Client</th>
+            <th>Machine</th>
+            <th>Login</th>
             {% for user in users %}
             <th><a class="user" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_profile.nickname }}</a></th>
             {% endfor %}
@@ -41,7 +43,9 @@
                     <input class="sync clean" type="submit" value="        "> 
                     {% endif %}
                 </td>
-                <th> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
+                <th title="{{ login.client.description }}">{{ login.client.nickname }}</th>
+                <th title="{{ login.machine.description }}">{{ login.machine.nickname }}</th>
+                <th title="{{ login.description }}"> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
 
                 {% for entry in login.entries %}
                     {% comment %}
