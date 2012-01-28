@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 def read_file(filename):
     """
     Read data from a file and return it
@@ -35,7 +37,10 @@ class DirtyFieldsMixin(object):
             return "%s_pk" % f.name if f.rel else f.name
 
         def value(f):
-            val = getattr(self, f.name)
+            try:
+                val = getattr(self, f.name)
+            except ObjectDoesNotExist: # foreign key relation not yet set
+                val = None
             if f.rel and val:
                 return val.pk
             else:
