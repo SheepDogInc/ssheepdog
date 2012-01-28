@@ -1,0 +1,1 @@
+web: python src/manage.py collectstatic --noinput --settings=settings-heroku; python src/manage.py syncdb --settings=settings-heroku; python src/manage.py runserver "0.0.0.0:$PORT" --settings=settings-heroku
