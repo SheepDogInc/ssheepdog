@@ -3,19 +3,37 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from ssheepdog.models import Login, UserProfile
 from django.contrib.auth.decorators import permission_required
-from ssheepdog.forms import UserProfileForm
+from ssheepdog.forms import UserProfileForm, AccessFilterForm
+from django.db.models import Q
 
 
 @permission_required('ssheepdog.can_view_access_summary')
 def view_access_summary(request):
     users = User.objects.select_related('_profile_cache').order_by('_profile_cache__nickname')
     logins = Login.objects.all().order_by('username')
+    filter_form = AccessFilterForm(request.GET)
+    u, l = filter_form.data.get('user'), filter_form.data.get('login')
+    if u:
+        users = users.filter(Q(username__icontains=u)
+                             | Q(email__icontains=u)
+                             | Q(first_name__icontains=u)
+                             | Q(last_name__icontains=u)
+                             | Q(_profile_cache__nickname__icontains=u)
+                             )
+    if l:
+        logins = logins.filter(Q(username__icontains=l)
+                               | Q(client__nickname__icontains=l)
+                               | Q(client__description__icontains=l)
+                               | Q(machine__nickname__icontains=l)
+                               | Q(machine__hostname__icontains=l)
+                               | Q(machine__ip__icontains=l)
+                               | Q(machine__description__icontains=l))
 
     for login in logins:
         login.entries = get_user_login_info(login,users)
 
     return render_to_response('view_grid.html',
-        {'users' : users, 'logins' : logins},
+        {'users': users, 'logins': logins, 'filter_form': filter_form},
         context_instance=RequestContext(request))
 
     

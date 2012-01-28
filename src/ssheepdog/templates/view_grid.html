@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if logins and users %}
+<div class="head grid">
+  <form class="logout" action="{% url logout %}" method="get">
+    <input class="button" type="submit" value="logout"/>
+  </form>
+  <form action="{% url ssheepdog.views.view_access_summary %}" method="get">
+   <ul>
+      {{ filter_form }}
+      <input class="button" type="submit" value="filter"/>
+    </ul>
+  </form>
+</div>
 
+{% if logins and users %}
 <table class="access_view">
     <thead>
         <tr class="top_header">
@@ -15,7 +26,7 @@
     </thead>
 
     <tbody>
-
+    
         {% for login in logins %}
 
             <tr class="{% cycle 'row1' 'row2' %}">
