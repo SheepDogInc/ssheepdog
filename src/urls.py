@@ -7,5 +7,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^openid/', include('django_openid_auth.urls')), # optional
 	url(r'^', include(ssheepdog.urls)),
 )
