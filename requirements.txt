@@ -1,20 +1,3 @@
-# As installed:
-#
-# Django==1.3.1
-# Fabric==1.3.3
-# South==0.7
-# pycrypto==2.4.1
-# ssh==1.7.11
-# wsgiref==0.1.2
-# sphinx
-# django-celery
-# django-kombu
-
-# NEED TO EXCLUDE FROM PIP FREEZE:
-# importlib is included in Python 2.7 and newer for 2.x
-###### importlib==1.0.2
-
-# Results of pip freeze:
 Django==1.3.1
 Fabric==1.3.3
 Jinja2==2.6
