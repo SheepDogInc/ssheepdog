@@ -53,11 +53,21 @@ class Machine(DirtyFieldsMixin, models.Model):
         return self.nickname
 
     def save(self, *args, **kwargs):
-        fields = set(['hostname', 'ip', 'port','is_active'])
-        made_dirty = bool(fields.intersection(self.get_dirty_fields()))
+        dirty_fields = self.get_dirty_fields()
+
+        # Updates to these fields require a push of keys to all logins
+        fields = set(['hostname', 'ip', 'port', 'is_active'])
+        made_dirty = bool(fields.intersection(dirty_fields))
         if made_dirty:
             self.login_set.update(is_dirty=True)
+
         super(Machine, self).save(*args, **kwargs)
+
+        # if the client changed, make login clients change which used to match
+        if 'client_pk' in dirty_fields:
+            old_pk = dirty_fields['client_pk']
+            self.login_set.filter(client__pk=old_pk).update(client=self.client)
+            self.login_set.filter(client__pk=None).update(client=self.client)
 
 
 class Login(DirtyFieldsMixin, models.Model):
@@ -98,7 +108,11 @@ class Login(DirtyFieldsMixin, models.Model):
         return self.get_application_key().formatted_public_key
 
     def save(self, *args, **kwargs):
-        fields = set(['machine', 'username', 'is_active'])
+        if not self.client:
+            self.client = self.machine.client
+
+        # Updates to these fields require a push of keys to login
+        fields = set(['machine_pk', 'username', 'is_active'])
         made_dirty = bool(fields.intersection(self.get_dirty_fields()))
         self.is_dirty = self.is_dirty or made_dirty
         super(Login, self).save(*args, **kwargs)

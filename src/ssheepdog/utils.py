@@ -17,19 +17,36 @@ def monkeypatch_class(name, bases, namespace):
 
 class DirtyFieldsMixin(object):
     """
-    Store original plain fields (not foreign key fields) so that it's easy to
-    detect which fields are dirty (i.e., have been altered.)
+    Supplies method get_dirty_fields() which is a dict of those fields which
+    have changed since object creation, mapping field names to original values.
+
+    A foreign key field is dirty if its pk changes; changes to the other object
+    are not detected.  The dirty field is listed as fieldname_pk, and the
+    original value is either the pk itself or None.
+
+    Many-to-many fields are ignored.
     """
     def __init__(self, *args, **kwargs):
         super(DirtyFieldsMixin, self).__init__(*args, **kwargs)
         self._original_state = self._as_dict()
 
     def _as_dict(self):
-        return dict([(f.name, getattr(self, f.name)) for f in self._meta.local_fields if not f.rel])
+        def name(f):
+            return "%s_pk" % f.name if f.rel else f.name
+
+        def value(f):
+            val = getattr(self, f.name)
+            if f.rel and val:
+                return val.pk
+            else:
+                return val
+        return dict([(name(f), value(f)) for f in self._meta.local_fields])
 
     def get_dirty_fields(self):
         new_state = self._as_dict()
-        return dict([(key, value) for key, value in self._original_state.iteritems() if value != new_state[key]])
+        return dict([(key, value)
+                     for key, value in self._original_state.iteritems()
+                     if value != new_state[key]])
 
 def generate_new_application_key():
     from ssheepdog import models

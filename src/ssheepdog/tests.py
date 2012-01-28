@@ -195,6 +195,7 @@ class DirtyTests(TestCase):
         self.user = create_user(username='user_1')
         self.user2 = create_user(username='user_2')
         self.machine = create_machine()
+        self.machine2 = create_machine()
         self.login = create_login(username="login", machine=self.machine)
         self.login.is_dirty = False
         self.login.save()
@@ -231,6 +232,13 @@ class DirtyTests(TestCase):
         """Changing the m2m for a user makes the login dirty"""
         self.login.users = []
         self.login.save()
+
+
+    def test_change_machine(self):
+        """Switching the machine for another machine dirties"""
+        self.login.machine = self.machine2
+        self.login.save()
+        self.assertDirty()
 
     def test_machine(self):
         """Changing the machine should make all the logins associated dirty"""
