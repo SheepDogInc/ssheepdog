@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-base.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.7.1.js"></script>
+    <script src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery-client.js"></script>
+</head>
+<body>
+    <div class="topbar" data-scrollspy="scrollspy" >
+      <div class="topbar-inner">
+        <div class="container">
+          <a class="brand" href="#">ssheepdog</a>
+          <ul class="nav">
+            <li class="active"><a href="#overview">Overview</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#grid-system">Grid</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+        <div id="main-row" class="row">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+</body>
+</html>

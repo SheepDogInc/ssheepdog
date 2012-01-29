@@ -1,20 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'bootstrap_base.html' %}
 {% block content %}
 
 <div class="head grid">
   <form class="logout" action="{% url logout %}" method="get">
-    <input class="button" type="submit" value="logout"/>
+    <input class="btn" type="submit" value="logout"/>
   </form>
   <form action="{% url ssheepdog.views.view_access_summary %}" method="get">
    <ul>
       {{ filter_form }}
-      <input class="button" type="submit" value="filter"/>
+      <input class="btn" type="submit" value="filter"/>
     </ul>
   </form>
 </div>
 
 {% if logins and users %}
-<table class="access_view">
+<table class="access_view bordered-table">
     <thead>
         <tr class="top_header">
             <th></th>
@@ -38,7 +38,7 @@
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
-                            <input class="sync dirty" type="submit" value="sync" id="sync_form"/>
+                            <input class="btn primary dirty" type="submit" value="sync" id="sync_form"/>
                         </form>
                         {% else %}
                         <input class="sync dirty" type="submit" value="        "> 
@@ -47,9 +47,9 @@
                     <input class="sync clean" type="submit" value="        "> 
                     {% endif %}
                 </td>
-                <th title="{{ login.client.description }}">{{ login.client.nickname }}</th>
-                <th title="{{ login.machine.description }}">{{ login.machine.nickname }}</th>
-                <th title="{{ login.description }}"> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></th>
+                <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>
+                <td title="{{ login.machine.description }}">{{ login.machine.nickname }}</td>
+                <td title="{{ login.description }}"> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></td>
 
                 {% for entry in login.entries %}
                     {% comment %}
@@ -70,16 +70,37 @@
 {% if perms.ssheepdog.can_sync %}
 <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
     {% csrf_token %}
-    <input class="sync_all" type="submit" value="sync all" id="sync_form"/>
+    <p>
+        <input class="sync_all btn" type="submit" value="Synchronize all" id="sync_form"/>
+    </p>
 </form>
 
 <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
     {% csrf_token %}
-    <input class="new_app_key" type="submit" value="new app key" id="new_app_key"/>
+    <p>
+    <input class="new_app_key btn" type="submit" value="Generate new application key" id="new_app_key"/>
+    </p>
 </form>
 {% endif %}
 
 {% else %}
   <p>No {% if logins %}users{% else %}logins{% endif %}</p>
 {% endif %}
+
+<div id="modal" class="modal hide fade">
+
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>More Information</h3>
+    </div>
+
+    <div class="modal-body">
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" class="btn primary">Close</a>
+    </div>
+
+</div>
+
 {% endblock %}
