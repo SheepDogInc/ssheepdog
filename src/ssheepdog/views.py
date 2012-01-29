@@ -48,8 +48,9 @@ def get_user_login_info(login, users):
     that the users remain in the same order.
     """
     login_is_active = login.is_active and login.machine.is_active
+    login_users = login.users.all()
     return [{'is_active': user.is_active and login_is_active,
-             'is_allowed': user in login.users.all(),
+             'is_allowed': user in login_users,
              'user': user}
             for user in users]
 
