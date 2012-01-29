@@ -98,6 +98,13 @@ class Login(DirtyFieldsMixin, models.Model):
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
 
+    class Meta:
+        permissions = ( # Managed by South so added by data migration!
+            ("can_view_access_summary", "Can view access summary"),
+            ("can_sync", "Can sync login keys"),
+            ("can_edit_own_public_key", "Can edit one's own public key"),
+            )
+
     def get_last_log(self):
         try:
             return LoginLog.objects.filter(login=self).latest('date')

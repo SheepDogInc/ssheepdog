@@ -5,6 +5,7 @@ from ssheepdog.models import Login
 from django.contrib.auth.decorators import permission_required
 from ssheepdog.forms import UserProfileForm, AccessFilterForm
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 
 
 @permission_required('ssheepdog.can_view_access_summary')
@@ -53,12 +54,15 @@ def get_user_login_info(login, users):
             for user in users]
 
 
+@permission_required('ssheepdog.can_view_access_summary')
 def user_admin_view(request,id=None):
     user = User.objects.select_related('_profile_cache').get(pk=id)
     profile = user.get_profile()
 
     if request.method == 'POST' and request.user.pk == user.pk:
         # Can only edit your own ssh key through this interface
+        if not request.user.has_perm('ssheepdog.can_edit_own_public_key'):
+            raise PermissionDenied
         form = UserProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
@@ -69,6 +73,7 @@ def user_admin_view(request,id=None):
                               context_instance=RequestContext(request))
 
 
+@permission_required('ssheepdog.can_view_access_summary')
 def login_admin_view(request,id=None):
     return render_to_response('login_view.html',
             {'login': Login.objects.get(pk=id)},

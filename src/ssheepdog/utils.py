@@ -100,3 +100,9 @@ class capture_output:
             self.result.stdout = sys.stdout.getvalue()
             sys.stdout.close()
             sys.stdout = self.stdout
+
+def add_permission(orm, codename, name, app_label='ssheepdog', model='login'):
+    ct, created = orm['contenttypes.ContentType'].objects.get_or_create(
+        model=model, app_label=app_label)
+    orm['auth.permission'].objects.get_or_create(
+        content_type=ct, codename=codename, defaults=dict(name=name))

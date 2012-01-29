@@ -12,7 +12,7 @@
 <div class="ssh_div">
 <form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
     {{form.as_p}}
-    {% if request.user.is_authenticated and request.user == user %}
+    {% if request.user == user and perms.ssheepdog.can_edit_own_public_key %}
     <input type="submit" value="Submit">
     {% endif %}
 </form>

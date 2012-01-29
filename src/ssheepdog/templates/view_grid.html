@@ -34,11 +34,15 @@
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
                     {% if login.is_dirty %}
+                        {% if perms.ssheepdog.can_sync %}
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
                             <input class="sync dirty" type="submit" value="sync" id="sync_form"/>
                         </form>
+                        {% else %}
+                        <input class="sync dirty" type="submit" value="        "> 
+                        {% endif %}
                     {% else %}
                     <input class="sync clean" type="submit" value="        "> 
                     {% endif %}
@@ -63,6 +67,7 @@
 
 </table>
 
+{% if perms.ssheepdog.can_sync %}
 <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
     {% csrf_token %}
     <input class="sync_all" type="submit" value="sync all" id="sync_form"/>
@@ -72,6 +77,7 @@
     {% csrf_token %}
     <input class="new_app_key" type="submit" value="new app key" id="new_app_key"/>
 </form>
+{% endif %}
 
 {% else %}
   <p>No {% if logins %}users{% else %}logins{% endif %}</p>
