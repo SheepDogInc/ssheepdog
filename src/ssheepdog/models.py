@@ -6,7 +6,7 @@ from django.db.utils import DatabaseError
 from fabric.api import env, run, hide, settings
 from fabric.network import disconnect_all
 from django.conf import settings as app_settings
-from ssheepdog.utils import DirtyFieldsMixin
+from ssheepdog.utils import DirtyFieldsMixin, capture_output
 from django.core.urlresolvers import reverse
 from south.signals import post_migrate
 from south.modelsinspector import add_introspection_rules
@@ -16,7 +16,8 @@ add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
                         '../deploy/keys')
-FABRIC_WARNINGS = ['everything', 'status', 'aborts']
+ALL_FABRIC_WARNINGS = ['everything', 'status', 'aborts']
+FABRIC_WARNINGS = []
 
 
 class UserProfile(DirtyFieldsMixin, models.Model):
@@ -70,6 +71,18 @@ class Machine(DirtyFieldsMixin, models.Model):
             self.login_set.filter(client__pk=None).update(client=self.client)
 
 
+class LoginLog(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    message = models.TextField()
+    stderr = models.TextField(default="")
+    stdout = models.TextField(default="")
+    login = models.ForeignKey('Login', null=True)
+    actor = models.ForeignKey(User, null=True)
+    class Meta:
+        ordering = ['-date']
+    
+
+
 class Login(DirtyFieldsMixin, models.Model):
     machine = models.ForeignKey('Machine')
     username = models.CharField(max_length=256)
@@ -79,20 +92,23 @@ class Login(DirtyFieldsMixin, models.Model):
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
 
+    def get_last_log(self):
+        try:
+            return LoginLog.objects.filter(login=self).latest('date')
+        except LoginLog.DoesNotExist:
+            return None
+
     def get_change_url(self):
         return reverse('admin:ssheepdog_login_change', args=(self.pk,))
 
     @staticmethod
-    def sync_all():
+    def sync_all(actor=None):
         try:
             for login in Login.objects.all():
-                login.sync()
+                login.sync(actor=actor)
         finally:
-            disconnect_all()
-
-    def sync(self):
-        self.update_keys()
-        disconnect_all()
+            with settings(hide(*ALL_FABRIC_WARNINGS)):
+                disconnect_all()
 
     def __unicode__(self):
         return self.username
@@ -128,11 +144,12 @@ class Login(DirtyFieldsMixin, models.Model):
                                         (mach.ip or mach.hostname),
                                         mach.port)    
         try:
-            with settings(hide(*FABRIC_WARNINGS)):
+            with capture_output() as captured:
                 run(command)
-            return True
+            return True, captured
         except SystemExit:
-            return False
+            return False, captured
+                                           
 
     def get_authorized_keys(self):
         """
@@ -147,7 +164,7 @@ class Login(DirtyFieldsMixin, models.Model):
                 keys.append(user.get_profile().formatted_public_key)
         return keys
 
-    def update_keys(self): 
+    def sync(self, actor=None):
         """
         Updates the authorized_keys file on the machine attached to this login 
         adding or deleting users public keys
@@ -159,8 +176,22 @@ class Login(DirtyFieldsMixin, models.Model):
             # No update required (either impossible or not needed)
             return None
         formatted_keys = "\n\n".join(self.get_authorized_keys())
-        if self.run('echo "%s" > ~/.ssh/authorized_keys' % formatted_keys,
-                    self.get_application_key().private_key):
+        success, output = self.run('echo "%s" > ~/.ssh/authorized_keys' % formatted_keys,
+                                   self.get_application_key().private_key)
+
+        message="%successful %s" % ("S" if success else "Uns",
+                                    "key deployment")
+        LoginLog.objects.create(stderr=output.stderr,
+                                stdout=output.stdout,
+                                actor=actor,
+                                login=self,
+                                message=message
+                                )
+
+        with settings(hide(*ALL_FABRIC_WARNINGS)):
+            disconnect_all()
+
+        if success:
             self.is_dirty = False
             self.application_key = ApplicationKey.get_latest() 
             self.save()

@@ -1,4 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
+from StringIO import StringIO
+import sys
 
 def read_file(filename):
     """
@@ -59,3 +61,42 @@ def generate_new_application_key():
     with transaction.commit_on_success():
         models.ApplicationKey.get_latest(create_new = True)
         models.Login.objects.update(is_dirty=True)
+
+class capture_output:
+    """
+    Usage:
+    with capture_output() as captured:
+        do_stuff()
+    Now captured.stderr and captured.stdout contain the output generated during
+    do_stuff().  capture_output(stderr=False) turns the latter off.
+    """
+
+    backup = None
+    result = None
+
+    def __init__(self, stderr=True, stdout=True):
+        self.capture_stdout = stdout
+        self.capture_stderr = stderr
+
+    def __enter__(self):
+        class Result(object):
+            stdout = ""
+            stderr = ""
+        self.result = Result()
+        if self.capture_stderr:
+            self.stderr = sys.stderr
+            sys.stderr = StringIO()
+        if self.capture_stdout:
+            self.stdout = sys.stdout
+            sys.stdout = StringIO()
+        return self.result
+
+    def __exit__(self, type, value, traceback):
+        if self.capture_stderr:
+            self.result.stderr = sys.stderr.getvalue()
+            sys.stderr.close()
+            sys.stderr = self.stderr
+        if self.capture_stdout:
+            self.result.stdout = sys.stdout.getvalue()
+            sys.stdout.close()
+            sys.stdout = self.stdout

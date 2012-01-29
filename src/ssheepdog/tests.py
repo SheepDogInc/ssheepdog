@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ssheepdog.models import Client, Login, Machine, ApplicationKey, FABRIC_WARNINGS
+from ssheepdog.models import Client, Login, Machine, ApplicationKey
 from ssheepdog.fields import PublicKeyField
 import os
 import settings as app_settings
@@ -86,7 +86,7 @@ class VagrantTests(TestCase):
 
     @flag_test('requires_server')
     def reset_vagrant(self):
-        with settings(hide(*FABRIC_WARNINGS)):
+        with settings(hide('everything', 'status')):
             env.key_filename = local('vagrant ssh_config | grep IdentityFile',
                                      capture=True).split()[1]
             env.host_string = 'vagrant@127.0.0.1:2222'
@@ -104,7 +104,8 @@ class VagrantTests(TestCase):
         """
         env.key_filename = os.path.join(KEYS_DIR, 'ssheepdog')
         env.host_string = 'login@127.0.0.1:2222'
-        run('ls')
+        with hide('everything'):
+            run('ls')
 
     @flag_test('requires_server')
     def test_can_connect(self):
@@ -143,14 +144,13 @@ def can_connect(user, login):
     Try to connect to the given login using the credential of user
     """
     private_key = read_file(os.path.join(KEYS_DIR, user.username))
-    return login.run('echo', private_key=private_key)
+    return login.run('echo', private_key=private_key)[0]
 
 def key_present(user,login):
     return user.get_profile().formatted_public_key in login.get_authorized_keys()
 
 def sync_all():
-    with settings(hide(*FABRIC_WARNINGS)):
-        Login.sync_all()
+    Login.sync_all()
 
 class PushKeyTests(TestCase):
     def setUp(self):

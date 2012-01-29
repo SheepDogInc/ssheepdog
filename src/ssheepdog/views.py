@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from ssheepdog.models import Login, UserProfile
+from ssheepdog.models import Login
 from django.contrib.auth.decorators import permission_required
 from ssheepdog.forms import UserProfileForm, AccessFilterForm
 from django.db.models import Q
@@ -81,11 +81,11 @@ def sync_keys(request):
     if pk:
         try:
             login = Login.objects.get(pk=pk)
-            login.sync()
+            login.sync(request.user)
         except Login.DoesNotExist:
             pass
     else:
-        Login.sync_all()
+        Login.sync_all(request.user)
     return redirect('ssheepdog.views.view_access_summary')
 
 

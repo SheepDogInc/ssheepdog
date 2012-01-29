@@ -23,4 +23,21 @@
 <div class="app_key_div">
     <div>Application Key: <textarea>{{ login.formatted_public_key }}</textarea></div>
 </div>
+{% with log=login.get_last_log %}
+{% if log %}
+<div class="log">
+  Last activity {{ log.date }}<br/>{{ log.message }}
+  {% if log.stderr %}
+  <div class="stderr">
+    {{ log.stderr }}
+  </div>
+  {% endif %}
+  {% if log.stdout %}
+  <div class="stdout">
+    {{ log.stdout }}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+{% endwith %}
 {% endblock %}

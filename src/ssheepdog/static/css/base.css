@@ -113,3 +113,19 @@ table.access_view td.entry {
 form.logout {
     float: right;
 }
+
+div.log {
+    font-size: 10px;
+    font-weight: bold;
+}
+div.log div.stderr, div.log div.stdout {
+    font-weight: normal;
+    font-size: 8px;
+}
+div.log div.stdout {
+    color: green;
+}
+div.log div.stderr {
+    color: red;
+}
+
