@@ -57,7 +57,7 @@ class Machine(DirtyFieldsMixin, models.Model):
     is_active = models.BooleanField()
 
     def __unicode__(self):
-        return self.nickname
+        return "%s (%s)" % (self.nickname, self.client.nickname)
 
     def save(self, *args, **kwargs):
         dirty_fields = self.get_dirty_fields()
