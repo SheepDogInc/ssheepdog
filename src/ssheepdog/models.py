@@ -36,6 +36,12 @@ class UserProfile(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return self.nickname or self.user.username
 
+    def save(self, *args, **kwargs):
+        if 'ssh_key' in self.get_dirty_fields():
+            Login.objects.filter(users___profile_cache=self).update(is_dirty=True)
+
+        super(UserProfile, self).save(*args, **kwargs)
+
 
 class Machine(DirtyFieldsMixin, models.Model):
     # XXX: A machine should have either an IP or hostname or both

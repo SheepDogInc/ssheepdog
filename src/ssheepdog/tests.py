@@ -197,7 +197,9 @@ class DirtyTests(TestCase):
         self.machine = create_machine()
         self.machine2 = create_machine()
         self.login = create_login(username="login", machine=self.machine)
+        self.login.users = [self.user, self.user2]
         self.login.is_dirty = False
+        Login.objects.update(is_dirty=False)
         self.login.save()
     
     def assertDirty(self):
@@ -252,6 +254,34 @@ class DirtyTests(TestCase):
         self.machine.nickname = False
         self.machine.save()
         self.assertClean()
+
+    def test_change_username(self):
+        """
+        Changing a username does not dirty the login
+        """
+        self.user.username = "changed username"
+        self.user.save()
+        self.assertClean()
+
+    def test_change_is_active(self):
+        """
+        Changing active status effects dirty status
+        """
+        self.user.is_active = False
+        self.user.save()
+        self.assertDirty()
+        self.login.is_dirty = False
+        self.login.save()
+
+        user = User.objects.get(pk=self.user.pk)
+        user.save()
+        assert(user.is_active == False)
+        self.assertClean()
+
+        user.is_active = True
+        user.save()
+        self.assertDirty()
+
 
 class ApplicationKeyTests(TestCase):
     def setUp(self):
