@@ -13,10 +13,16 @@ select.login_selector{
     width: 10em;
 }
 
+table .btn {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
 .sync {
 	color: #eee; 
 	font-family: arial, san-serif; 
 	font-weight: bold; 
+    height: 2px;
 }
 .sync.clean { 
     width: 58px;
