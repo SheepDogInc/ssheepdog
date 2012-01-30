@@ -68,7 +68,7 @@ def generate_new_application_key():
         models.ApplicationKey.get_latest(create_new = True)
         models.Login.objects.update(is_dirty=True)
 
-class capture_output:
+class capture_output(object):
     """
     Usage:
     with capture_output() as captured:
