@@ -102,13 +102,13 @@ table.access_view td.entry.is_allowed.active {
     background: url(/static/images/tick.png) no-repeat center;
 }
 table.access_view td.entry.active {
-    background: url(/static/images/cross.png) no-repeat;
+    background: url(/static/images/cross.png) no-repeat center;
 }
 table.access_view td.entry.is_allowed {
-    background: url(/static/images/tick-gray.png) no-repeat;
+    background: url(/static/images/tick-gray.png) no-repeat center;
 }
 table.access_view td.entry {
-    background: url(/static/images/cross-gray.png) no-repeat;
+    background: url(/static/images/cross-gray.png) no-repeat center;
 }
 
 form.logout {
