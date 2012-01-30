@@ -27,6 +27,8 @@
       return false;
     });
 
+    $('.twipsy').twipsy();
+
   });
 
 })(jQuery);
