@@ -34,25 +34,30 @@ def view_access_summary(request):
                                | Q(machine__ip__icontains=l)
                                | Q(machine__description__icontains=l))
 
+
+    # To conserve DB queries, pre load all relations as a dict
+    # {(3,4): True} means user w/ 3 can access login w/ id 4
+    rel_list = Login.users.through.objects.values("user_id", "login_id")
+    user_login_rel = dict([((x['user_id'], x['login_id']), True) for x in rel_list])
+
     for login in logins:
-        login.entries = get_user_login_info(login,users)
+        login.entries = get_user_login_info(login, users, user_login_rel)
 
     return render_to_response('view_grid.html',
         {'users': users, 'logins': logins, 'filter_form': filter_form},
         context_instance=RequestContext(request))
 
     
-def get_user_login_info(login, users):
+def get_user_login_info(login, users, user_login_rel):
     """
     Return a dict of data for each user; it's important
     that the users remain in the same order.
     """
     login_is_active = login.is_active and login.machine.is_active
-    login_users = login.users.all()
 
     info = []
     for user in users:
-        is_allowed = user in login_users
+        is_allowed = (user.pk, login.pk) in user_login_rel
         is_active =  user.is_active and login_is_active
 
         verb = "is" if is_active else "would be"
@@ -72,7 +77,6 @@ def get_user_login_info(login, users):
                                         login.username,
                                         login.machine.hostname or login.machine.ip,
                                         explanation)
-        print tooltip
         info.append({'is_active': is_active,
                      'is_allowed': is_allowed,
                      'tooltip': tooltip,

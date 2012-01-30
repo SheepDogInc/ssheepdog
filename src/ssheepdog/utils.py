@@ -39,6 +39,12 @@ class DirtyFieldsMixin(object):
             return "%s_pk" % f.name if f.rel else f.name
 
         def value(f):
+            if f.rel: # Usually the primary key is the "_id"...
+                try: 
+                    return getattr(self, f.name + "_id")
+                except AttributeError:
+                    pass
+            
             try:
                 val = getattr(self, f.name)
             except ObjectDoesNotExist: # foreign key relation not yet set
