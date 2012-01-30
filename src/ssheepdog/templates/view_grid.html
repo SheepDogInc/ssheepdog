@@ -67,16 +67,12 @@
 {% if perms.ssheepdog.can_sync %}
 <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
     {% csrf_token %}
-    <p>
-        <input class="sync_all btn" type="submit" value="Synchronize all" id="sync_form"/>
-    </p>
+    <input class="sync_all btn" type="submit" value="Synchronize all" id="sync_form"/>
 </form>
 
 <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
     {% csrf_token %}
-    <p>
     <input class="new_app_key btn" type="submit" value="Generate new application key" id="new_app_key"/>
-    </p>
 </form>
 {% endif %}
 

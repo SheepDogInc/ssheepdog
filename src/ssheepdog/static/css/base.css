@@ -1,70 +1,25 @@
-table.access_view {
-    /* font: 13.34px helvetica,arial,freesans,clean,sans-serif; */
-    /* line-height: 1.4; */
-    /* border: solid 1px black; */
-    /* clear: both; */
- }
-table,th, td
-{
-    border-collapse:collapse;
-    /* padding:4px 4px; */
-}
-table.access_view thead{
-    
-}
-table.access_view td.dirty {
-    color: red;
-}
-table.access_view td.clean {
-    color: green;
-}
 table.access_view tr.top_header {
-    color: black;
-    font-size: 16px;
-    font-weight: bold;
-    border: solid 1px black;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
-    /* background: rgb(206,220,231); /1* Old browsers *1/ */
-    /* background: -moz-linear-gradient(top,  rgb(206,220,231) 0%, rgb(89,106,114) 100%); /1* FF3.6+ *1/ */
-    /* background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgb(206,220,231)), color-stop(100%,rgb(89,106,114))); /1* Chrome,Safari4+ *1/ */
-    /* background: -webkit-linear-gradient(top,  rgb(206,220,231) 0%,rgb(89,106,114) 100%); /1* Chrome10+,Safari5.1+ *1/ */
-    /* background: -o-linear-gradient(top,  rgb(206,220,231) 0%,rgb(89,106,114) 100%); /1* Opera 11.10+ *1/ */
-    /* background: -ms-linear-gradient(top,  rgb(206,220,231) 0%,rgb(89,106,114) 100%); /1* IE10+ *1/ */
-    /* background: linear-gradient(top,  rgb(206,220,231) 0%,rgb(89,106,114) 100%); /1* W3C *1/ */
-    /* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72',GradientType=0 ); /1* IE6-9 *1/ */
+    font-size: 14px;
+}
 
+.sync_form input.sync_all.btn, .sync_form input.new_app_key.btn {
+    float: left;
+    margin-right: 15px;
 }
-.sync_form{
-    float:left;
-}
+
 select.login_selector{
-    margin:0; 
-    text-align:right; 
-    width:10em;
+    margin: 0; 
+    text-align: right; 
+    width: 10em;
 }
+
 .sync {
-	padding:0px 5px; 
-	color:#eee; 
-	font-family:arial, san-serif; 
+	color: #eee; 
+	font-family: arial, san-serif; 
 	font-weight: bold; 
-	text-decoration: none; 
-	border:solid 1px rgba(0,0,0,0.4); 
-	text-shadow: #000 1px 1px 2px; 
-	/* background:#ff0000; */ 
-	border-radius: 3px; 
-		-webkit-border-radius: 3px; 
-		-moz-border-radius: 3px;
-	box-shadow: 0px 1px 3px #000, inset 0px 0px 5px #fff; 
-		-o-box-shadow: 0px 1px 3px #000, inset 0px 0px 5px #fff; 
-		-webkit-box-shadow: 0px 1px 3px #000, inset 0px 0px 5px #fff; 
-		-moz-box-shadow: 0px 1px 3px #000, inset 0px 0px 5px #fff;
-	background-image: gradient(center bottom, #cc0000 29%, #ff0000 80%); 
-		background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.29, #cc0000), color-stop(0.80, #ff0000)); 
-		background-image: -moz-linear-gradient(center bottom, #cc0000 29%, #ff0000 80%);
 }
 .sync.clean { 
+    width: 58px;
 	background-image: gradient(center bottom, #00cc00 29%, #00ff00 80%); 
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.29, #00cc00), color-stop(0.80, #00ff00)); 
 	background-image: -moz-linear-gradient(center bottom, #00cc00 29%, #00ff00 80%);
@@ -115,17 +70,21 @@ form.logout {
     float: right;
 }
 
+/* Logs */
 div.log {
     font-size: 10px;
     font-weight: bold;
 }
+
 div.log div.stderr, div.log div.stdout {
     font-weight: normal;
     font-size: 8px;
 }
+
 div.log div.stdout {
     color: green;
 }
+
 div.log div.stderr {
     color: red;
 }
@@ -133,3 +92,11 @@ div.log div.stderr {
 form {
     margin: 0;
 }
+
+/* bootstrap overrides */
+table.access_view td,
+table.access_view th
+{
+    padding: 3px;
+}
+
