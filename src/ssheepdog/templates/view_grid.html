@@ -2,9 +2,6 @@
 {% block content %}
 
 <div class="head grid">
-  <form class="logout" action="{% url logout %}" method="get">
-    <input class="btn" type="submit" value="logout"/>
-  </form>
   <form action="{% url ssheepdog.views.view_access_summary %}" method="get">
    <ul>
       {{ filter_form }}
