@@ -8,6 +8,7 @@ amqplib==1.0.2
 anyjson==0.3.1
 celery==2.4.6
 django-celery==2.4.2
+django-debug-toolbar==0.9.4
 django-kombu==0.9.4
 django-picklefield==0.1.9
 docutils==0.8.1
