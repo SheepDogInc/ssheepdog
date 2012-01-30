@@ -1,3 +1,12 @@
+.head.grid label {
+    float:none;
+}
+table.access_view th {
+    text-align: center;
+}
+table.access_view td {
+    text-align: center;
+}
 table.access_view tr.top_header {
     font-size: 14px;
 }
