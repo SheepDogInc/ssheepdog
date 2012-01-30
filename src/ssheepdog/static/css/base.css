@@ -68,6 +68,10 @@ table.access_view tr.row1 {
 table.access_view tfoot {
     font-style: normal;
 }
+table.access_view td {
+    align: center;
+    text-align: center;
+}
 table.access_view td.entry.is_allowed.active {
     background: url(/static/images/tick.png) no-repeat center;
 }
@@ -112,6 +116,11 @@ form {
 table.access_view td,
 table.access_view th
 {
-    padding: 3px;
+    padding: 2px;
 }
-
+table.access_view td span.twipsy
+{
+    position: inherit;
+    padding: 0;
+    margin: 0;
+}
