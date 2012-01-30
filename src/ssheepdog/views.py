@@ -49,10 +49,35 @@ def get_user_login_info(login, users):
     """
     login_is_active = login.is_active and login.machine.is_active
     login_users = login.users.all()
-    return [{'is_active': user.is_active and login_is_active,
-             'is_allowed': user in login_users,
-             'user': user}
-            for user in users]
+
+    info = []
+    for user in users:
+        is_allowed = user in login_users
+        is_active =  user.is_active and login_is_active
+
+        verb = "is" if is_active else "would be"
+        adjective = "permitted to access" if is_allowed else "forbidden from"
+        explanations = []
+        if not user.is_active:
+            explanations.append("user were active")
+        if not login.is_active:
+            explanations.append("login were active")
+        if not login.machine.is_active:
+            explanations.append("machine were active")
+        if_ = " if " if is_allowed else " even if "
+        explanation = if_ + " and ".join(explanations) if explanations else ""
+
+        tooltip = "%s %s %s %s@%s%s" % (user,
+                                        verb, adjective,
+                                        login.username,
+                                        login.machine.hostname or login.machine.ip,
+                                        explanation)
+        print tooltip
+        info.append({'is_active': is_active,
+                     'is_allowed': is_allowed,
+                     'tooltip': tooltip,
+                     'user': user})
+    return info
 
 
 @permission_required('ssheepdog.can_view_access_summary')

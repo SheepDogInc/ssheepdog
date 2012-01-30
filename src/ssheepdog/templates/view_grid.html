@@ -57,7 +57,7 @@
                         For example:  class="allowed active"
                     {% endcomment %}
                     <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.is_active %}active{% endif %}">
-                        &nbsp;
+                      <span title="{{ entry.tooltip }}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     </td>
                 {% endfor %}
             </tr>

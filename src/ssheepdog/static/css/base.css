@@ -110,6 +110,7 @@ table.access_view td.entry.is_allowed {
 table.access_view td.entry {
     background: url(/static/images/cross-gray.png) no-repeat;
 }
+
 form.logout {
     float: right;
 }
