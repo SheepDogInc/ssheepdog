@@ -103,6 +103,8 @@ class Login(DirtyFieldsMixin, models.Model):
     is_dirty = models.BooleanField(default=True)
 
     class Meta:
+        ordering = ('username', 'client__nickname',)
+
         permissions = ( # Managed by South so added by data migration!
             ("can_view_access_summary", "Can view access summary"),
             ("can_sync", "Can sync login keys"),
@@ -128,7 +130,12 @@ class Login(DirtyFieldsMixin, models.Model):
                 disconnect_all()
 
     def __unicode__(self):
-        return self.username
+        if self.client:
+            return "%s@%s (%s)" % (self.username,
+                                   self.machine.hostname or self.machine.ip,
+                                   self.client)
+        else:
+            return "%s@%s" % (self.username, self.machine)
     
     def get_application_key(self):
         if self.application_key is None:

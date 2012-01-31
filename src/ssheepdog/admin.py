@@ -1,11 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, User
-from django.contrib.auth.forms import UserChangeForm
 import models
 from django.utils.translation import ugettext_lazy as _
 
 admin.site.register(models.Machine)
-admin.site.register(models.Login)
 admin.site.register(models.Client)
 
 def unregister(Model):
@@ -17,6 +15,12 @@ def unregister(Model):
 def reregister(Model, AdminModel):
     unregister(Model)
     admin.site.register(Model, AdminModel)
+
+class LoginAdmin(admin.ModelAdmin):
+    model = models.Login
+    exclude = ('application_key', 'is_dirty')
+    filter_horizontal = ('users',)
+admin.site.register(models.Login, LoginAdmin)
 
 class UserProfileInline(admin.StackedInline):
     model = models.UserProfile
