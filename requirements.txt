@@ -17,6 +17,7 @@ ordereddict==1.1
 psycopg2==2.4.4
 pycrypto==2.4.1
 python-dateutil==1.5
-python-openid==2.2.5
 ssh==1.7.11
 wsgiref==0.1.2
+-e git+git://github.com/adieu/python-openid.git#egg=python-openid
+-e git+git://github.com/jezdez/django-openid-auth.git#egg=django-openid-auth

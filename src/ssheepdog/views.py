@@ -2,10 +2,20 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from ssheepdog.models import Login
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import user_passes_test
 from ssheepdog.forms import UserProfileForm, AccessFilterForm
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
+
+
+def permission_required(perm, login_url=None, raise_exception=True):
+    def check_perms(user):
+        if user.has_perm(perm):
+            return True
+        if raise_exception:
+            raise PermissionDenied
+        return False
+    return user_passes_test(check_perms, login_url=login_url)
 
 
 @permission_required('ssheepdog.can_view_access_summary')
@@ -47,7 +57,7 @@ def view_access_summary(request):
         {'users': users, 'logins': logins, 'filter_form': filter_form},
         context_instance=RequestContext(request))
 
-    
+
 def get_user_login_info(login, users, user_login_rel):
     """
     Return a dict of data for each user; it's important
