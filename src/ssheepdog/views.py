@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from ssheepdog.models import Login
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from ssheepdog.forms import UserProfileForm, AccessFilterForm
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
@@ -18,6 +18,7 @@ def permission_required(perm, login_url=None, raise_exception=True):
     return user_passes_test(check_perms, login_url=login_url)
 
 
+@login_required
 @permission_required('ssheepdog.can_view_access_summary')
 def view_access_summary(request):
     users = (User.objects
