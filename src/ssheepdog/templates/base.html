@@ -11,7 +11,8 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-client.js"></script>
 </head>
 <body>
-    <div class="topbar" data-scrollspy="scrollspy" >
+{% block topbar %}
+  <div class="topbar" data-scrollspy="scrollspy" >
       <div class="topbar-inner">
         <div class="container">
           <a class="brand" href="#">ssheepdog</a>
@@ -26,6 +27,7 @@
         </div>
       </div>
     </div>
+{% endblock %}
 
     <div class="container">
 

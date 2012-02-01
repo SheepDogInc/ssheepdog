@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Permission denied: {{ request.user.email }}</h1>
+<p>
+You may need to let your manager know that
+you have signed in and need your permissions enabled.
+</p>
+{% endblock content %}
+
