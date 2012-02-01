@@ -23,7 +23,7 @@ FABRIC_WARNINGS = []
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
-    ssh_key = PublicKeyField()
+    ssh_key = PublicKeyField(blank=True)
 
     @property
     def formatted_public_key(self):
@@ -259,25 +259,25 @@ class ApplicationKey(models.Model):
         exponent = '%x' % (key.e, )
         if len(exponent) % 2:
             exponent = '0' + exponent
-        
+
         ssh_rsa = '00000007' + base64.b16encode('ssh-rsa')
         ssh_rsa += '%08x' % (len(exponent) / 2, )
         ssh_rsa += exponent
-        
+
         modulus = '%x' % (key.n, )
         if len(modulus) % 2:
             modulus = '0' + modulus
-        
+
         if modulus[0] in '89abcdef':
             modulus = '00' + modulus
-        
+
         ssh_rsa += '%08x' % (len(modulus) / 2, )
         ssh_rsa += modulus
-        
+
         self.public_key = 'ssh-rsa %s' % (
             base64.b64encode(base64.b16decode(ssh_rsa.upper())),
             )
-        
+
     @staticmethod
     def get_latest(create_new=False):
         if not create_new:
