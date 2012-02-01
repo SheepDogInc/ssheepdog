@@ -19,7 +19,7 @@
             <th>Machine</th>
             <th>Login</th>
             {% for user in users %}
-            <th><a class="user" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_profile.nickname }}</a></th>
+            <th><a class="user" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_nickname }}</a></th>
             {% endfor %}
         </tr>
     </thead>

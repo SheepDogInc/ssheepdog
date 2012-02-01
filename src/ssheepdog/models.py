@@ -136,7 +136,7 @@ class Login(DirtyFieldsMixin, models.Model):
                                    self.client)
         else:
             return "%s@%s" % (self.username, self.machine)
-    
+
     def get_application_key(self):
         if self.application_key is None:
             self.application_key = ApplicationKey.get_latest()

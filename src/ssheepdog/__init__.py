@@ -13,6 +13,9 @@ class User(AdminUser):
         super(User, self).__init__(*args, **kwargs)
         self._was_active = self.is_active
 
+    def get_nickname(self):
+        return self.get_profile().nickname or self.email
+
     def save(self, *args, **kwargs):
         """
         If is_active was changed, then associated Logins need to be flagged as is_dirty
@@ -21,7 +24,7 @@ class User(AdminUser):
             from models import Login
             Login.objects.filter(users=self).update(is_dirty=True)
         super(User, self).save(*args, **kwargs)
-        
+
 
 class PKey(pkey.PKey):
     __metaclass__ = monkeypatch_class
