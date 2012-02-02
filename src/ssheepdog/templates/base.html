@@ -2,86 +2,102 @@
 <html>
 <head>
     <title>ssheepdog</title>
+
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-base.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.responsive.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css" />
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.1.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap-twipsy.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap-modal.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-client.js"></script>
+
 </head>
 <body>
+
 {% block topbar %}
-  <div class="topbar" data-scrollspy="scrollspy" >
-      <div class="topbar-inner">
-        <div class="container">
+
+
+<div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
           <a class="brand" href="#">ssheepdog</a>
-          <ul class="nav">
-            <li class="active"><a href="#directions">Directions</a></li>
-            {% if request.user.is_staff %}
-            <li class="active"><a href="/admin/">Admin</a></li>
-            {% endif %}
-          </ul>
-          <ul class="nav secondary-nav">
-            <li><a href="{% url logout %}">Logout</a></li>
-          </ul>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Directions</a></li>
+                {% if request.user.is_staff %}
+                <li><a href="/admin/">Admin</a></li>
+                {% endif %}
+            </ul>
+            <p class="navbar-text pull-right"><a href="{% url logout %}">Logout</a></p>
+          </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
+
+
 {% endblock %}
 
-    <div class="container">
+    <div class="container-fluid">
 
-        <div id="main-row" class="row">
+        <div id="main-row" class="row-fluid">
             {% block content %}
             {% endblock %}
         </div>
-    </div>
-<div class="directions">
-  <h1>Directions</h1>
-  <ul>
-    <li>
-      <p>If someone should be temporarily denied access to all Logins,
-        de-select is_active for the user (in the admin)
-        and click <em>Synchronize all.</em>  This may be appropriate, for
-        example, for contract or seasonal employees.
-      </p>
-    </li>
-    <li>
-      <p>When someone permanently leaves an organization, disable or
-        delete the user and, in the case of a user who might have had
-        access to the SSHeepdog database, also click <em>Generate new application key</em>.
-      </p>
-    </li>
-    <li>
-      <p>You can also de-select is_active for a Login or a Machine if
-        you wish to prevent inadvertent updates or access to the
-        related Logins.  Access can later be re-activated on demand.
-      </p>
-    </li>
-    <li>
-      <p>You can safely click <em>Generate new application key</em> at
-      any time.  The application keeps track of which Logins it has
-      successfully upgraded to the new key.
-      </p>
-    </li>
-    <li>
-      <p>
-        It's usually safe to click <em>Synchronize all</em> at any time.  If a
-        Login fails to sync, here is a checklist of possible reasons:
-        <ol>
-          <li>The Machine is off-line.</li>
-          <li>SSH is not configured properly on the Machine.</li>
-          <li>The .ssh directory for the Login does not have the correct
-            permissions.</li>
-          <li>This application's public key has not been installed in
-            the <code>.ssh/authorized_keys</code> file in the Login account.  Copy
-            and paste the one from clicking on the  appropriate Login above.
-          </li>
-        </ol>
-      </p>
-    </li>
-  </ul>
-</div>
+
+        <div class="directions row-fluid">
+            <div class="span4">
+                <h1>Directions</h1>
+                <ul>
+                    <li>
+                    <p>If someone should be temporarily denied access to all Logins,
+                        de-select is_active for the user (in the admin)
+                        and click <em>Synchronize all.</em>  This may be appropriate, for
+                        example, for contract or seasonal employees.
+                    </p>
+                    </li>
+                    <li>
+                    <p>When someone permanently leaves an organization, disable or
+                        delete the user and, in the case of a user who might have had
+                        access to the SSHeepdog database, also click <em>Generate new application key</em>.
+                    </p>
+                    </li>
+                    <li>
+                    <p>You can also de-select is_active for a Login or a Machine if
+                        you wish to prevent inadvertent updates or access to the
+                        related Logins.  Access can later be re-activated on demand.
+                    </p>
+                    </li>
+                    <li>
+                    <p>You can safely click <em>Generate new application key</em> at
+                    any time.  The application keeps track of which Logins it has
+                    successfully upgraded to the new key.
+                    </p>
+                    </li>
+                    <li>
+                    <p>
+                        It's usually safe to click <em>Synchronize all</em> at any time.  If a
+                        Login fails to sync, here is a checklist of possible reasons:
+                        <ol>
+                        <li>The Machine is off-line.</li>
+                        <li>SSH is not configured properly on the Machine.</li>
+                        <li>The .ssh directory for the Login does not have the correct
+                            permissions.</li>
+                        <li>This application's public key has not been installed in
+                            the <code>.ssh/authorized_keys</code> file in the Login account.  Copy
+                            and paste the one from clicking on the  appropriate Login above.
+                        </li>
+                        </ol>
+                    </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div><!-- end of container -->
 </body>
 </html>

@@ -5,7 +5,6 @@
   $(function() {
 
     modal = $('#modal');
-    modal.modal();
 
     $('.primary', modal).click(function() {
       modal.modal('hide');
@@ -27,7 +26,7 @@
       return false;
     });
 
-    $('.twipsy').twipsy();
+    $('.twipsy').tooltip();
 
   });
 

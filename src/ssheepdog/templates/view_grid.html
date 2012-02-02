@@ -11,7 +11,7 @@
 </div>
 
 {% if logins and users %}
-<table class="access_view bordered-table">
+<table class="access_view table-bordered">
     <thead>
         <tr class="top_header">
             <th></th>
@@ -35,13 +35,13 @@
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
-                            <input class="btn primary" type="submit" value="sync" id="sync_form"/>
+                            <input class="btn" type="submit" value="sync" id="sync_form"/>
                         </form>
                         {% else %}
-                        <input class="btn primary" type="submit" value="        "> 
+                        <input class="btn" type="submit" value="        "> 
                         {% endif %}
                     {% else %}
-                    <input class="btn success" type="submit" value="        "> 
+                    <input class=".btn-success" type="submit" value="        "> 
                     {% endif %}
                 </td>
                 <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>
