@@ -93,7 +93,6 @@ class LoginLog(models.Model):
     actor = models.ForeignKey(User, null=True)
     class Meta:
         ordering = ['-date']
-    
 
 
 class Login(DirtyFieldsMixin, models.Model):
