@@ -1,8 +1,13 @@
-#main-row {
+form.filter {
     margin-top: 50px;
 }
 
-#login_form ul {
+form.filter ul li {
+    margin-right: 10px;
+    float: left;
+}
+
+form ul {
     list-style: none;
     margin-left: 0;
 }
@@ -18,6 +23,7 @@ a.admin {
 .sync_form input.sync_all.btn, .sync_form input.new_app_key.btn {
     float: left;
     margin-right: 15px;
+    margin-top: 15px;
 }
 
 select.login_selector{
@@ -26,11 +32,15 @@ select.login_selector{
     width: 10em;
 }
 
-table .btn {
-    padding-top: 2px;
-    padding-bottom: 2px;
+table .btn, table .btn-success, .btn-primary {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    width: 100%;
 }
 
+table.access_view {
+    clear: both;
+}
 table.access_view th, table.access_view td {
     text-align: center;
     padding: 2px;

@@ -2,10 +2,10 @@
 {% block content %}
 
 <div class="head grid">
-  <form action="{% url ssheepdog.views.view_access_summary %}" method="get">
+  <form class="filter" action="{% url ssheepdog.views.view_access_summary %}" method="get">
    <ul>
-      {{ filter_form }}
-      <input class="btn" type="submit" value="filter"/>
+      {{ filter_form.as_ul }}
+      <li><label>&nbsp;</label><input class="btn" type="submit" value="filter"/></li>
     </ul>
   </form>
 </div>
@@ -35,13 +35,13 @@
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
-                            <input class="btn" type="submit" value="sync" id="sync_form"/>
+                            <input class="btn btn-primary" type="submit" value="sync" />
                         </form>
                         {% else %}
-                        <input class="btn" type="submit" value="        "> 
+                        <input class="btn-primary" type="submit" value="       ">
                         {% endif %}
                     {% else %}
-                    <input class=".btn-success" type="submit" value="        "> 
+                    <input class="btn-success" type="submit" value="       ">
                     {% endif %}
                 </td>
                 <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>
@@ -54,7 +54,7 @@
                         For example:  class="allowed active"
                     {% endcomment %}
                     <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.is_active %}active{% endif %}">
-                      <span class="twipsy" rel="twipsy" title="{{ entry.tooltip }}">&nbsp;</span>
+                      <span class="twipsy" title="{{ entry.tooltip }}">&nbsp;</span>
                     </td>
                 {% endfor %}
             </tr>
@@ -67,12 +67,12 @@
 {% if perms.ssheepdog.can_sync %}
 <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
     {% csrf_token %}
-    <input class="sync_all btn" type="submit" value="Synchronize all" id="sync_form"/>
+    <input class="sync_all btn  btn-primary" type="submit" value="Synchronize all" />
 </form>
 
 <form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
     {% csrf_token %}
-    <input class="new_app_key btn" type="submit" value="Generate new application key" id="new_app_key"/>
+    <input class="new_app_key btn btn-primary" type="submit" value="Generate new application key" />
 </form>
 {% endif %}
 
