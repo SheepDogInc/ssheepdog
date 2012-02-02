@@ -46,16 +46,16 @@ table.access_view tr.top_header {
     font-size: 14px;
 }
 table.access_view td.entry.is_allowed.active {
-    background: url(/static/images/tick.png) no-repeat center;
+    background: url(../images/tick.png) no-repeat center;
 }
 table.access_view td.entry.active {
-    background: url(/static/images/cross.png) no-repeat center;
+    background: url(../images/cross.png) no-repeat center;
 }
 table.access_view td.entry.is_allowed {
-    background: url(/static/images/tick-gray.png) no-repeat center;
+    background: url(../images/tick-gray.png) no-repeat center;
 }
 table.access_view td.entry {
-    background: url(/static/images/cross-gray.png) no-repeat center;
+    background: url(../images/cross-gray.png) no-repeat center;
 }
 
 form.logout {
