@@ -24,3 +24,10 @@ OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=%s' % '
 LOGIN_URL = '/openid/login/'
 LOGIN_REDIRECT_URL = '/'
 
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_QUERYSTRING_AUTH = False
+AWS_STORAGE_BUCKET_NAME = 'ssheepdog'
+AWS_ACCESS_KEY_ID = os.environ['AWS_KEY']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET']
+
+STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
