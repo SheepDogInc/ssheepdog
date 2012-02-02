@@ -52,6 +52,9 @@ table.access_view td span.twipsy
     margin: 0;
 }
 
+td.entry span:hover {
+    cursor:default;
+}
 table.access_view tr.top_header {
     font-size: 14px;
 }
