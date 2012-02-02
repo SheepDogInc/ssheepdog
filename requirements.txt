@@ -21,3 +21,6 @@ ssh==1.7.11
 wsgiref==0.1.2
 -e git+git://github.com/adieu/python-openid.git#egg=python-openid
 -e git+git://github.com/jezdez/django-openid-auth.git#egg=django-openid-auth
+gunicorn
+django-storages
+boto
