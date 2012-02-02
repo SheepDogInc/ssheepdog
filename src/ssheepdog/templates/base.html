@@ -18,6 +18,9 @@
           <a class="brand" href="#">ssheepdog</a>
           <ul class="nav">
             <li class="active"><a href="#directions">Directions</a></li>
+            {% if request.user.is_staff %}
+            <li class="active"><a href="/admin/">Admin</a></li>
+            {% endif %}
           </ul>
           <ul class="nav secondary-nav">
             <li><a href="{% url logout %}">Logout</a></li>
