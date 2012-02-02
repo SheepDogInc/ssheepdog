@@ -1,4 +1,8 @@
 {% block content %}
+{% if perms.can_change_user %}
+<a class="admin" href="{{ user.get_change_url }}">edit</a>
+{% endif %}
+
 {% if user.get_full_name %}
 <div class="fullName"> Full Name: {{ user.get_full_name }} </div>
 {% endif %}
@@ -9,6 +13,7 @@
     <div>Nickname: {{user.get_profile.nickname}}</div>
 </div>
 <div class="active"> Active: {{ user.is_active }} </div>
+
 <div class="ssh_div">
 <form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
     {{form.as_p}}

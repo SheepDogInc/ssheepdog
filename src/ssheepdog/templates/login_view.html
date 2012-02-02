@@ -1,17 +1,29 @@
 {% block content %}
+{% if perms.can_change_login %}
+<a class="admin" href="{{login.get_change_url }}">edit login</a>
+{% endif %}
+
 <div class="username_div">
     <div>Username: {{ login.username }}</div>
 </div>
 <div class="machine_div">
-    <div>Machine: {{ login.machine }}</div>
+    <div>Machine: {{ login.machine }}
+      {% if perms.can_change_machine %}
+      <a class="admin" href="{{login.machine.get_change_url }}">edit machine</a>
+      {% endif %}
+   </div>
 </div>
 <div class="client_div">
-    <div>Client:   
+    <div>Client:
         {% if login.client %}
-            {{ login.client }}
-        {% else %}
+            {{ login.client }} {% if perms.can_change_machine %}
+                               <a class="admin" href="{{login.client.get_change_url }}">edit client</a>
+                               {% endif %}
+       {% else %}{% if login.machine.client %} {% if perms.can_change_machine %}
+                                               <a class="admin" href="{{login.machine.client.get_change_url }}">edit client</a>
+                                               {% endif %}
             {{ login.machine.client }}
-        {% endif %}
+        {% endif %}{% endif %}
     </div>
     <div>Description:</div><textarea> {{ login.client.description }}</textarea>
 </div></br>

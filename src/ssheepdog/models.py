@@ -63,6 +63,9 @@ class Machine(DirtyFieldsMixin, models.Model):
             parenthetical = self.hostname or self.ip
         return "%s (%s)" % (self.nickname, parenthetical)
 
+    def get_change_url(self):
+        return reverse('admin:ssheepdog_machine_change', args=(self.pk,))
+
     def save(self, *args, **kwargs):
         dirty_fields = self.get_dirty_fields()
 
@@ -227,6 +230,10 @@ class Login(DirtyFieldsMixin, models.Model):
 class Client(models.Model):
     nickname = models.CharField(max_length=256)
     description = models.TextField()
+
+    def get_change_url(self):
+        return reverse('admin:ssheepdog_client_change', args=(self.pk,))
+
     def __unicode__(self):
         return self.nickname
 
