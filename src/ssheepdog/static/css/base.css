@@ -5,15 +5,6 @@ a.admin {
 .head.grid label {
     float: none;
 }
-table.access_view th {
-    text-align: center;
-}
-table.access_view td {
-    text-align: center;
-}
-table.access_view tr.top_header {
-    font-size: 14px;
-}
 
 .sync_form input.sync_all.btn, .sync_form input.new_app_key.btn {
     float: left;
@@ -31,50 +22,19 @@ table .btn {
     padding-bottom: 2px;
 }
 
-.sync {
-	color: #eee;
-	font-family: arial, san-serif;
-	font-weight: bold;
-    height: 2px;
-}
-.sync.clean {
-    width: 58px;
-	background-image: gradient(center bottom, #00cc00 29%, #00ff00 80%);
-	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.29, #00cc00), color-stop(0.80, #00ff00));
-	background-image: -moz-linear-gradient(center bottom, #00cc00 29%, #00ff00 80%);
-}
-
-.red-button:hover {
-	color:#eee;
-	background:#ff0000;
-}
-
-.red-button:active {
-	color:#eee;
-	/* background:#ee0000; */
-	box-shadow: 0px 1px 1px #000, inset 0px 0px 5px #fff;
-		-o-box-shadow: 0px 1px 1px #000, inset 0px 0px 5px #fff;
-		-webkit-box-shadow: 0px 1px 1px #000, inset 0px 0px 5px #fff;
-		-moz-box-shadow: 0px 1px 1px #000, inset 0px 0px 5px #fff;
-	transform: scale(0.95, 0.95);
-		-moz-transform: scale(0.95, 0.95);
-		-o-transform: scale(0.95, 0.95);
-		-webkit-transform: scale(0.95, 0.95);
-}
-table.access_view tr.row2 {
-    /* background-color: rgb(200, 200, 900); */
-}
-
-table.access_view tr.row1 {
-    /* background-color: #ffffff; */
-}
-
-table.access_view tfoot {
-    font-style: normal;
-}
-table.access_view td {
-    align: center;
+table.access_view th, table.access_view td {
     text-align: center;
+    padding: 2px;
+}
+table.access_view td span.twipsy
+{
+    position: inherit;
+    padding: 0;
+    margin: 0;
+}
+
+table.access_view tr.top_header {
+    font-size: 14px;
 }
 table.access_view td.entry.is_allowed.active {
     background: url(/static/images/tick.png) no-repeat center;
@@ -116,18 +76,6 @@ form {
     margin: 0;
 }
 
-/* bootstrap overrides */
-table.access_view td,
-table.access_view th
-{
-    padding: 2px;
-}
-table.access_view td span.twipsy
-{
-    position: inherit;
-    padding: 0;
-    margin: 0;
-}
 div.directions {
     max-width: 500px;
     margin: 20px;
