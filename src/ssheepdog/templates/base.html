@@ -38,44 +38,50 @@
         </div>
     </div>
 <div class="directions">
-<h1>Directions</h1>
-<ul>
-  <li>
-    <p>When someone is temporarily denied access to all machines,
-      de-select is_active for the user (in the admin)
-      and <em>Synchronize all.</em>  This may be appropriate, for
-      example, for contract or seasonal employees.
-    </p>
-  </li>
-  <li>
-    <p>When someone permanently leaves an organization, disable or
-      delete the user and generate a new application key.  This is
-      especially important if the person who left is a developer
-      who had access to the SSHeepdog database.
-    </p>
-  </li>
-  <li>
-    <p>You can also de-select is_active for a login or a machine if
-    you wish to prevent inadvertent updates or access to the machine.
-    Access can later be re-activated on demand.
-    </p>
-  </li>
- <li>
-    <p>
-      It's usually safe to click <em>Synchronize all</em> at any time.  If a
-      machine fails sync, here is a checklist of possible reasons:
-      <ol>
-        <li>The machine is taken off-line</li>
-        <li>SSH is not configured properly on the machine</li>
-        <li>The .ssh directory for the login does not have the correct
-          permissions.</li>
-        <li>This application's public key has not been installed on
-          the machine.  Copy and paste the one from clicking on the
-        appropriate login above.</li>
-      </ol>
-   </p>
-  </li>
-</ul>
+  <h1>Directions</h1>
+  <ul>
+    <li>
+      <p>If someone should be temporarily denied access to all Logins,
+        de-select is_active for the user (in the admin)
+        and click <em>Synchronize all.</em>  This may be appropriate, for
+        example, for contract or seasonal employees.
+      </p>
+    </li>
+    <li>
+      <p>When someone permanently leaves an organization, disable or
+        delete the user and, in the case of a user who might have had
+        access to the SSHeepdog database, also click <em>Generate new application key</em>.
+      </p>
+    </li>
+    <li>
+      <p>You can also de-select is_active for a Login or a Machine if
+        you wish to prevent inadvertent updates or access to the
+        related Logins.  Access can later be re-activated on demand.
+      </p>
+    </li>
+    <li>
+      <p>You can safely click <em>Generate new application key</em> at
+      any time.  The application keeps track of which Logins it has
+      successfully upgraded to the new key.
+      </p>
+    </li>
+    <li>
+      <p>
+        It's usually safe to click <em>Synchronize all</em> at any time.  If a
+        Login fails to sync, here is a checklist of possible reasons:
+        <ol>
+          <li>The Machine is off-line.</li>
+          <li>SSH is not configured properly on the Machine.</li>
+          <li>The .ssh directory for the Login does not have the correct
+            permissions.</li>
+          <li>This application's public key has not been installed in
+            the <code>.ssh/authorized_keys</code> file in the Login account.  Copy
+            and paste the one from clicking on the  appropriate Login above.
+          </li>
+        </ol>
+      </p>
+    </li>
+  </ul>
 </div>
 </body>
 </html>
