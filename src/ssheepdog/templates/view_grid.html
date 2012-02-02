@@ -54,7 +54,13 @@
                         For example:  class="allowed active"
                     {% endcomment %}
                     <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.is_active %}active{% endif %}">
+                      {% if perms.can_change_login %}
+                      <a class="login" href="{% url ssheepdog.views.change_access entry.action entry.user.pk login.pk %}">
+                        <span class="twipsy" title="{{ entry.tooltip }}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      </a>
+                     {% else %}
                       <span class="twipsy" title="{{ entry.tooltip }}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      {% endif %}
                     </td>
                 {% endfor %}
             </tr>

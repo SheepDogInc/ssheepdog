@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from ssheepdog.forms import UserProfileForm, AccessFilterForm
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
-
+from django.forms import Form as EmptyForm
 
 def permission_required(perm, login_url=None, raise_exception=True):
     def check_perms(user):
@@ -90,6 +90,7 @@ def get_user_login_info(login, users, user_login_rel):
                                         explanation)
         info.append({'is_active': is_active,
                      'is_allowed': is_allowed,
+                     'action': 'deny' if is_allowed else 'permit',
                      'tooltip': tooltip,
                      'user': user})
     return info
@@ -140,3 +141,23 @@ def generate_new_application_key(request):
     from ssheepdog.utils import generate_new_application_key
     generate_new_application_key()
     return redirect('ssheepdog.views.view_access_summary')
+
+@permission_required('admin.can_change_login')
+def change_access(request, action, user_pk, login_pk):
+    user = User.objects.select_related('_profile_cache').get(pk=user_pk)
+    login = Login.objects.get(pk=login_pk)
+
+    if request.method == 'POST':
+        form = EmptyForm(request.POST) # Using empty form just for CSFR
+        if form.is_valid():
+            if action == 'permit':
+                login.users.add(user)
+            elif action == 'deny':
+                login.users.remove(user)
+            return redirect('ssheepdog.views.view_access_summary')
+    else:
+        form = EmptyForm()
+    return render_to_response('confirm_toggle.html',
+                              {'user': user, 'form': form,
+                               'login': login, 'action': action},
+                              context_instance=RequestContext(request))

@@ -52,6 +52,9 @@ table.access_view td span.twipsy
     margin: 0;
 }
 
+td.entry a:hover {
+    text-decoration: none;
+}
 td.entry span:hover {
     cursor:default;
 }
