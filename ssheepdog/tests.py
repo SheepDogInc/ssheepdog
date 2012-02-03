@@ -170,7 +170,7 @@ class PushKeyTests(TestCase):
         self.assertFalse(key_present(self.user, self.login))
 
     def test_machine_login_inactive_user_active(self):
-        self.login.users = [self.user] 
+        self.login.users = [self.user]
         self.machine.is_active = False
         self.login.is_active = False
         self.machine.save()
@@ -178,7 +178,7 @@ class PushKeyTests(TestCase):
         self.assertFalse(key_present(self.user, self.login))
 
     def test_two_users(self):
-        self.login.users = [self.user, self.user2] 
+        self.login.users = [self.user, self.user2]
         self.login.save()
         self.assertTrue(key_present(self.user, self.login))
         self.assertTrue(key_present(self.user2, self.login))
@@ -201,7 +201,7 @@ class DirtyTests(TestCase):
         self.login.is_dirty = False
         Login.objects.update(is_dirty=False)
         self.login.save()
-    
+
     def assertDirty(self):
         login = Login.objects.get()
         self.assertTrue(login.is_dirty)

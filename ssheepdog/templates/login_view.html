@@ -41,12 +41,12 @@
   Last activity {{ log.date }}<br/>{{ log.message }}
   {% if log.stderr %}
   <div class="stderr">
-    {{ log.stderr }}
+    {{ log.stderr|linebreaks }}
   </div>
   {% endif %}
   {% if log.stdout %}
   <div class="stdout">
-    {{ log.stdout }}
+    {{ log.stdout|linebreaks }}
   </div>
   {% endif %}
 </div>

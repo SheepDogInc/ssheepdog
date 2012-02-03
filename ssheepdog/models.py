@@ -19,7 +19,6 @@ KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
 ALL_FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 FABRIC_WARNINGS = []
 
-
 class UserProfile(DirtyFieldsMixin, models.Model):
     nickname = models.CharField(max_length=256)
     user = models.OneToOneField(User, primary_key=True, related_name='_profile_cache')
@@ -27,8 +26,10 @@ class UserProfile(DirtyFieldsMixin, models.Model):
 
     @property
     def formatted_public_key(self):
-        return "%s %s" % (" ".join(self.ssh_key.split()[:2]),
-                          self.user.email or self.user.username)
+        name = self.user.get_full_name()
+        return "## %s%s\n%s" % (self.user.email or self.user.username,
+                                " (%s)" % name if name else "",
+                                self.ssh_key)
 
     def __str__(self):
         return self.nickname
@@ -168,21 +169,20 @@ class Login(DirtyFieldsMixin, models.Model):
         env.key_filename = private_key or ApplicationKey.get_latest().private_key
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
-                                        mach.port)    
+                                        mach.port)
         try:
             with capture_output() as captured:
                 run(command)
             return True, captured
         except SystemExit:
             return False, captured
-                                           
 
     def get_authorized_keys(self):
         """
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [ApplicationKey.get_latest().formatted_public_key] 
+        keys = [ApplicationKey.get_latest().formatted_public_key]
         if self.is_active and self.machine.is_active:
             for user in (self.users
                          .filter(is_active = True)
@@ -192,7 +192,7 @@ class Login(DirtyFieldsMixin, models.Model):
 
     def sync(self, actor=None):
         """
-        Updates the authorized_keys file on the machine attached to this login 
+        Updates the authorized_keys file on the machine attached to this login
         adding or deleting users public keys
 
         Returns True if successfully changed the authorized files and False if
@@ -202,7 +202,9 @@ class Login(DirtyFieldsMixin, models.Model):
             # No update required (either impossible or not needed)
             return None
         formatted_keys = "\n\n".join(self.get_authorized_keys())
-        success, output = self.run('echo "%s" > ~/.ssh/authorized_keys' % formatted_keys,
+        # Switch back and forth between ' and "" to quote '
+        formatted_keys = formatted_keys.replace("'", "'\"'\"'")
+        success, output = self.run("echo '%s' > ~/.ssh/authorized_keys" % formatted_keys,
                                    self.get_application_key().private_key)
 
         message="%successful %s" % ("S" if success else "Uns",
@@ -219,7 +221,7 @@ class Login(DirtyFieldsMixin, models.Model):
 
         if success:
             self.is_dirty = False
-            self.application_key = ApplicationKey.get_latest() 
+            self.application_key = ApplicationKey.get_latest()
             self.save()
             return True
         else:
@@ -321,7 +323,7 @@ m2m_changed.connect(user_login_changed, sender=Login.users.through)
 
 def force_one_app_key(app, **kwargs):
     if app == 'ssheepdog':
-        ApplicationKey.get_latest()         
+        ApplicationKey.get_latest()
 
 post_migrate.connect(force_one_app_key)
 
