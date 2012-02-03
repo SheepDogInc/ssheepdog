@@ -8,8 +8,33 @@ appropriate servers.
 
 **Note**: This is very much alpha software.
 
-`ssheepdog` is a django app and it's contained in the `src/` directory. You
-should be able to run it locally without much trouble.
+Development
+-----------
+
+ssheepdog is distributed as a pluggable django app. The meat of the application
+is contained in the `ssheepdog` directory. The `src` directory contains a
+django project that uses the app.
+
+When you are developing, you should install ssheepdog into your virtual
+environment with the following command:
+
+    $ python setup.py develop
+
+This will create a symlink between the source and the environment's site
+packages. Once the link is created, you can edit the source code in
+`ssheepdog/` as usual.
+
+Installation
+------------
+
+To install the latest version, run:
+
+    $ pip install -e git+git://github.com/SheepDogInc/ssheepdog.git@dev#egg=django-ssheepdog
+
+Then, add `ssheepdog` to your `INSTALLED_APPS` and add the `ssheepdog.urls` to
+your project's urls.
+
+The project isn't on PyPI yet.
 
 Documentation
 -------------
