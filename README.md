@@ -1,7 +1,7 @@
-ssheepdog
-=========
+django-ssheepdog
+================
 
-ssheepdog is a public ssh key management tool for teams of programmers.
+django-ssheepdog is a public ssh key management tool for teams of programmers.
 Different people need different privileges to different servers. Ssheepdog
 allows you to specify these relationships and then sync the keys to the
 appropriate servers.
@@ -11,9 +11,9 @@ appropriate servers.
 Development
 -----------
 
-ssheepdog is distributed as a pluggable django app. The meat of the application
-is contained in the `ssheepdog` directory. The `src` directory contains a
-django project that uses the app.
+django-ssheepdog is distributed as a pluggable django app. The meat of the
+application is contained in the `ssheepdog` directory. The `src` directory
+contains a django project that uses the app.
 
 When you are developing, you should install ssheepdog into your virtual
 environment with the following command:
@@ -29,7 +29,7 @@ Installation
 
 To install the latest version, run:
 
-    $ pip install -e git+git://github.com/SheepDogInc/ssheepdog.git@dev#egg=django-ssheepdog
+    $ pip install -e git+git://github.com/sheepdoginc/django-ssheepdog.git@dev#egg=django-ssheepdog
 
 Then, add `ssheepdog` to your `INSTALLED_APPS` and add the `ssheepdog.urls` to
 your project's urls.

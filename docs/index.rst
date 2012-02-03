@@ -3,22 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ssheepdog's documentation!
-=====================================
-ssheepdog is a public ssh key management tool for teams of programmers.
-Different people need different privileges to different servers. Ssheepdog
-allows you to specify these relationships and then sync the keys to the
-appropriate servers.
+django-ssheepdog
+================
 
-ssheepdog is a django app and it's contained in the ``src/`` directory. You
-should be able to run it locally without much trouble.
+django-ssheepdog is a public ssh key management tool for teams of programmers.
+Different people need different privileges to different servers.
+django-ssheepdog allows you to specify these relationships and then sync the
+keys to the appropriate servers.
 
-ssheepdog is developed and maintained by `SheepDogInc`_, based in Halifax,
-Canada.
+django-ssheepdog is developed and maintained by `SheepDogInc`_, based in
+Halifax, Canada.
 
 .. warning::
 
-    This is alpha software. Please proceed with caution.
+    This is beta software. Please proceed with caution.
 
 Contents:
 
