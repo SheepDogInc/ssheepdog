@@ -87,7 +87,7 @@ class VagrantTests(TestCase):
     @flag_test('requires_server')
     def reset_vagrant(self):
         with settings(hide('everything', 'status')):
-            env.key_filename = local('vagrant ssh_config | grep IdentityFile',
+            env.key_filename = local('vagrant ssh-config | grep IdentityFile',
                                      capture=True).split()[1]
             env.host_string = 'vagrant@127.0.0.1:2222'
             for u in ['login']:
