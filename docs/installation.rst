@@ -1,23 +1,25 @@
 Installation
 ============
 
-Ssheepdog doesn't yet come as a reusable Django app, so we have provided a
-starter Django project for you.
+* Install django-ssheepdog with pip ::
 
-::
+    $ pip install -e git+git://github.com/sheepdoginc/django-ssheepdog.git@dev#egg=django-ssheepdog
 
-    $ git clone git://github.com/SheepDogInc/ssheepdog.git
-    $ cd ssheepdog
-    $ pip install -r requirements.txt
-    $ cd src
-    $ python manage.py syncdb
-    $ python manage.py migrate
-    $ python manage.py runserver
+* Add ``ssheepdog`` to your ``INSTALLED_APPS`` setting ::
 
-And the application will be running on ``http://localhost:8000``.
+    INSTALLED_APPS = (
+        # other apps
+        'ssheepdog',
+    )
 
-.. note:: We **strongly** recommend using `virtualenv`_ when installing
-    ssheepdog.
+* Add django-ssheepdog urls to your project's ``urls.py`` ::
+
+    urlpatterns = patterns('',
+        url('^ssheepdog/', include('ssheepdog.urls')),
+    )
+
+* Sync and migrate your database
+
 
 Celery tasks
 ------------
