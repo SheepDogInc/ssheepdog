@@ -329,22 +329,30 @@ class PublicKeyFieldTests(TestCase):
                   "ssh-rsa %s comment" % self.key)
 
     def test_whitespace_ok(self):
-        self.good("\n  ssh-rsa  \n%s\ncomment  " % self.key,
+        self.good("  \n\n  ssh-rsa  %s comment  " % self.key,
                   "ssh-rsa %s comment" % self.key)
 
+    def test_two_keys(self):
+        self.good("ssh-rsa %s row1\nssh-rsa %s row1" % (self.key, self.key),
+                  "ssh-rsa %s row1\nssh-rsa %s row1" % (self.key, self.key))
+
+    def test_two_keys_with_whitespace(self):
+        self.good("\nssh-rsa %s row1\n\nssh-rsa  %s  row1\n" % (self.key, self.key),
+                  "ssh-rsa %s row1\nssh-rsa %s row1" % (self.key, self.key))
+
+
     def test_comment_with_whitespace(self):
-        self.good("\n  ssh-rsa  \n%s\ncomment  comment2  " % self.key,
+        self.good("  \n\n  ssh-rsa  %s comment  comment2  " % self.key,
                   "ssh-rsa %s comment comment2" % self.key)
 
     def test_no_comment(self):
-        self.good("ssh-rsa %s" % self.key,
-                  "ssh-rsa %s" % self.key)
+        self.good("ssh-rsa %s" % self.key, "ssh-rsa %s" % self.key)
 
     def test_long_enough(self): # This isn't really an ssh key, but it will pass the weak test
-        self.good("\n  ssh-rsa  \n%s\ncomment  " % self.key[0:104])
+        self.good("ssh-rsa %s comment" % self.key[0:104])
 
     def test_too_short(self):
-        self.bad("\n  ssh-rsa  \n%s\ncomment  " % self.key[0:96])
+        self.bad("ssh-rsa %s comment" % self.key[0:96])
 
     def test_not_base64(self): # This isn't really an ssh key, but it will pass the weak test
         self.bad("ssh-rsa %s comment" % self.key[0:97])
