@@ -10,6 +10,8 @@ setup(
     install_requires=[
         'django-celery',
         'django-kombu',
+        'south',
+        'ssh'
     ],
     description=description,
     long_description=long_desc,
