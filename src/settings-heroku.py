@@ -1,7 +1,7 @@
 from settings import INSTALLED_APPS as INSTALLED_APPS_
 from settings import *
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # OpenID settings
