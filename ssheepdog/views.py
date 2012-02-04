@@ -146,7 +146,7 @@ def generate_new_application_key(request):
     generate_new_application_key()
     return redirect('ssheepdog.views.view_access_summary')
 
-@permission_required('admin.can_change_login')
+@permission_required('ssheepdog.change_login')
 def change_access(request, action, user_pk, login_pk):
     user = User.objects.select_related('_profile_cache').get(pk=user_pk)
     login = Login.objects.get(pk=login_pk)

@@ -1,5 +1,5 @@
 {% block content %}
-{% if perms.can_change_login %}
+{% if perms.change_login %}
 <a class="admin" href="{{login.get_change_url }}">edit login</a>
 {% endif %}
 
