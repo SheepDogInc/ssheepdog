@@ -306,9 +306,9 @@ class ApplicationKeyTests(TestCase):
 
     def test_when_latest_key_differs_from_login_key(self):
         previous = ApplicationKey.get_latest()
-        self.assertTrue(previous.formatted_public_key in self.login.get_authorized_keys())
+        self.assertTrue(previous.formatted_public_key in "\n".join(self.login.get_authorized_keys()))
         latest = ApplicationKey.get_latest(create_new=True)
-        keys = self.login.get_authorized_keys()
+        keys = "\n".join(self.login.get_authorized_keys())
         self.assertFalse(previous.formatted_public_key in keys)
         self.assertTrue(latest.formatted_public_key in keys)
 

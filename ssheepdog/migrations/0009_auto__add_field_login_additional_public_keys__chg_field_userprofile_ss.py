@@ -1,25 +1,30 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
-from ssheepdog.utils import add_permission
-PERMISSIONS = ( # Managed by South so added by data migration!
-    ("can_view_access_summary", "Can view access summary"),
-    ("can_sync", "Can sync login keys"),
-    ("can_edit_own_public_key", "Can edit one's own public key"),
-    )
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        ct, created = orm['contenttypes.ContentType'].objects.get_or_create(
-            model='login', app_label='ssheepdog')
-        for codename, name in PERMISSIONS:
-            add_permission(orm, codename, name)
+        # Adding field 'Login.additional_public_keys'
+        db.add_column('ssheepdog_login', 'additional_public_keys', self.gf('ssheepdog.fields.PublicKeyField')(default='', blank=True), keep_default=False)
+
+        # Changing field 'UserProfile.ssh_key'
+        db.alter_column('ssheepdog_userprofile', 'ssh_key', self.gf('ssheepdog.fields.PublicKeyField')(blank=True))
+
+        # Delete permission which was unintionally injected by previous migration
+        orm['auth.Permission'].objects.filter(name='Verbose Name').delete()
+
 
     def backwards(self, orm):
-        pass
+
+        # Deleting field 'Login.additional_public_keys'
+        db.delete_column('ssheepdog_login', 'additional_public_keys')
+
+        # Changing field 'UserProfile.ssh_key'
+        db.alter_column('ssheepdog_userprofile', 'ssh_key', self.gf('ssheepdog.fields.PublicKeyField')())
+
 
     models = {
         'auth.group': {
@@ -72,6 +77,7 @@ class Migration(DataMigration):
         },
         'ssheepdog.login': {
             'Meta': {'object_name': 'Login'},
+            'additional_public_keys': ('ssheepdog.fields.PublicKeyField', [], {'blank': 'True'}),
             'application_key': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ssheepdog.ApplicationKey']", 'null': 'True'}),
             'client': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ssheepdog.Client']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -106,9 +112,9 @@ class Migration(DataMigration):
         'ssheepdog.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'nickname': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'ssh_key': ('ssheepdog.fields.PublicKeyField', [], {}),
+            'ssh_key': ('ssheepdog.fields.PublicKeyField', [], {'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'_profile_cache'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['auth.User']"})
         }
     }
-    
+
     complete_apps = ['ssheepdog']

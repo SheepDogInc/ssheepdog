@@ -12,6 +12,7 @@ from south.signals import post_migrate
 from south.modelsinspector import add_introspection_rules
 from Crypto.PublicKey import RSA
 from ssheepdog.fields import PublicKeyField
+from django.utils.translation import ugettext_lazy as _
 add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
@@ -104,6 +105,9 @@ class Login(DirtyFieldsMixin, models.Model):
     application_key = models.ForeignKey('ApplicationKey', null=True)
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
+    additional_public_keys = PublicKeyField(blank=True,
+        help_text=_("These are public keys which will be pushed to the login"
+                    " in addition to user keys."))
 
     class Meta:
         ordering = ('username', 'client__nickname',)
@@ -182,8 +186,16 @@ class Login(DirtyFieldsMixin, models.Model):
         Return a list of authorized keys strings which should be deployed
         to the machine.
         """
-        keys = [ApplicationKey.get_latest().formatted_public_key]
+        keys = ["%s\n%s" %
+                ("######################################################\n"
+                 "### This public keys file is managed by ssheepdog. ###\n"
+                 "### Changes made manually will be overwritten.     ###\n"
+                 "######################################################",
+                 ApplicationKey.get_latest().formatted_public_key)]
         if self.is_active and self.machine.is_active:
+            if self.additional_public_keys:
+                keys.append("## Additional keys specified in Login\n%s"
+                            % self.additional_public_keys)
             for user in (self.users
                          .filter(is_active = True)
                          .select_related('_profile_cache')):
