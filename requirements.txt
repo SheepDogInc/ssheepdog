@@ -24,3 +24,5 @@ wsgiref==0.1.2
 gunicorn
 django-storages
 boto
+-e git+git://github.com:SheepDogInc/django-ssheepdog.git#egg=django-ssheepdog
+
