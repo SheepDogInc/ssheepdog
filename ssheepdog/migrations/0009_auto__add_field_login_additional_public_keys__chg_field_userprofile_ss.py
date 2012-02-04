@@ -3,6 +3,12 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from ssheepdog.utils import add_permission
+
+NEW_PERMISSIONS = ( # Managed by South so added by data migration!
+    ("can_view_all_users", "Can view other users"),
+    ("can_view_all_logins", "Can view other's logins"),
+    )
 
 class Migration(SchemaMigration):
 
@@ -16,6 +22,10 @@ class Migration(SchemaMigration):
         # Delete permission which was unintionally injected by previous migration
         orm['auth.Permission'].objects.filter(name='Verbose Name').delete()
 
+        ct, created = orm['contenttypes.ContentType'].objects.get_or_create(
+            model='login', app_label='ssheepdog')
+        for codename, name in NEW_PERMISSIONS:
+            add_permission(orm, codename, name)
 
     def backwards(self, orm):
 

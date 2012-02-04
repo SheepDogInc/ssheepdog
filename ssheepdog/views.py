@@ -24,9 +24,13 @@ def view_access_summary(request):
     users = (User.objects
              .select_related('_profile_cache')
              .order_by('_profile_cache__nickname'))
+    if not request.user.has_perm("ssheepdog.can_view_all_users"):
+        users = users.filter(pk=request.user.pk)
     logins = (Login.objects
               .select_related('client', 'machine')
               .order_by('client__nickname', 'machine__nickname', 'username'))
+    if not request.user.has_perm("ssheepdog.can_view_all_logins"):
+        logins = logins.filter(users=request.user)
     filter_form = AccessFilterForm(request.GET)
     u, l = filter_form.data.get('user'), filter_form.data.get('login')
     if u:

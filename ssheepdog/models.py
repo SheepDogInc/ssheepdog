@@ -116,6 +116,8 @@ class Login(DirtyFieldsMixin, models.Model):
             ("can_view_access_summary", "Can view access summary"),
             ("can_sync", "Can sync login keys"),
             ("can_edit_own_public_key", "Can edit one's own public key"),
+            ("can_view_all_users", "Can view other users"),
+            ("can_view_all_logins", "Can view other's logins"),
             )
 
     def get_last_log(self):
