@@ -19,7 +19,7 @@
             <th>Machine</th>
             <th>Login</th>
             {% for user in users %}
-            <th><a class="user" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_nickname }}</a></th>
+            <th><a class="open-modal-form" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_nickname }}</a></th>
             {% endfor %}
         </tr>
     </thead>
@@ -46,7 +46,7 @@
                 </td>
                 <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>
                 <td title="{{ login.machine.description }}">{{ login.machine.nickname }}</td>
-                <td title="{{ login.description }}"> <a class="login" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></td>
+                <td title="{{ login.description }}"> <a class="open-modal-form" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></td>
 
                 {% for entry in login.entries %}
                     {% comment %}
@@ -55,7 +55,7 @@
                     {% endcomment %}
                     <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.is_active %}active{% endif %}">
                       {% if perms.ssheepdog.change_login %}
-                      <a class="login" href="{% url ssheepdog.views.change_access entry.action entry.user.pk login.pk %}">
+                      <a class="open-modal-form" href="{% url ssheepdog.views.change_access entry.action entry.user.pk login.pk %}">
                         <span class="twipsy" title="{{ entry.tooltip }}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
                       </a>
                      {% else %}

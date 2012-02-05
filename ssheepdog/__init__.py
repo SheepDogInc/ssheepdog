@@ -14,7 +14,14 @@ class User(AdminUser):
         self._was_active = self.is_active
 
     def get_nickname(self):
-        return self.get_profile().nickname or self.email
+        try:
+            return self.get_profile().nickname or self.email
+        except AttributeError:
+             # A User created through management has no profile
+             # Create one!
+            from ssheepdog.models import UserProfile
+            UserProfile.objects.create(user=self)
+            return User.objects.get(pk=self.pk).get_profile().nickname or self.email
 
     def save(self, *args, **kwargs):
         """
