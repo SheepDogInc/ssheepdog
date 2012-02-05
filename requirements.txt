@@ -6,21 +6,21 @@ South==0.7
 Sphinx==1.1.2
 amqplib==1.0.2
 anyjson==0.3.1
+boto==2.2.1
 celery==2.4.6
 django-celery==2.4.2
 django-debug-toolbar==0.9.4
 django-kombu==0.9.4
+-e git://github.com/jezdez/django-openid-auth.git@71ceda256f6e6b7ef0e7d606b4557e6ba7b3615d#egg=django_openid_auth-dev
 django-picklefield==0.1.9
+django-storages==1.1.4
 docutils==0.8.1
+gunicorn==0.13.4
 kombu==2.0.0
 ordereddict==1.1
 psycopg2==2.4.4
 pycrypto==2.4.1
 python-dateutil==1.5
+-e git://github.com/adieu/python-openid.git@12efd783e7b58aa72aff8feaff54bed1c133a3f9#egg=python_openid-dev
 ssh==1.7.11
 wsgiref==0.1.2
--e git+git://github.com/adieu/python-openid.git#egg=python-openid
--e git+git://github.com/jezdez/django-openid-auth.git#egg=django-openid-auth
-gunicorn
-django-storages
-boto
