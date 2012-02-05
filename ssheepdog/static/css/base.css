@@ -93,6 +93,10 @@ div.log div.stdout {
     color: green;
 }
 
+ul.errorlist {
+    color: red;
+}
+
 div.log div.stderr {
     color: red;
 }
