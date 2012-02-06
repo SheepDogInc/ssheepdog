@@ -102,7 +102,7 @@ class Login(DirtyFieldsMixin, models.Model):
     username = models.CharField(max_length=256)
     users = models.ManyToManyField(User, blank=True)
     client = models.ForeignKey('Client', null=True, blank=True)
-    application_key = models.ForeignKey('ApplicationKey', null=True)
+    application_key = models.ForeignKey('ApplicationKey', null=True, verbose_name="SSHeepdog Public Key")
     is_active = models.BooleanField(default=True)
     is_dirty = models.BooleanField(default=True)
     additional_public_keys = PublicKeyField(blank=True,
@@ -119,6 +119,9 @@ class Login(DirtyFieldsMixin, models.Model):
             ("can_view_all_users", "Can view other users"),
             ("can_view_all_logins", "Can view other's logins"),
             )
+
+    def get_address(self):
+        return "%s@%s" % (self.username, self.machine.ip or self.machine.hostname)
 
     def get_last_log(self):
         try:

@@ -33,7 +33,8 @@
     <div>Port: {{ login.machine.port }} </div>
 </div></br>
 <div class="app_key_div">
-    <div>Application Key: <textarea>{{ login.formatted_public_key }}</textarea></div>
+  <div>SSHeepdog public key to install in <code>.ssh/authorized_keys</code> on <code>{{ login.get_address }}</code><br/>
+    <textarea>{{ login.formatted_public_key }}</textarea>
 </div>
 {% with log=login.get_last_log %}
 {% if log %}
