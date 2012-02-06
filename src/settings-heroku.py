@@ -1,9 +1,6 @@
 from settings import INSTALLED_APPS as INSTALLED_APPS_
 from settings import *
 
-DEBUG = False
-TEMPLATE_DEBUG = DEBUG
-
 # OpenID settings
 AUTHENTICATION_BACKENDS = (
     'django_openid_auth.auth.OpenIDBackend',
