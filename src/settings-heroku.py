@@ -1,5 +1,15 @@
-from settings import INSTALLED_APPS as INSTALLED_APPS_
 from settings import *
+
+# Django secure settings
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 500
+SECURE_FRAME_DENY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+# This is Heroku-specific to get around a weird configuration they have
+# Settings is required to prevent redirect loop
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", None)
 
 # OpenID settings
 AUTHENTICATION_BACKENDS = (
@@ -7,9 +17,12 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-INSTALLED_APPS = list(INSTALLED_APPS_) + [
+INSTALLED_APPS = list(INSTALLED_APPS) + [
     'django_openid_auth',
     ]
+
+MIDDLEWARE_CLASSES = ["djangosecure.middleware.SecurityMiddleware",
+                      ] + list(MIDDLEWARE_CLASSES)
 
 OPENID_CREATE_USERS = True
 OPENID_UPDATE_DETAILS_FROM_SREG = False
