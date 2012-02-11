@@ -26,3 +26,10 @@ class UserProfile(DirtyFieldsMixin, models.Model):
     SKIP_TESTS_WITH_FLAGS = ['requires_vagrant', 'slow']
 
 (5) Use of Twitter Bootstrap
+
+(6) Use of a trick to get all the login-user pairs in one query:
+
+    # To conserve DB queries, pre load all relations as a dict
+    # {(3,4): True} means user w/ 3 can access login w/ id 4
+    rel_list = Login.users.through.objects.values("user_id", "login_id")
+    user_login_rel = dict([((x['user_id'], x['login_id']), True) for x in rel_list])
