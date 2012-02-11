@@ -1,0 +1,28 @@
+Things we did that are innovative in this app:
+(1) Use of ssh api from fabric
+    - took a bit of time to figure out how best to configure output options
+    - had to monkey patch ssh app to accept a private key as a
+      StringIO in place of a filename (hacky)
+
+(2) Instead of fabric's way, wrote capture_output:
+
+    with capture_output() as captured:
+      run(command)
+    captured.stderr and captured.stdout now contain the output.
+
+(3) DirtyFieldsMixin class:
+class UserProfile(DirtyFieldsMixin, models.Model):
+    ...
+    def save(self, *args, **kwargs):
+        if 'ssh_key' in self.get_dirty_fields():
+            Login.objects.filter(users___profile_cache=self).update(is_dirty=True)
+
+(4) flagtest decorator:
+    @flag_test('requires_vagrant')
+    def test_connect(self):
+        ...
+
+  in settings,
+    SKIP_TESTS_WITH_FLAGS = ['requires_vagrant', 'slow']
+
+(5) Use of Twitter Bootstrap

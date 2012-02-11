@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from ssheepdog.models import Client, Login, Machine, ApplicationKey
 from ssheepdog.fields import PublicKeyField
+from ssheepdog.views import view_access_summary
 import os
 import settings as app_settings
 from fabric.network import disconnect_all
@@ -9,6 +10,7 @@ from ssheepdog.models import KEYS_DIR
 from utils import read_file
 from fabric.api import run, env, hide, settings, local
 from django.core import exceptions
+from django.http import HttpRequest
 
 def populate_ssheepdog_key():
     pub = read_file(os.path.join(KEYS_DIR, "ssheepdog.pub"))
@@ -53,13 +55,14 @@ def create_user(**kwargs):
         defaults['ssh_key'] = read_file(os.path.join(KEYS_DIR, kwargs['username']+".pub"))
     defaults['nickname'] = kwargs['username']
     defaults.update(kwargs)
-    username = defaults.pop('username')
-    u = User.objects.create(username=username,
+    u = User.objects.create(username=defaults.pop('username'),
                             password=defaults.pop('password'))
     p = u.get_profile()
     for attr, value in defaults.items():
         setattr(p, attr, value)
+        setattr(u, attr, value)
     p.save()
+    u.save()
     return u
 
 create_machine = call_with_defaults(nickname='machine',
@@ -151,6 +154,22 @@ def key_present(user,login):
 
 def sync_all():
     Login.sync_all()
+
+class NumQueriesTest(TestCase):
+    def setUp(self):
+        self.users = [create_user(username='user_%d' % i) for i in range(1,4)]
+        self.machines = [create_machine() for i in range(10)]
+        self.logins = [create_login(username="login_%d" % i, machine=self.machines[i]) for i in range(10)]
+        for i in range(10):
+            self.logins[i].users = self.users[i:]
+            self.logins[i].save()
+
+    def test_access_summary_constant_queries(self):
+        request = HttpRequest()
+        request.user = create_user(username="ssheepdog", is_superuser=True)
+        with self.assertNumQueries(4):
+            view_access_summary(request)
+
 
 class PushKeyTests(TestCase):
     def setUp(self):
@@ -359,3 +378,4 @@ class PublicKeyFieldTests(TestCase):
 
     def test_bad_key_type_name(self):
         self.assertRaises(exceptions.ValidationError, self.field.clean, "sh-rs %s comment" % self.key, None)
+
