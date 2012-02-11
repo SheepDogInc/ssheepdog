@@ -33,11 +33,16 @@
     <div>Port: {{ login.machine.port }} </div>
 </div></br>
 <div class="app_key_div">
-  <div>SSHeepdog public key to install in <code>.ssh/authorized_keys</code> on <code>{{ login.get_address }}</code><br/>
+  <div>&gt;&nbsp;<code>ssh {{ login.get_address }} -p {{ login.machine.port }}</code>
+  <br/>
     <textarea>{{ login.formatted_public_key }}</textarea>
+    <textarea>ssh {{ login.get_address }} -p {{ login.machine.port }} "(echo ; echo {{ login.formatted_public_key }}) >> .ssh/authorized_keys"</textarea>
+    <br/>
+    (On left is ssh key; on right is command to run locally to install key remotely.)
 </div>
 {% with log=login.get_last_log %}
 {% if log %}
+<hr/>
 <div class="log">
   Last activity {{ log.date }}<br/>{{ log.message }}
   {% if log.stderr %}
