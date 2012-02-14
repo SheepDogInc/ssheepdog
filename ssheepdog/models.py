@@ -13,6 +13,8 @@ from south.modelsinspector import add_introspection_rules
 from Crypto.PublicKey import RSA
 from ssheepdog.fields import PublicKeyField
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
+
 add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
 KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
@@ -46,12 +48,11 @@ class UserProfile(DirtyFieldsMixin, models.Model):
 
 
 class Machine(DirtyFieldsMixin, models.Model):
-    # XXX: A machine should have either an IP or hostname or both
-    # Need a validator in the form supplied to the django admin
-    # Consider validating on save as well... not as important
     nickname = models.CharField(max_length=256)
     hostname = models.CharField(max_length=256, blank=True, null=True)
-    ip = models.CharField(max_length=256, null=True, blank=True)
+    ip = models.CharField(max_length=256, null=True, blank=True,
+                          help_text="If you supply both an ip and a hostname,"
+                          " the ip will be used for key deployments.")
     description = models.TextField()
     port = models.IntegerField(default=22)
     client = models.ForeignKey('Client', null=True, blank=True)
@@ -67,6 +68,10 @@ class Machine(DirtyFieldsMixin, models.Model):
 
     def get_change_url(self):
         return reverse('admin:ssheepdog_machine_change', args=(self.pk,))
+
+    def clean(self, *args, **kwargs):
+        if not self.ip and not self.hostname:
+            raise ValidationError("Provide an ip or a hostname or both")
 
     def save(self, *args, **kwargs):
         dirty_fields = self.get_dirty_fields()
