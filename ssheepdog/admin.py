@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin, User
 import models
 from django.utils.translation import ugettext_lazy as _
 
-admin.site.register(models.Machine)
 admin.site.register(models.Client)
 
 def unregister(Model):
@@ -21,6 +20,15 @@ class LoginAdmin(admin.ModelAdmin):
     exclude = ('application_key', 'is_dirty')
     filter_horizontal = ('users',)
 admin.site.register(models.Login, LoginAdmin)
+
+class LoginInline(admin.TabularInline):
+    model = models.Login
+    fields = ['username', 'is_active']
+
+class MachineAdmin(admin.ModelAdmin):
+    model = models.Machine
+    inlines = [LoginInline]
+admin.site.register(models.Machine, MachineAdmin)
 
 class UserProfileInline(admin.StackedInline):
     model = models.UserProfile

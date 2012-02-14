@@ -57,7 +57,7 @@ class Machine(DirtyFieldsMixin, models.Model):
     port = models.IntegerField(default=22)
     client = models.ForeignKey('Client', null=True, blank=True)
     is_down = models.BooleanField(default=False)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     def __unicode__(self):
         if self.client:
