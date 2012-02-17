@@ -60,8 +60,8 @@ class Machine(DirtyFieldsMixin, models.Model):
     is_active = models.BooleanField(default=True)
 
     def __unicode__(self):
-        if self.client:
-            parenthetical = self.client.nickname
+        if self.hostname and self.ip:
+            parenthetical = "%s, %s" % (self.hostname, self.ip)
         else:
             parenthetical = self.hostname or self.ip
         return "%s (%s)" % (self.nickname, parenthetical)
@@ -191,6 +191,9 @@ class Login(DirtyFieldsMixin, models.Model):
         except SystemExit:
             return False, captured
 
+    def get_client(self):
+        return self.client or self.machine.client
+
     def get_authorized_keys(self):
         """
         Return a list of authorized keys strings which should be deployed
@@ -212,6 +215,11 @@ class Login(DirtyFieldsMixin, models.Model):
                 keys.append(user.get_profile().formatted_public_key)
         return keys
 
+    def formatted_keys(self):
+        formatted_keys = "\n\n".join(self.get_authorized_keys())
+        # Switch back and forth between ' and "" to quote '
+        return formatted_keys.replace("'", "'\"'\"'")
+
     def sync(self, actor=None):
         """
         Updates the authorized_keys file on the machine attached to this login
@@ -223,10 +231,7 @@ class Login(DirtyFieldsMixin, models.Model):
         if self.machine.is_down or not self.is_dirty:
             # No update required (either impossible or not needed)
             return None
-        formatted_keys = "\n\n".join(self.get_authorized_keys())
-        # Switch back and forth between ' and "" to quote '
-        formatted_keys = formatted_keys.replace("'", "'\"'\"'")
-        success, output = self.run("echo '%s' > ~/.ssh/authorized_keys" % formatted_keys,
+        success, output = self.run("echo '%s' > ~/.ssh/authorized_keys" % self.formatted_keys(),
                                    self.get_application_key().private_key)
 
         message="%successful %s" % ("S" if success else "Uns",

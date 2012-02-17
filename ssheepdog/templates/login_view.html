@@ -13,38 +13,46 @@
       {% endif %}
    </div>
 </div>
-<div class="client_div">
-    <div>Client:
-        {% if login.client %}
-            {{ login.client }} {% if perms.ssheepdog.change_client %}
-                               <a class="admin" href="{{login.client.get_change_url }}">edit client</a>
-                               {% endif %}
-       {% else %}{% if login.machine.client %} {% if perms.ssheepdog.change_client %}
-                                               <a class="admin" href="{{login.machine.client.get_change_url }}">edit client</a>
-                                               {% endif %}
-            {{ login.machine.client }}
-        {% endif %}{% endif %}
-    </div>
-    <div>Description:</div><textarea> {{ login.client.description }}</textarea>
-</div></br>
-<div class="machine_info">
-    <div>Hostname: {{ login.machine.hostname }}</div>
-    <div>IP: {{ login.machine.ip }}</div>
-    <div>Port: {{ login.machine.port }} </div>
+{% with login.get_client as client %}
+{% if client %}
+<div>Client:
+  {{ client }}
+  {% if client.description %}
+  ({{ client.description }})
+  {% endif %}
+  {% if perms.ssheepdog.change_client %}
+  <a class="admin" href="{{client.get_change_url }}">edit client</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endwith %}
 </div></br>
 <div class="app_key_div">
   <div>&gt;&nbsp;<code>ssh {{ login.get_address }} -p {{ login.machine.port }}</code>
-  <br/>
-    <textarea>{{ login.formatted_public_key }}</textarea>
-    <textarea>ssh {{ login.get_address }} -p {{ login.machine.port }} "(echo ; echo {{ login.formatted_public_key }}) >> .ssh/authorized_keys"</textarea>
     <br/>
-    (On left is ssh key; on right is command to run locally to install key remotely.)
+    <div class="ssh textareas">
+      <div>
+        <label>SSHeepdog's public SSH key:</label>
+        <textarea>{{ login.formatted_public_key }}</textarea>
+      </div>
+      <div>
+        <label>bash command to deploy key:</label>
+        <textarea>ssh {{ login.get_address }} -p {{ login.machine.port }} "(echo ; echo {{ login.formatted_public_key }}) >> .ssh/authorized_keys"</textarea>
+      </div>
+      <div>
+        <label>All keys for manual deployment:</label>
+        <textarea>{{ login.formatted_keys }}</textarea>
+      </div>
+    </div>
+    <br/>
+  </div>
 </div>
+<br/>
 {% with log=login.get_last_log %}
 {% if log %}
-<hr/>
 <div class="log">
-  Last activity {{ log.date }}<br/>{{ log.message }}
+<hr/>
+ Last activity {{ log.date }}<br/>{{ log.message }}
   {% if log.stderr %}
   <div class="stderr">
     {{ log.stderr|linebreaks }}

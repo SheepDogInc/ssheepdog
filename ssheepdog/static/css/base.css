@@ -104,3 +104,19 @@ div.log div.stderr {
 form {
     margin: 0;
 }
+
+div.ssh.textareas div {
+    float: left;
+}
+div.ssh.textareas div  textarea {
+    margin-right: 5px;
+    width: 150px;
+}
+div.ssh.textareas div label {
+    font-weight: bold;
+    font-size: 10px;
+}
+div.log {
+    clear: both;
+}
+
