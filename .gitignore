@@ -4,4 +4,6 @@
 site_media
 settings_local.py
 _build
-ssheepdog.egg-info
+django_ssheepdog.egg-info
+dist
+build
