@@ -45,12 +45,20 @@
       </div>
     </div>
     <br/>
-  </div>
+ </div>
 </div>
+{% if login.machine.manual and perms.ssheepdog.can_sync and login.is_dirty %}
+<div class="manual-form section">
+  <form class="sync_form" action="{% url ssheepdog.views.manual_sync login.pk %}" method="post">
+  {% csrf_token %}
+  <input class="sync_all btn  btn-primary" type="submit" value="Flag as manually synced" />
+  </form>
+</div>
+{% endif %}
 <br/>
 {% with log=login.get_last_log %}
 {% if log %}
-<div class="log">
+<div class="log section">
 <hr/>
  Last activity {{ log.date }}<br/>{{ log.message }}
   {% if log.stderr %}

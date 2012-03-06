@@ -127,6 +127,12 @@ def login_admin_view(request,id=None):
 
 
 @permission_required('ssheepdog.can_sync')
+def manual_sync(request, id):
+    login = Login.objects.get(pk=id)
+    login.flag_as_manually_synced_by(request.user)
+    return login_admin_view(request, id)
+
+@permission_required('ssheepdog.can_sync')
 def sync_keys(request):
     pk = request.POST.get('pk', None)
     if pk:

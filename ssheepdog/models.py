@@ -58,6 +58,11 @@ class Machine(DirtyFieldsMixin, models.Model):
     client = models.ForeignKey('Client', null=True, blank=True)
     is_down = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    manual = models.BooleanField(
+        default=False,
+        verbose_name="Requires manual deployments",
+        help_text="This machine requires manual key deployments.  For example,"
+        " it may be behind a firewall and ssheepdog lacks ssh access.")
 
     def __unicode__(self):
         if self.hostname and self.ip:
@@ -140,7 +145,7 @@ class Login(DirtyFieldsMixin, models.Model):
     @staticmethod
     def sync_all(actor=None):
         try:
-            for login in Login.objects.all():
+            for login in Login.objects.exclude(machine__manual=True):
                 login.sync(actor=actor)
         finally:
             with settings(hide(*ALL_FABRIC_WARNINGS)):
@@ -220,6 +225,14 @@ class Login(DirtyFieldsMixin, models.Model):
         # Switch back and forth between ' and "" to quote '
         return formatted_keys.replace("'", "'\"'\"'")
 
+    def flag_as_manually_synced_by(self, actor):
+        self.is_dirty = False
+        self.application_key = ApplicationKey.get_latest()
+        self.save()
+        LoginLog.objects.create(actor=actor,
+                                login=self,
+                                message="Manual sync was performed")
+
     def sync(self, actor=None):
         """
         Updates the authorized_keys file on the machine attached to this login
@@ -228,7 +241,7 @@ class Login(DirtyFieldsMixin, models.Model):
         Returns True if successfully changed the authorized files and False if
         not (status stays dirty).  If no change attempted, return None.
         """
-        if self.machine.is_down or not self.is_dirty:
+        if self.machine.is_down or self.machine.manual or not self.is_dirty:
             # No update required (either impossible or not needed)
             return None
         success, output = self.run("echo '%s' > ~/.ssh/authorized_keys" % self.formatted_keys(),

@@ -31,7 +31,11 @@
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
                     {% if login.is_dirty %}
-                        {% if perms.ssheepdog.can_sync %}
+                        {% if login.machine.manual %}
+                        <a class="open-modal-form" href="{% url ssheepdog.views.login_admin_view login.pk %}">
+                          <input class="btn btn-primary" type="submit" value="man">
+                        </a>
+                        {% else %}{% if perms.ssheepdog.can_sync %}
                         <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
@@ -39,9 +43,13 @@
                         </form>
                         {% else %}
                         <input class="btn-primary" type="submit" value="       ">
-                        {% endif %}
+                        {% endif %}{% endif %}
                     {% else %}
-                    <input class="btn-success" type="submit" value="       ">
+                        {% if login.machine.manual %}
+                        <input class="btn-success" type="submit" value="man">
+                        {% else %}
+                        <input class="btn-success" type="submit" value="       ">
+                        {% endif%}
                     {% endif %}
                 </td>
                 <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>

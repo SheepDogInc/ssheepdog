@@ -116,7 +116,9 @@ div.ssh.textareas div label {
     font-weight: bold;
     font-size: 10px;
 }
-div.log {
+div.section {
     clear: both;
 }
-
+div.manual-form {
+    color: green;
+}
