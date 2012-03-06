@@ -5,6 +5,7 @@ def publish():
     print "Please do the following before publishing:"
     print "  - Update version in setup.py"
     print "  - Update version in ssheepdog/__init__.py"
+    print "  - Update version in docs/conf.py"
     print "  - Update the changelog"
     print "  - Tag the release in git and push the tag to Github"
     print "  - Make sure you know the PyPI credentials"
