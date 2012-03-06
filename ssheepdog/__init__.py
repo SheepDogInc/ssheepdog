@@ -1,3 +1,5 @@
+__version__ = '0.1.0'
+
 from ssh import pkey
 from ssheepdog.utils import monkeypatch_class
 from StringIO import StringIO
