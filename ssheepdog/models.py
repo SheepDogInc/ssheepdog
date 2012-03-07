@@ -53,7 +53,7 @@ class Machine(DirtyFieldsMixin, models.Model):
     ip = models.CharField(max_length=256, null=True, blank=True,
                           help_text="If you supply both an ip and a hostname,"
                           " the ip will be used for key deployments.")
-    description = models.TextField()
+    description = models.TextField(blank=True)
     port = models.IntegerField(default=22)
     client = models.ForeignKey('Client', null=True, blank=True)
     is_down = models.BooleanField(default=False)
@@ -263,14 +263,12 @@ class Login(DirtyFieldsMixin, models.Model):
             self.is_dirty = False
             self.application_key = ApplicationKey.get_latest()
             self.save()
-            return True
-        else:
-            return False
+        return success
 
 
 class Client(models.Model):
     nickname = models.CharField(max_length=256)
-    description = models.TextField()
+    description = models.TextField(blank=True)
 
     def get_change_url(self):
         return reverse('admin:ssheepdog_client_change', args=(self.pk,))
@@ -279,9 +277,33 @@ class Client(models.Model):
         return self.nickname
 
 
+class NamedApplicationKey(models.Model):
+    """
+    The reason to create a named key is if you want to pre-select it as the
+    start key for a Login.  For example, perhaps you want to preconfigure a
+    master VM with this start key.
+    """
+    # Note that the above comment
+    nickname = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    application_key = models.ForeignKey('ApplicationKey')
+
+    def __unicode__(self):
+        return self.nickname
+
+    def save(self, *args, **kwargs):
+        if not (self.nickname and self.description):
+            raise ValidationError("Nickname and description are required")
+        if not self.pk:
+            key = ApplicationKey(is_named=True)
+            key.save()
+            self.application_key = key
+        super(NamedApplicationKey, self).save(*args, **kwargs)
+
 class ApplicationKey(models.Model):
     private_key = models.TextField()
     public_key = PublicKeyField()
+    is_named = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.private_key or not self.public_key:
@@ -330,7 +352,7 @@ class ApplicationKey(models.Model):
     def get_latest(create_new=False):
         if not create_new:
             try:
-                return ApplicationKey.objects.latest('pk')
+                return ApplicationKey.objects.exclude(is_named=True).latest('pk')
             except ApplicationKey.DoesNotExist:
                 pass
         key = ApplicationKey()
