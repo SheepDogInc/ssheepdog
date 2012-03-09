@@ -19,6 +19,7 @@ docutils==0.8.1
 gunicorn==0.13.4
 kombu==2.0.0
 ordereddict==1.1
+paramiko==1.7.7.1
 psycopg2==2.4.4
 pycrypto==2.4.1
 python-dateutil==1.5
