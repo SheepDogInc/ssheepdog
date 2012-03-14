@@ -26,4 +26,5 @@ python-dateutil==1.5
 -e git://github.com/adieu/python-openid.git@03773fb96dff352bbda12538726dc5c46fe0316c#egg=python_openid-dev
 ssh==1.7.11
 wsgiref==0.1.2
-django-ssheepdog
+yolk==0.4.3
+# django-ssheepdog

@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from south.signals import post_migrate
 from south.modelsinspector import add_introspection_rules
 from Crypto.PublicKey import RSA
+from Crypto import Random
 from ssheepdog.fields import PublicKeyField
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -320,6 +321,7 @@ class ApplicationKey(models.Model):
         return "...%s ssheepdog_%s" % (self.public_key[-10:], self.pk)
 
     def generate_key_pair(self):
+        Random.atfork()
         key = RSA.generate(app_settings.RSA_KEY_LENGTH)
         self.private_key = key.exportKey()
 

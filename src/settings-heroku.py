@@ -1,5 +1,8 @@
 from settings import *
 
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
 # Django secure settings
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 500
