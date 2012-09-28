@@ -186,6 +186,9 @@ class Login(DirtyFieldsMixin, models.Model):
         """
         mach = self.machine
         env.abort_on_prompts = True
+        env.reject_unknown_hosts = False
+        # TODO:  Squash potential man-in-middle attack!  Bottom of http://docs.fabfile.org/en/1.3.4/usage/ssh.html
+        env.disable_known_hosts = True
         env.key_filename = private_key or ApplicationKey.get_latest().private_key
         env.host_string = "%s@%s:%d" % (self.username,
                                         (mach.ip or mach.hostname),
