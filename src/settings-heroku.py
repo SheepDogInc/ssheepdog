@@ -3,6 +3,11 @@ from settings import *
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+# For heroku
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+
 # Django secure settings
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 500
@@ -44,3 +49,4 @@ AWS_ACCESS_KEY_ID = os.environ['AWS_KEY']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET']
 
 STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+
