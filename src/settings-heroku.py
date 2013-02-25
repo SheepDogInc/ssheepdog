@@ -32,7 +32,7 @@ OPENID_UPDATE_DETAILS_FROM_SREG = False
 OPENID_UPDATE_DETAILS_FROM_AX = True
 # OPENID_USE_AS_ADMIN_LOGIN = TRUE
 # OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=sheepdoginc.ca'
-OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=%s' % 'sheepdoginc.ca'
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/site-xrds?hd=%s' % 'sheepdog.com'
 
 LOGIN_URL = '/openid/login/'
 LOGIN_REDIRECT_URL = '/'
