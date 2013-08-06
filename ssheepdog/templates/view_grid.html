@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="head grid">
-  <form class="filter" action="{% url ssheepdog.views.view_access_summary %}" method="get">
+  <form class="filter" action="{% url 'ssheepdog.views.view_access_summary' %}" method="get">
    <ul>
       {{ filter_form.as_ul }}
       <li><label>&nbsp;</label><input class="btn" type="submit" value="filter"/></li>
@@ -19,7 +19,7 @@
             <th>Machine</th>
             <th>Login</th>
             {% for user in users %}
-            <th><a class="open-modal-form" href="{% url ssheepdog.views.user_admin_view user.pk %}">{{ user.get_nickname }}</a></th>
+            <th><a class="open-modal-form" href="{% url 'ssheepdog.views.user_admin_view' user.pk %}">{{ user.get_nickname }}</a></th>
             {% endfor %}
         </tr>
     </thead>
@@ -32,11 +32,11 @@
                 <td>
                     {% if login.is_dirty %}
                         {% if login.machine.manual %}
-                        <a class="open-modal-form" href="{% url ssheepdog.views.login_admin_view login.pk %}">
+                        <a class="open-modal-form" href="{% url 'ssheepdog.views.login_admin_view' login.pk %}">
                           <input class="btn btn-primary" type="submit" value="man">
                         </a>
                         {% else %}{% if perms.ssheepdog.can_sync %}
-                        <form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+                        <form class="sync_form" action="{% url 'ssheepdog.views.sync_keys' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="pk" value="{{ login.pk }}">
                             <input class="btn btn-primary" type="submit" value="sync" />
@@ -54,7 +54,7 @@
                 </td>
                 <td title="{{ login.client.description }}">{{ login.client.nickname }}</td>
                 <td title="{{ login.machine.description }}">{{ login.machine.nickname }}</td>
-                <td title="{{ login.description }}"> <a class="open-modal-form" href="{% url ssheepdog.views.login_admin_view login.pk %}"> {{login.username}} </a></td>
+                <td title="{{ login.description }}"> <a class="open-modal-form" href="{% url 'ssheepdog.views.login_admin_view' login.pk %}"> {{login.username}} </a></td>
 
                 {% for entry in login.entries %}
                     {% comment %}
@@ -63,7 +63,7 @@
                     {% endcomment %}
                     <td class="entry {% if entry.is_allowed %}is_allowed{% endif %} {% if entry.is_active %}active{% endif %}">
                       {% if perms.ssheepdog.change_login %}
-                      <a class="open-modal-form" href="{% url ssheepdog.views.change_access entry.action entry.user.pk login.pk %}">
+                      <a class="open-modal-form" href="{% url 'ssheepdog.views.change_access' entry.action entry.user.pk login.pk %}">
                         <span class="twipsy" title="{{ entry.tooltip }}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
                       </a>
                      {% else %}
@@ -79,12 +79,12 @@
 </table>
 
 {% if perms.ssheepdog.can_sync %}
-<form class="sync_form" action="{% url ssheepdog.views.sync_keys %}" method="post">
+<form class="sync_form" action="{% url 'ssheepdog.views.sync_keys' %}" method="post">
     {% csrf_token %}
     <input class="sync_all btn  btn-primary" type="submit" value="Synchronize all" />
 </form>
 
-<form class="sync_form" action="{% url ssheepdog.views.generate_new_application_key %}" method="post">
+<form class="sync_form" action="{% url 'ssheepdog.views.generate_new_application_key' %}" method="post">
     {% csrf_token %}
     <input class="new_app_key btn btn-primary" type="submit" value="Generate new application key" />
 </form>

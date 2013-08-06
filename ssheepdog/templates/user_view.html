@@ -14,7 +14,7 @@
 <div class="active"> Active: {{ user.is_active }} </div>
 
 <div class="ssh_div">
-<form class="ssh_key_form" action="{% url ssheepdog.views.user_admin_view user.pk %}" method="post">{% csrf_token %}
+<form class="ssh_key_form" action="{% url 'ssheepdog.views.user_admin_view' user.pk %}" method="post">{% csrf_token %}
     {{ form.as_p }}
     {% if request.user == user and perms.ssheepdog.can_edit_own_public_key %}
     <input type="submit" class="btn" value="Submit">

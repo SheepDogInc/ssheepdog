@@ -1,0 +1,9 @@
+{
+    "name": "ssheepdog",
+    "version": "0.0.0",
+    "private": true,
+    "dependencies": {
+        "bower": "0.10.0",
+        "less": "1.4.1"
+    }
+}

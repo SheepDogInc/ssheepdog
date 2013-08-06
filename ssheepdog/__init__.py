@@ -1,6 +1,6 @@
 __version__ = '0.2.0'
 
-from ssh import pkey
+from paramiko import pkey
 from ssheepdog.utils import monkeypatch_class
 from StringIO import StringIO
 from django.contrib.auth.models import User as AdminUser
@@ -38,6 +38,10 @@ class User(AdminUser):
 class PKey(pkey.PKey):
     __metaclass__ = monkeypatch_class
     def _read_private_key_file(self, tag, filename, password=None):
+        """
+        Augment behaviour so that if the filename looks like a key, use it
+        rather than attempting to read from a file.
+        """
         if len(filename) > 300: # Assume it's already a key
             f = StringIO(filename)
         else:

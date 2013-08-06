@@ -30,7 +30,7 @@
           <div class="nav-collapse">
             <ul class="nav">
               {% if perms.ssheepdog.can_view_access_summary %}
-              <li><a href="{% url ssheepdog.views.view_access_summary %}">Access Summary</a></li>
+              <li><a href="{% url 'ssheepdog.views.view_access_summary' %}">Access Summary</a></li>
               {% endif %}
               <li><a href="/admin/">Admin</a></li>
               {% get_flatpages as flatpages %}
@@ -40,7 +40,7 @@
               {% if request.user.is_staff %}
               {% endif %}
             </ul>
-            <p class="navbar-text pull-right"><a href="{% url logout %}">Logout</a></p>
+            <p class="navbar-text pull-right"><a href="{% url 'logout' %}">Logout</a></p>
           </div><!--/.nav-collapse -->
         </div>
       </div>

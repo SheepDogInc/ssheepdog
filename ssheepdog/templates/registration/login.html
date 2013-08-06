@@ -8,7 +8,7 @@
   
 {% if not user.is_anonymous %}
   {% trans "You are currently logged in." %}&nbsp;
-  <a href="{% url logout %}">{% trans "Log Out" %}</a>
+  <a href="{% url 'logout' %}">{% trans "Log Out" %}</a>
 
 {% else %}
 {% if not locked %}
@@ -24,7 +24,7 @@
         </ul>
   	</form>
 {% comment %}
- 	<p><a href="{% url reset_password %}">{% trans 'Forgot your password?' %}</a>
+ 	<p><a href="{% url 'reset_password' %}">{% trans 'Forgot your password?' %}</a>
   	  |
   	  <a href="/help/signin/">{% trans 'Having problems signing in?' %}</a>
   	</p>

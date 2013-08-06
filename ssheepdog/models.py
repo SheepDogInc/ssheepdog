@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, m2m_changed
 from django.db.utils import DatabaseError
 from fabric.api import env, run, hide, settings
+import fabric.exceptions
 from fabric.network import disconnect_all
 from django.conf import settings as app_settings
 from ssheepdog.utils import DirtyFieldsMixin, capture_output
@@ -18,8 +19,8 @@ from django.core.exceptions import ValidationError
 
 add_introspection_rules([], ["^ssheepdog\.fields\.PublicKeyField"])
 
-KEYS_DIR = os.path.join(app_settings.PROJECT_ROOT,
-                        '../deploy/keys')
+KEYS_DIR = os.path.join(os.path.dirname(__file__),
+                        '..', 'deploy', 'keys')
 ALL_FABRIC_WARNINGS = ['everything', 'status', 'aborts']
 FABRIC_WARNINGS = []
 
@@ -198,6 +199,8 @@ class Login(DirtyFieldsMixin, models.Model):
                 run(command)
             return True, captured
         except SystemExit:
+            return False, captured
+        except fabric.exceptions.NetworkError:
             return False, captured
 
     def get_client(self):
