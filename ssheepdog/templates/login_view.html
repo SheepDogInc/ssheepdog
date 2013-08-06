@@ -49,7 +49,7 @@
 </div>
 {% if login.machine.manual and perms.ssheepdog.can_sync and login.is_dirty %}
 <div class="manual-form section">
-  <form class="sync_form" action="{% url ssheepdog.views.manual_sync login.pk %}" method="post">
+  <form class="sync_form" action="{% url 'ssheepdog.views.manual_sync' login.pk %}" method="post">
   {% csrf_token %}
   <input class="sync_all btn  btn-primary" type="submit" value="Flag as manually synced" />
   </form>

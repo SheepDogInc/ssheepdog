@@ -1,0 +1,27 @@
+# Install packages from feta
+--find-links https://s3.amazonaws.com/sheepdog-assets/feta/index.html
+
+# Install Django 1.6b1 until 1.6 stable is released
+Django==1.6b1
+
+# Django-specific dependencies
+South
+dj-database-url
+django-compressor
+django-crispy-forms
+django-debug-toolbar==0.9.4-sd2
+django-storages
+django-versioned
+
+# openid
+django-openid-auth
+python-openid
+
+# Supporting dependencies
+Fabric
+boto
+coverage
+gunicorn
+psycopg2
+raven
+ssh
