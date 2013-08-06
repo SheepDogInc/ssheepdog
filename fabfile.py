@@ -15,6 +15,10 @@ ENVS = {
         'repo_url': 'git@heroku.com:sheltered-bastion-8737.git',
         'site_url': 'http://sheltered-bastion-8737.herokuapp.com'
     },
+    'prod': {
+        'repo_url': 'git@heroku.com:setsailforfail.git',
+        'site_url': 'http://setsailforfail.herokuapp.com'
+    },
 }
 
 
