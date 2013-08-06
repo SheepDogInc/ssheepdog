@@ -14,8 +14,34 @@
     <thead>
         <tr class="top_header">
             <th>User</th>
-            <th>Policy</th>
+            <th>Policies</th>
             {% for policy, value in user_policies.items %}
+                <tr>
+                    <td>{{ policy }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tr>
+
+        <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
+
+        <tr class="top_header">
+            <th>Role</th>
+            <th>Policies</th>
+            {% for policy, value in role_policies.items %}
+                <tr>
+                    <td>{{ policy }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tr>
+
+        <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
+
+        <tr class="top_header">
+            <th>Group</th>
+            <th>Policies</th>
+            {% for policy, value in group_policies.items %}
                 <tr>
                     <td>{{ policy }}</td>
                     <td>{{ value }}</td>
