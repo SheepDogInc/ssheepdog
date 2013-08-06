@@ -6,8 +6,8 @@ from fabric.colors import red, green
 from fabric.operations import local, prompt
 
 PROJECT_NAME = 'ssheepdog'
-APPS = []
-TESTS = [' '.join(APPS)]
+APPS = ['ssheepdog']
+TESTS = ' '.join(APPS)
 COVERAGE_SOURCES = ','.join(APPS)
 COVERAGE_PARAMS = "--omit='*migrations*,*tests*"
 ENVS = {
