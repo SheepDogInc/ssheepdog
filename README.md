@@ -14,7 +14,7 @@ contains a django project that uses the app.
 When you are developing, you should install ssheepdog into your virtual
 environment with the following command:
 
-    $ python setup.py develop
+    $ ./setup.sh
 
 This will create a symlink between the source and the environment's site
 packages.  Once the link is created, you can edit the source code in
