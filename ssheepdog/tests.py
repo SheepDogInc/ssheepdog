@@ -4,7 +4,7 @@ from ssheepdog.models import Client, Login, Machine, ApplicationKey
 from ssheepdog.fields import PublicKeyField
 from ssheepdog.views import view_access_summary
 import os
-import settings as app_settings
+import settings.test as app_settings
 from fabric.network import disconnect_all
 from ssheepdog.models import KEYS_DIR
 from utils import read_file
