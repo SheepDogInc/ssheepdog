@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url, include
 from django.contrib.auth.views import login, logout
 from django.contrib import admin
 
+from awspolicyview import urls as awsurls
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -16,4 +18,5 @@ urlpatterns = patterns('',
     url(r'^openid/', include('django_openid_auth.urls')),
     url(r'^accounts/login/$', login, {}, name='login'),
     url(r'^accounts/logout/$', logout, {}, name='logout'),
+    url(r'^awspolicies/', include(awsurls.aws_patterns, namespace='aws_urls')),
 )

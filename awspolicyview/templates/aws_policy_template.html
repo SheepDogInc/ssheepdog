@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="head grid">
+  <form class="filter" action="GET" method="get">
+    <ul>
+
+    </ul>
+  </form>
+</div>
+
+
+<table class="access_view table-bordered">
+    <thead>
+        <tr class="top_header">
+            <th>User</th>
+            <th>Policy</th>
+            {% for policy, value in user_policies.items %}
+                <tr>
+                    <td>{{ policy }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tr>
+    </thead>
+</table>
+
+{% endblock %}

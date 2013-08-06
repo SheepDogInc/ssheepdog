@@ -32,6 +32,7 @@
               {% if perms.ssheepdog.can_view_access_summary %}
               <li><a href="{% url 'ssheepdog.views.view_access_summary' %}">Access Summary</a></li>
               {% endif %}
+              <li><a href="/awspolicies/">AWS Policies</a></li>
               <li><a href="/admin/">Admin</a></li>
               {% get_flatpages as flatpages %}
               {% for page in flatpages %}
