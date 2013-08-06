@@ -1,9 +1,0 @@
-Chris Troup provided the following links to get openid working:
-
-https://github.com/jezdez/django-openid-auth
-https://github.com/adieu/python-openid
-http://stackoverflow.com/questions/3145453/which-openid-oauth-library-to-connect-a-django-project-to-google-apps-accounts
-
-
-Endpoint:
-https://www.google.com/accounts/o8/site-xrds?hd=sheepdoginc.ca
