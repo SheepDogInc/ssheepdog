@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+    .modal-body {  white-space: pre-wrap}
+</style>
+
 <div class="modal fade" id="policy_modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Policy</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="policy_title">Policy</h4>
       </div>
       <div class="modal-body" id="policy_body">
         <p>Policy failed to load</p>
@@ -40,11 +45,9 @@
                     </td>
                 </tr>
             {% endfor %}
-        </tr>
 
-        <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
+            <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
 
-        <tr class="top_header">
             <th>Role</th>
             <th>Policies</th>
             {% for policy, values in role_policies.items %}
@@ -57,11 +60,9 @@
                     </td>
                 </tr>
             {% endfor %}
-        </tr>
 
-        <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
+            <tr><td colspan="2"><hr style="height:1px;border:none;background-color:#000;"></td></tr>
 
-        <tr class="top_header">
             <th>Group</th>
             <th>Policies</th>
             {% for policy, values in group_policies.items %}
@@ -83,6 +84,7 @@
                 $('.policy_element').click(function(event){
                     $('#policy_modal').modal();
                     $('#policy_body').html(policies[event.target.innerText]);
+                    $('#policy_title').html("Policy: " + event.target.innerText);
                 });
             });
         </script>
