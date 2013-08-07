@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class="modal fade" id="policy_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Policy</h4>
+      </div>
+      <div class="modal-body" id="policy_body">
+        <p>Policy failed to load</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="head grid">
   <form class="filter" action="GET" method="get">
     <ul>
@@ -9,16 +25,19 @@
   </form>
 </div>
 
-
 <table class="access_view table-bordered">
     <thead>
         <tr class="top_header">
             <th>User</th>
             <th>Policies</th>
-            {% for policy, value in user_policies.items %}
+            {% for policy, values in user_policies.items %}
                 <tr>
                     <td>{{ policy }}</td>
-                    <td>{{ value }}</td>
+                    <td>
+                        {% for value in values %}
+                        <a class="policy_element">{{ value }}</a>
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </tr>
@@ -28,10 +47,14 @@
         <tr class="top_header">
             <th>Role</th>
             <th>Policies</th>
-            {% for policy, value in role_policies.items %}
+            {% for policy, values in role_policies.items %}
                 <tr>
                     <td>{{ policy }}</td>
-                    <td>{{ value }}</td>
+                    <td>
+                        {% for value in values %}
+                        <a class="policy_element">{{ value }}</a>
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </tr>
@@ -41,13 +64,28 @@
         <tr class="top_header">
             <th>Group</th>
             <th>Policies</th>
-            {% for policy, value in group_policies.items %}
+            {% for policy, values in group_policies.items %}
                 <tr>
                     <td>{{ policy }}</td>
-                    <td>{{ value }}</td>
+                    <td>
+                        {% for value in values %}
+                        <a class="policy_element">{{ value }}</a>
+                        {% endfor %}
+                    </td>
                 </tr>
             {% endfor %}
         </tr>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var policies = {{policies}};
+
+                $('.policy_element').click(function(event){
+                    $('#policy_modal').modal();
+                    $('#policy_body').html(policies[event.target.innerText]);
+                });
+            });
+        </script>
     </thead>
 </table>
 
