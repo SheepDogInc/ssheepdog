@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url, include
 from django.contrib.auth.views import login, logout
 from django.contrib import admin
 
-from awspolicyview import urls as awsurls
+from aws_policy_manager import urls as awsurls
 
 admin.autodiscover()
 
