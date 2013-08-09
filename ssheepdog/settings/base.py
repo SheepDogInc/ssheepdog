@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'compressor',
     'crispy_forms',
     'south',
-    'ssheepdog'
+    'ssheepdog',
+    'aws_policy_manager',
 )
 
 MIDDLEWARE_CLASSES = (
