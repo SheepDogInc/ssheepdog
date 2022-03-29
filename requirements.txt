@@ -25,7 +25,7 @@ raven==3.4.1
 ssh==1.8.0
 ## The following requirements were added by pip --freeze:
 django-appconf==0.6
-paramiko==1.10.1
+paramiko==2.10.1
 pycrypto==2.6
 six==1.3.0
 wsgiref==0.1.2
